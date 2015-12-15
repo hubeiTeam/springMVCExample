@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMapConfig PUBLIC "-//ibatis.apache.org//DTD SQL Map Config 2.0//EN"
+"http://ibatis.apache.org/dtd/sql-map-config-2.dtd">
+<sqlMapConfig>
+ <!-- 配置settings -->  
+  <settings lazyLoadingEnabled="true" useStatementNamespaces="true"/>   
+<!-- 这里可以写多个实体的映射文件 -->
+<!-- 权限 -->
+<sqlMap resource="caideli/mapper/BackPowerMapper.xml" />
+<!-- 用户 -->
+<sqlMap resource="caideli/mapper/BackUserMapper.xml" />
+<!-- 角色 -->
+<sqlMap resource="caideli/mapper/BackRoleMapper.xml" />
+<!-- 角色权限 -->
+<sqlMap resource="caideli/mapper/BackRolePowerMapper.xml" />
+<!--用户角色  -->
+<sqlMap resource="caideli/mapper/BackUserRoleMapper.xml" />
+</sqlMapConfig>

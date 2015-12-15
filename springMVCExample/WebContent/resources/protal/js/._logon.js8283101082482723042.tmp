@@ -1,0 +1,30 @@
+$('#logonBtn').click(function(){
+	var phone = $('#phone').val();
+	var logonPassword = $('#logonPassword').val();
+	if(phone.length != 11){
+		alert('手机号错误！');
+		return;
+	}
+	if(logonPassword.length < 6){
+		alert('密码不正确！');
+		return;
+	}
+	//检查是否有target
+	var target = getParams('target');
+	if(target == null){
+		target = '';
+	}
+	$.post('/merchant/doLogon.json',{'phone':phone,'logonPassword':logonPassword,'target':target},function(result){
+		if(result.status == 'successful'){
+			window.location.href=result.target;
+		}else{
+			console.log(result);
+		}
+	},'json')
+});
+
+function getParams(name) {
+    var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+    var r = window.location.search.substr(1).match(reg);
+    if (r != null) return unescape(r[2]); return null;
+}

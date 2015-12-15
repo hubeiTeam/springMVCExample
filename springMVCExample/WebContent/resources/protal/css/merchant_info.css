@@ -1,0 +1,21 @@
+.c_center{ float: right; border-left: 2px solid #f5f5f5; width: 878px; padding: 20px;}
+.c_center p{ line-height: 60px;}
+.user_info img{ float: left;}
+.user_info div.right{ height: 120px; float: left; margin: 0 20px; width: 630px; }
+.user_info div.right h3{ height: 59px; line-height: 59px; border-bottom: 1px solid #CCC;}
+.user_info div.right p{ height: 60px; line-height: 60px;}
+
+.user_table{ padding: 30px 0px; font-size: 18px; }
+.user_table .t_title{ display: block; width: 120px; float: left; text-align: center;}
+.user_table .t_center{ display: block; float: left; margin: 0 20px; width: 630px;}
+.user_table .t_center textarea{ text-indent: 2em; width: 590px; height: 100px; padding: 20px; font-size: 16px;}
+
+.trader_passwd{ font-size: 16px; padding: 20px;}
+.trader_passwd .input{ height: 40px; border: 2px solid #DFDFDF; width: 298px; font-size: 16px; line-height: 40px; text-indent: 1em;}
+.trader_passwd .code{ height: 40px; line-height: 40px; text-align: center; color: #337CA1;  padding: 0 10px; border: 1px dotted #CCC;}
+.trader_passwd .get-code{ height: 40px; line-height: 40px; padding: 0 20px; background: #4889db; color: #FFF;}
+.trader_passwd .get-code-dis{ background: #CCC;}
+.trader_passwd table{ margin: 0 auto;}
+.trader_passwd td{ height: 50px;}
+
+.center_bg{ padding: 0;}

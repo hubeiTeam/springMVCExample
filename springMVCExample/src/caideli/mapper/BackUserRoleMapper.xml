@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="BackUserRole">
+	<!-- 别名 -->
+	<typeAlias alias="BackUserRole"
+		type="caideli.bean.BackUserRole" />
+	<!-- 配置对象映射 -->
+	<resultMap class="BackUserRole" id="BackUserRoleResult">
+		<result property="id" column="id" />
+		<result property="userId" column="user_id" />
+		<result property="roleId" column="role_id" />
+	</resultMap>
+	<!-- 查询内容 -->
+	<sql id="BackUserRole_common_columns">
+		a.id,
+		a.user_id,
+		a.role_id
+	</sql>
+	<!-- 查询条件 -->
+	<sql id="BackUserRole_common_condition">
+		<isNotEmpty property="id">
+			and a.id=#id#
+		</isNotEmpty>
+		<isNotEmpty property="userId">
+			and a.user_id=#userId#
+		</isNotEmpty>
+		<isNotEmpty property="roleId">
+			and a.role_id=#roleId#
+		</isNotEmpty>
+	</sql>
+	<!-- 条件查询 -->
+	<select id="query" resultMap="BackUserRoleResult">
+		SELECT
+		<include refid="BackUserRole_common_columns" />
+		FROM
+		back_user_role a
+		WHERE 1=1
+		<include refid="BackUserRole_common_condition" />
+	</select>
+	<!-- 据id查询 -->
+	<select id="query_id" resultMap="BackUserRoleResult" parameterClass="Long">
+		SELECT
+		<include refid="BackUserRole_common_columns" />
+		FROM
+		back_user_role a
+		WHERE 1=1 and a.id=#id#
+		ORDER BY a.id DESC
+	</select>
+	<!-- 数量 -->
+<select id="count" resultClass="int">
+		SELECT COUNT(*) FROM back_user_role a WHERE 1=1 <include refid="BackUserRole_common_condition" /> 
+	</select>
+	<!-- 添加 -->
+	<insert id="add" parameterClass="BackUserRole" >
+		INSERT INTO 
+			back_user_role (
+				user_id,
+				role_id
+			) 
+			VALUES (
+				#userId#,
+				#roleId#
+			)
+		<selectKey resultClass="Long" keyProperty="id"> 
+			SELECT @@IDENTITY AS id  
+		</selectKey>
+	</insert>
+	<!-- 删除 -->
+	<delete id="delete" parameterClass="BackUserRole">DELETE FROM back_user_role WHERE id=#id#</delete>
+	<!-- 修改 -->
+	<update id="update" parameterClass="BackUserRole">
+		UPDATE back_user_role SET
+			<isNotEmpty property="id">id=#id#</isNotEmpty>
+			<isNotEmpty property="userId" prepend=",">userId=#user_id#</isNotEmpty>
+			<isNotEmpty property="roleId" prepend=",">roleId=#role_id#</isNotEmpty>
+		WHERE id=#id#
+	</update>
+</sqlMap>

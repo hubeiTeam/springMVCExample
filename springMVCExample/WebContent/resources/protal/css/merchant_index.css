@@ -1,0 +1,115 @@
+.c_center{ border: none;}
+.user_info{ display: block; height: 120px; padding: 15px;}
+.user_info img{ float: left;}
+.user_info div{ height: 120px; float: left; margin: 0 20px; width: 800px; }
+.user_info div h3{ height: 59px; line-height: 59px; border-bottom: 1px solid #CCC;}
+.user_info div p{ height: 60px; line-height: 60px;}
+
+.user_box{ border: 1px solid #CCC; margin-top: 20px; padding: 15px;}
+.user_box .half{ width: 50%;}
+.user_box ul{ padding: 10px;}
+.user_box ul.bor{ border-right: 1px solid #CCC;}
+.user_box li{ line-height: 2em; border-bottom: 1px dotted #CCC; padding: 5px 0;}
+.user_box li.hf-title{ padding-left: 10px; background: #4889db; color: #FFF; border-bottom: 0;}
+.user_box span{ padding-left: 10px;}
+.user_box li a{height: 34px !important; padding-top: 0; padding-bottom: 0; line-height: 34px;}
+
+.user_list{ margin-top: 20px; padding: 15px; background: #FFF; }
+.user_list .title{ color: #1e78e8; font-size: 22px; font-weight: bold; border-bottom: 0; line-height: 42px; }
+.user_list .search{ padding: 10px 0; font-weight: bold;}
+.user_list .search a{ line-height: 34px; margin: 0 20px; height: 32px; padding: 0 20px;}
+.user_list input.timer{ line-height: 30px; width: 120px; height: 30px; font-size: 12px; border:2px solid #CCC; text-align: center; }
+.user_list .search-list p{ display: block; color: #1e7868 ; padding: 10px 0; text-align: right;}
+.user_list .search-list p span{ display: inline-block; padding: 0 30px;}
+
+.user_list table{ border-color: #CCC; border: 1px solid #F4F5F5;}
+.user_list table td{ border: 0px solid #CCC; line-height: 30px; font-size: 18px;}
+.user_list table thead{ background: #d9dcdc; color: #333; border: 0; font-weight: bold;}
+.user_list table thead td{ line-height: 50px; height: 30px; text-align: center; border: 1px solid #d9dcdc;}
+.user_list table tbody td{ padding: 10px; text-align: center; font-size: 14px;}
+.user_list table tbody a{ color: #4889db;}
+.user_list table tbody a:hover{ color: #4889db;}
+
+/* mvn clean     mvn install mvn eclipse:eclipse; */
+
+.trade_info{}
+.trade_info p{ line-height: 2em; margin: 10px 0; color: #4889db;}
+
+.trade_info table{ border-color: #CCC; }
+.trade_info table td{}
+.trade_info table thead{ color: #333; font-weight: bold; }
+.trade_info table thead tr{}
+.trade_info table thead td{ line-height: 3em; height: 30px; text-align: center;}
+.trade_info table tbody td{ padding: 10px; text-align: center; font-size: 14px;}
+.trade_info table tbody td.right{ text-align: right !important;}
+.trade_info table tbody a{}
+.trade_info table tbody a:hover{}
+.trade_info ul li{ display: block;  text-align: center; line-height: 3em; border-bottom: 1px dotted #ccc; }
+.trade_info ul li b{ display: inline-block; padding-left: 40px; }
+.trade_info ul li span{ display: inline-block; width: 700px;}
+
+.get_cash{ padding: 10px; color:#6B6868;}
+.get_cash table{ margin: 0 auto;}
+.get_cash .input{ line-height: 30px; height: 30px; font-size: 16px; width: 200px; text-align: left; padding: 0 10px;}
+.get_cash .number{ line-height: 30px; height: 30px; font-size: 16px;  text-align: center; width: 150px;}
+.get_cash table tr{}
+.get_cash table td{ line-height: 80px; text-align: center;}
+
+.trader_passwd{ font-size: 16px; padding: 30px;}
+.trader_passwd .input{ height: 40px; width: 298px; font-size: 16px; line-height: 40px; text-indent: 1em;}
+.trader_passwd .code{ height: 40px; line-height: 40px; text-align: center; color: #4889db;  padding: 0 10px; border: 1px dotted #CCC;}
+.trader_passwd .get-code{ height: 40px; line-height: 40px; padding: 0 20px; background: #4889db; color: #FFF;}
+.trader_passwd table{ margin: 0 auto;}
+.trader_passwd td{ height: 50px;}
+
+.user_table{}
+.user_table tr{ padding-left: 120px; border-bottom: 1px dotted #CCC;}
+.user_table td{ text-align: center; line-height: 3em;}
+
+.user_banner{ margin-top: 10px;}
+.banner_left{ background: #FFF; height: 140px; width: 515px; border-radius: 160px 0 0 160px; padding: 10px;}
+.banner_left .head_img{ display: block; padding: 10px 0; padding-left: 15px;}
+.banner_left .head_img img{ border-radius: 120px; border: 1px solid #F4F5F5; }
+.banner_left .userinfo{ width: 350px; display:block; color: #333;}
+.banner_left .userinfo h3{ font-size: 22px; line-height: 2em;}
+.banner_left .userinfo a{ display:block; padding: 10px 0; }
+.banner_left .userinfo a{ line-height: 26px;}
+.banner_left .userinfo p{ line-height: 2em; font-size: 16px; font-weight: bold;}
+
+.banner_right{ background: #FFF; height: 160px; width: 535px; }
+.banner_right .we { position: relative; height: 70px; border-bottom: 3px dotted #F4F5F5; padding: 10px; }
+.banner_right .aliy{ position: relative; height: 45px; padding: 10px; }
+.banner_right i{ position: absolute; top: 50%; margin-top: -22px;}
+.banner_right .we-c{ width: 230px; padding: 0px 10px; margin-left: 50px; line-height: 1.5em;}
+.banner_right .we-btm{ width: 250px; position: absolute; top: 34%; margin-top: -15px; right: 0;}
+
+.tab{ margin-top: 23px;}
+.tab a{ display: inline-block; padding: 0 20px; height: 41px; line-height: 42px; background: #CCC; border-radius: 5px 5px 0 0; color: #FFF; }
+.tab a.avt{ border-top: 1px solid #CCC; border-left: 1px solid #CCC; color: #4889db; border-right: 1px solid #CCC; border-radius: 5px 5px 0 0; background: #FFF;}
+.tab-box{ border:1px solid #CCC; margin-top: -1px; border-radius: 5px 0 5px 5px; display: none;}
+.tab-box.act{ display: block;}
+.tab-box p{ line-height: 4em; font-size: 16px; border-bottom: 1px solid #CCC;}
+.tab-box p span{ padding-right: 30px;}
+
+.icon-mony{ display: inline-block; width: 44px; height: 44px; background: url(../images/mony.png);}
+.icon-alipay{ display: inline-block; width: 44px; height: 44px; background: url(../images/alipay-c.png);}
+
+.paysubmit{ width: 300px; padding: 0; border: 1px dashed #4889db; border-radius: 10px;}
+.hr{ border-top:1px dotted #71b247; height: 0;}
+.popusepaper{ position: absolute; width: 100%;top: 0; background: rgba(0, 0, 0, 0.23); position: fixed; display: none;  }
+.popbg{ position: absolute; top: 0; width: 100%;background: #333; opacity: 0.5;}
+.popcenter{ width: 700px; margin: 0 auto; background: #FFF; position: relative; margin-top: 40px; margin-bottom: 40px; padding: 30px; vertical-align: middle; border: 1px solid #CCC;}
+.popcenter .xhide{ position: absolute; right: 10px; top: 10px; display: block; width: 22px; height: 22px; background: url(../images/x.png);}
+.popcenter p{ line-height: 3em;}
+.popcenter .item{ width: 292px; float: left; color: #737373; position: relative; height: 78px; padding: 10px; background: url(../images/redpaper.png) center no-repeat;}
+.popcenter .item-mony{ position: absolute; left: 15px; width: 50px; top: 20px; color: #FFF; font-size: 18px; text-align: center;}
+.popcenter .item-status{ position: absolute; display: block;left: 18px; bottom: 20px; color: #FFF; font-size: 14px; text-align: center; width: 50px;}
+.popcenter .item-content{ position: absolute; font-size: 10px; left: 100px; width: 190px; height: 60px; top: 18px;}
+.popcenter .content-title{ line-height: 1.3em; font-size: 16px;}
+.popcenter .checked{ width: 22px; height: 22px; position: absolute; right: 4px ; top: 4px; background: url(../images/nochecked.png); }
+.checking .checked{ background-image: url(../images/checked.png);}
+.popcenter .timeout{ width: 292px; float: left; color: #737373; position: relative; height: 78px; padding: 10px; background: url(../images/timeover.png) center no-repeat;}
+
+.popworing{ position: fixed; width: 100%; height: 100%; top: 0; }
+.popworing .popworbg{ position: absolute; width: 100%; height: 100%; background: #333; opacity:0.6; }
+.popworing .popcenter{ width: 400px; margin: 0 auto; margin-top: 40px; border: none; background: #fff;}

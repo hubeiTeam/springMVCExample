@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="BackRolePower">
+	<!-- 别名 -->
+	<typeAlias alias="BackRolePower"
+		type="caideli.bean.BackRolePower" />
+	<!-- 配置对象映射 -->
+	<resultMap class="BackRolePower" id="BackRolePowerResult">
+		<result property="id" column="id" />
+		<result property="roleId" column="role_id" />
+		<result property="powerId" column="power_id" />
+	</resultMap>
+	<!-- 查询内容 -->
+	<sql id="BackRolePower_common_columns">
+		a.id,
+		a.role_id,
+		a.power_id
+	</sql>
+	<!-- 查询条件 -->
+	<sql id="BackRolePower_common_condition">
+		<isNotEmpty property="id">
+			and a.id=#id#
+		</isNotEmpty>
+		<isNotEmpty property="powerId">
+			and a.power_id=#powerId#
+		</isNotEmpty>
+		<isNotEmpty property="roleId">
+			and a.role_id=#roleId#
+		</isNotEmpty>
+	</sql>
+	<!-- 条件查询 -->
+	<select id="query" resultMap="BackRolePowerResult">
+		SELECT
+		<include refid="BackRolePower_common_columns" />
+		FROM
+		back_role_power a
+		WHERE 1=1
+		<include refid="BackRolePower_common_condition" />
+	</select>
+	<!-- 据id查询 -->
+	<select id="query_id" resultMap="BackRolePowerResult" parameterClass="Long">
+		SELECT
+		<include refid="BackRolePower_common_columns" />
+		FROM
+		back_role_power a
+		WHERE 1=1 and a.id=#id#
+		ORDER BY a.id DESC
+	</select>
+	<!-- 数量 -->
+<select id="count" resultClass="int">
+		SELECT COUNT(*) FROM back_role_power a WHERE 1=1 <include refid="BackRolePower_common_condition" /> 
+	</select>
+	<!-- 添加 -->
+	<insert id="add" parameterClass="BackRolePower" >
+		INSERT INTO 
+			back_role_power (
+				role_id,
+				power_id
+			) 
+			VALUES (
+				#roleId#,
+				#powerId#
+			)
+		<selectKey resultClass="Long" keyProperty="id"> 
+			SELECT @@IDENTITY AS id  
+		</selectKey>
+	</insert>
+	<!-- 删除 -->
+	<delete id="delete" parameterClass="BackRolePower">DELETE FROM back_role_power WHERE id=#id#</delete>
+	<!-- 修改 -->
+	<update id="update" parameterClass="BackRolePower">
+		UPDATE back_role_power SET
+			<isNotEmpty property="id">id=#id#</isNotEmpty>
+			<isNotEmpty property="roleId" prepend=",">roleId=#role_id#</isNotEmpty>
+			<isNotEmpty property="powerId" prepend=",">powerId=#power_id#</isNotEmpty>
+		WHERE id=#id#
+	</update>
+</sqlMap>

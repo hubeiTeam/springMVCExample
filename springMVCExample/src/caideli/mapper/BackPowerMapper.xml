@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="BackPower">
+	<!-- 别名 -->
+	<typeAlias alias="BackPower" type="caideli.bean.BackPower" />
+	<!-- 配置对象映射 -->
+	<resultMap class="BackPower" id="BackPowerResult">
+		<result property="id" column="power_id" />
+		<result property="powerName" column="power_name" />
+		<result property="path" column="path" />
+		<result property="parentId" column="parentid" />
+		<result property="desc" column="desc" />
+	</resultMap>
+	<!-- 查询内容 -->
+	<sql id="BackPower_common_columns">
+		a.power_id,
+		a.power_name,
+		a.path,
+		a.parentid,
+		a.desc
+	</sql>
+	<!-- 查询条件 -->
+	<sql id="BackPower_common_condition">
+		<isNotEmpty property="id">
+			and a.power_id=#id#
+		</isNotEmpty>
+		<isNotEmpty property="PowerName">
+			and a.power_name like '%$powerName$%'
+		</isNotEmpty>
+		<isNotEmpty property="parentId">
+			and a.parentid=#parentId#
+		</isNotEmpty>
+	</sql>
+	<!-- 条件查询 -->
+	<select id="query" resultMap="BackPowerResult">
+		SELECT
+		<include refid="BackPower_common_columns" />
+		FROM
+		back_power a
+		WHERE 1=1
+		<include refid="BackPower_common_condition" />
+	</select>
+	<!-- 据id查询 -->
+	<select id="query_id" resultMap="BackPowerResult" parameterClass="Integer">
+		SELECT
+		<include refid="BackPower_common_columns" />
+		FROM
+		back_power a
+		WHERE 1=1 and a.power_id=#id#
+		ORDER BY a.power_id DESC
+	</select>
+	<!-- 数量 -->
+<select id="count" resultClass="int">
+		SELECT COUNT(*) FROM back_power a WHERE 1=1 <include refid="BackPower_common_condition" /> 
+	</select>
+	<!-- 添加 -->
+	<insert id="add" parameterClass="BackPower" >
+		INSERT INTO 
+			back_power (
+				power_name,
+				path,
+				parentid,
+				desc
+			) 
+			VALUES (
+				#powerName#,
+				#path#,
+				#parentId#,
+				#desc#
+			)
+		<selectKey resultClass="Long" keyProperty="id"> 
+			SELECT @@IDENTITY AS power_id  
+		</selectKey>
+	</insert>
+	<!-- 删除 -->
+	<delete id="delete" parameterClass="BackPower">DELETE FROM back_power WHERE power_id=#id#</delete>
+	<!-- 修改 -->
+	<update id="update" parameterClass="BackPower">
+		UPDATE back_power SET
+			<isNotEmpty property="id">id=#power_id#</isNotEmpty>
+			<isNotEmpty property="powerName" prepend=",">powerName=#power_name#</isNotEmpty>
+			<isNotEmpty property="path" prepend=",">path=#path#</isNotEmpty>
+			<isNotEmpty property="parentid" prepend=",">parentid=#parentId#</isNotEmpty>
+			<isNotEmpty property="desc" prepend=",">desc=#desc#</isNotEmpty>
+		WHERE power_id=#id#
+	</update>
+</sqlMap>

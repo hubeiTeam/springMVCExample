@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd  
+       http://www.springframework.org/schema/context  
+       http://www.springframework.org/schema/context/spring-context-3.0.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd  
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
+       
+  <!-- 自动扫描 -->  
+  <context:component-scan base-package="caideli"/> 
+  <!-- 启动spring注解,当自动扫描启动后,该配置可以去掉   
+  <context:annotation-config /> --> 
+    <!-- 启动spring注解,等同于 context:annotation-config  
+  <bean class="org.springframework.context.annotation.CommonAnnotationBeanPostProcessor"/>  
+  <bean class="org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor"/>  
+  <bean class="org.springframework.beans.factory.annotation.PersistenceAnnotationBeanPostProcessor"/>  
+  <bean class="org.springframework.beans.factory.annotation.RequiredAnnotationBeanPostProcessor"/> --> 
+  
+  	<!-- 引如外部属性文件 ，路径从外部磁盘中引入-->
+      <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+<!-- 				<value>file:/Users/liming/antx.properties</value> -->
+				<!-- <value>file:/D:/antx.properties</value> -->
+			</list>
+		</property>
+	</bean>
+ <!-- 配置数据源 -->
+<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">  
+  <property name="driverClassName">  
+    <value>com.mysql.jdbc.Driver</value>  
+  </property>  
+  <property name="username">  
+    <value>root</value>  
+  </property>  
+  <property name="password">  
+    <value>123456</value>  
+  </property>  
+  <property name="url">  
+    <value>jdbc:mysql://localhost:3306/test</value>  
+  </property>  
+</bean> 
+ <!-- 配置SqlMapClient对象 -->  
+   <!-- 此处应注入ibatis配置文件，而非sqlMap文件，否则会出现“there is no statement.....异常” -->
+  <bean id="sqlMapClient" class="org.springframework.orm.ibatis.SqlMapClientFactoryBean">    
+    <property name="configLocation" value="classpath:caideli/spring/SqlMapConfig.xml"/>  
+    <property name="dataSource" ref="dataSource"/>    
+  </bean>  
+    
+  <!--根据sqlMapClien创建一个SqlMapClient模版类-->  
+  <bean id="sqlMapClientTemplate" class="org.springframework.orm.ibatis.SqlMapClientTemplate">  
+    <property name="sqlMapClient" ref="sqlMapClient"/>  
+  </bean>   
+        
+    <!-- 配置事务管理器 -->  
+ <!-- <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">    
+    <property name="dataSource" ref="dataSource"/>    
+  </bean>  --> 
+    
+<!--   启动spring事务注解，事务注解尽在此   -->
+<!--   <tx:annotation-driven transaction-manager="transactionManager"/>  -->  
+    
+  <!-- 配置事务特性   
+  <tx:advice id="txAdvice" transaction-manager="transactionManager">  
+    <tx:attributes>  
+        <tx:method name="select*" read-only="true" propagation="REQUIRED"/>  
+        <tx:method name="find*" read-only="true" propagation="REQUIRED"/>  
+        <tx:method name="save*" propagation="REQUIRED" isolation="REPEATABLE_READ"/>  
+        <tx:method name="update*" propagation="REQUIRED" isolation="REPEATABLE_READ"/>  
+        <tx:method name="add*" propagation="REQUIRED" isolation="REPEATABLE_READ"/>  
+        <tx:method name="delete*" propagation="REQUIRED" isolation="REPEATABLE_READ"/>  
+        <tx:method name="*" read-only="true"/>  
+    </tx:attributes>  
+  </tx:advice> -->  
+    
+  <!-- 配置事务代理拦截器     
+  <bean id="baseTransactionProxy" abstract="true"   
+    class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">  
+    <property name="transactionManager">  
+      <ref bean="transactionManager"/>  
+    </property>  
+    <property name="transactionAttributes">  
+      <props>  
+        <prop key="insert*">PROPAGATION_REQUIRED</prop>  
+        <prop key="update*">PROPAGATION_REQUIRED</prop>  
+        <prop key="delete*">PROPAGATION_REQUIRED</prop>  
+        <prop key="*">PROPAGATION_REQUIRED,readOnly</prop>      
+      </props>     
+    </property>  
+  </bean> -->  
+    
+  <!-- 配置哪些类的方法需要进行事务管理   
+  <aop:config>  
+    <aop:pointcut id="baseServiceMethods" expression="execution(* com.archie.service.*.*(..))"/>  
+      <aop:advisor advice-ref="txAdvice" pointcut-ref="baseServiceMethods"/>  
+    </aop:config>  
+  <aop:aspectj-autoproxy /> -->  
+    
+  <!-- 配置Dao实例   
+  <bean id="userDao" class="com.archie.dao.UserDao">  
+    <property name="sqlMapClient" ref="sqlMapClient"/>     
+  </bean> -->  
+    
+  <!-- 配置Service实例   
+  <bean id="userService" class="com.archie.service.UserService">  
+    <property name="userDao" ref="userDao"/>  
+  </bean> -->  
+    
+  <!-- 添加了事务的管理类    
+  <bean id="userManager" parent="baseTransactionProxy">     
+    <property name="target">      
+      <bean class="com.archie.service.UserService"/>  
+    </property>    
+  </bean> -->   
+  <!-- <context:component-scan base-package="caideli" annotation-config="true" /> -->
+<!-- <bean id="dao" class="caideli.bean.PowerDao">  
+    
+  <property name="sqlMapClient">  
+    <ref bean="sqlMapClient"/>  
+  </property>  
+</bean>  --> 
+  <!--******************************************* *************************************************** -->
+  
+  
+</beans>  

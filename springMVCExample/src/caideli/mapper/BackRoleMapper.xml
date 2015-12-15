@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="BackRole">
+	<!-- 别名 -->
+	<typeAlias alias="BackRole" type="caideli.bean.BackRole"/>
+	<!-- 配置对象映射 -->
+	<resultMap class="BackRole" id="BackRoleResult">
+		<result property="id" column="role_id" />
+		<result property="roleName" column="role_name" />
+		<result property="desc" column="desc" />
+	</resultMap>
+	<!-- 查询内容 -->
+	<sql id="BackRole_common_columns">
+		a.role_id,
+		a.role_name,
+		a.desc
+	</sql>
+	<!-- 查询条件 -->
+	<sql id="BackRole_common_condition">
+		<isNotEmpty property="id">
+			and a.role_id=#id#
+		</isNotEmpty>
+		<isNotEmpty property="roleName">
+		  	and a.role_name like '%$roleName$%'
+		</isNotEmpty>
+	</sql>
+	<!-- 条件查询 -->
+	<select id="query" resultMap="BackRoleResult">
+		SELECT 
+			<include refid="BackRole_common_columns"/>
+		FROM
+			back_role a
+		WHERE 1=1
+			<include refid="BackRole_common_condition"/>
+	</select>
+	<!-- 据id查询 -->
+	<select id="query_id" resultMap="BackRoleResult" parameterClass="Long">
+		SELECT 
+		 	<include refid="BackRole_common_columns"/>
+		FROM
+			back_role a
+		WHERE 1=1 and a.role_id=#id#
+			ORDER BY a.role_id DESC
+	</select>
+	<!-- 数量 -->
+<select id="count" resultClass="int">
+		SELECT COUNT(*) FROM back_role a WHERE 1=1 <include refid="BackRole_common_condition" /> 
+	</select>
+	<!-- 添加 -->
+	<insert id="add" parameterClass="BackRole" >
+		INSERT INTO 
+			back_role (
+				role_name,
+				desc
+			) 
+			VALUES (
+				#roleName#,
+				#desc#
+			)
+		<selectKey resultClass="Long" keyProperty="id"> 
+			SELECT @@IDENTITY AS role_id  
+		</selectKey>
+	</insert>
+	<!-- 删除 -->
+	<delete id="delete" parameterClass="BackRole">DELETE FROM back_role WHERE role_id=#id#</delete>
+	<!-- 修改 -->
+	<update id="update" parameterClass="BackRole">
+		UPDATE back_Role SET
+			<isNotEmpty property="id">id=#role_id#</isNotEmpty>
+			<isNotEmpty property="roleName" prepend=",">roleName=#role_name#</isNotEmpty>
+			<isNotEmpty property="desc" prepend=",">desc=#desc#</isNotEmpty>
+		WHERE role_id=#id#
+	</update>
+</sqlMap>
