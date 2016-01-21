@@ -1,0 +1,514 @@
+#parse('/backStageManage/public/TOP.vm')
+<script type="text/javascript" src="/backStageManage/lib/layPage/laypage.dev.js"></script>
+<script type="text/javascript" src="/backStageManage/lib/layer/layer.js"></script>
+<script type="text/javascript" src="/backStageManage/js/uitl.js"></script>
+<script type="text/javascript" src="/backStageManage/js/system.js"></script>
+<link rel="stylesheet" type="text/css" href="/backStageManage/semantic/components/checkbox.css">
+<link rel="stylesheet" type="text/css" href="/backStageManage/ui/css/components/datepicker.css">
+<div class="main">
+
+	<div class="page-center ui segment">
+		<div class="ui dividing header">
+			<i class="user icon"></i>
+			<div class="content">
+				商户列表
+			</div>
+		</div>
+		<form class="ui small form" action="" method="get" name="search">
+			<div class="fields">
+				<div class="field">
+					<label>注册时间(起始)</label>
+					<!-- <div class="ui input action"> -->
+						<input type="text" placeholder="年/月/日" data-uk-datepicker="{format:'YYYY-MM-DD'}" name="beginTime">
+						<!-- <div class="ui button mini"></div>
+					</div>
+ -->				</div>
+				<div class="field">
+					<label>注册时间(结束)</label>
+					<input type="text" placeholder="年/月/日" data-uk-datepicker="{format:'YYYY-MM-DD'}" name="endTime">
+				</div>
+				<div class="field">
+					<label>认证状态</label>
+					<select class="ui dropdown" name="status">
+							<option value="0" selected="selected">全部状态</option>
+						#foreach($attest in $!{attestList.keySet()})
+							<option value="$attest">${attestList.get($attest)}</option>
+						#end
+					</select>
+ 				</div>
+				<div class="field">
+					<label>公司名称</label>
+					<input type="text" placeholder="支持模糊查询" name="companyName">
+				</div>
+				<div class="field">
+					<label>手机号</label>
+					<input type="text" placeholder="支持模糊查询" name="phone">
+				</div>
+			</div>
+			<div class="fields">
+				<div class="field">
+					<label>最低评分</label>
+					<!-- <div class="ui input action"> -->
+						<input type="text" placeholder="最低"  name="averageRatingMin">
+						<!-- <div class="ui button mini"></div>
+					</div>
+ -->				</div>
+				<div class="field">
+					<label>最高评分</label>
+					<input type="text" placeholder="最高" name="averageRatingMax">
+				</div>
+				<div class="field">
+					<label>城市名称</label>
+					<input type="text" placeholder="支持模糊查询" name="cityName">
+				</div>
+				<div class="field">
+					<label>操作</label>
+					<!-- <input class="ui button mini" type="submit" value="查询" > -->
+					<div class="ui buttons">
+					  <button class="ui button instagram" type="submit"> 查询 </button>
+					  <div class="or" data-text="或"></div>
+					  <button class="ui button" onclick="$('form').form('clear');">重置</button>
+					</div>
+				</div>
+			</div>
+		</form>
+	</div>
+
+    <div class="page-center ui page-list">
+    	<div class="ui active inverted dimmer page-loading">
+			<div class="ui large text loader">加载中</div>
+		</div>
+   		<div class="ui" style="min-height:400px;-webkit-transition:height .5s;">
+	        <table class="ui selectable celled table">
+	            <thead>
+	                <tr>
+	                    <th width="200">公司名称</th>
+	                    <th>手机号</th>
+	                    <th>城市</th>
+	                    <th width="150">认证状态</th>
+	                    <th>评分</th>
+	                    <th>注册时间</th>
+	                    <th width="150">最后登录时间</th>
+	                    <th>发布岗位数</th>
+	                    <th width="">操作</th>
+	                </tr>
+	            </thead>
+	            <tbody>
+	            </tbody>
+			</table>
+			<h5 class="ui dividing header " align="right" id="table-count"></h5>
+        </div>
+   	</div>
+   	<div class="page-center ui segment">
+        	<div id="page">
+            
+	        </div>
+	        <div class="clear"></div>
+	</div>
+
+</div>
+
+<!-- 弹出层窗口 -->
+<div class="ui modal" id="UIModel" data-type="" style="min-height:600px;">
+	
+</div>
+
+<!-- 列表模板 -->
+<script type="text/html" id="list">
+	{{each datas as v}}
+	<tr data-id="{{v.id}}">
+		<td>
+			<a href="/backStageManage/show/basic/userMerchantInfo.html?merchantId={{v.id}}" target="_blank">
+			{{ if v.userEnterpriseDto }}
+				{{v.userEnterpriseDto.companyName}}
+			{{ else }}
+				暂未认证
+			{{/if}}
+			</a>
+		</td>
+		<td>{{v.phone}}</td>
+		
+		<td>
+			{{ if v.userEnterpriseDto }}
+				{{v.userEnterpriseDto.cityName}}
+			{{ else }}
+				暂无
+			{{/if}}
+		</td>
+		<td>{{v.attestCategory.name}}</td>
+		<td>{{v.averageRating}}</td>
+		<td>{{v.createTime}}</td>
+		<td>{{v.modifyTime}}</td>
+		<td>{{v.publishPostCount}}</td>
+		<td>
+			{{if v.isDel == 1}}
+				<span class="ui label"></i>已软删除</span>
+			{{else}}
+				{{if v.attestCategory.code != "ENTERPRISE_COMPLETE" && v.attestCategory.code != "ENTERPRISE_RETREAT"}}
+				<a class="ui red label"> <i class="remove circle icon"></i>删除</a>
+				{{/if}}
+			{{/if}}
+			{{if v.userEnterpriseDto}}
+				{{if v.attestCategory.code == "ENTERPRISE_AUDIT"}}
+					<a class="ui green label"> <i class="write icon"></i>审核</a>
+				{{else}}
+					<a class="ui green label"> <i class="write square icon"></i>修改</a>
+				{{/if}}
+				{{if v.userEnterpriseDto.loaningLock == "1"}}
+					<a class="ui blue label"> <i class="unlock alternate icon"></i>释放锁定</a>
+				{{else}}
+					<a class="ui blue label"> <i class="unlock icon"></i>锁定垫资</a>				
+				{{/if}}
+			{{/if}}
+		</td>
+		
+	</tr>
+	{{/each}}
+</script>
+
+<!-- 弹出层模板 （） -->
+<script type="texr/html" id="UIModel-tmp">
+	<i class="close icon"></i>
+	{{if enterpriseMessage}}
+		<form class="ui content small form" name="editinfo" user-id="{{enterpriseMessage.userId}}">
+			<h3 class="ui dividing header">修改商户</h3>
+			<div class="three fields">
+				<div class="field">
+					<label>公司名称</label>
+					<input type="text" name="first-name" value="{{enterpriseMessage.companyName}}" placeholder="公司名称" disabled="disabled">
+				</div>
+				<div class="field">
+					<label>营业执照</label>
+					<input type="text" name="first-name" value="{{enterpriseMessage.companyCodeId}}" placeholder="营业执照" disabled="disabled">
+				</div>
+				<div class="field">
+					<label>区域</label>
+					<input type="text" value="{{enterpriseMessage.cityName}}" placeholder="区域" disabled="disabled">
+					<input type="hidden" value="{{enterpriseMessage.cityId}}" disabled="disabled">
+				</div>
+			</div>
+			<div class="two fields">
+				<div class="field">
+					<label>地址</label>
+					<textarea style="height:300px" disabled="disabled">{{enterpriseMessage.companyAddress}}</textarea>
+				</div>
+				<div class="field">
+					<label>认证图片</label>
+					<img class="ui medium rounded image" src="http://192.168.199.168/upload/images/attest/merchant/1iQDPJuvTXk.jpg">
+				</div>
+			</div>
+			<div class="field">
+				<label>操作</label>
+				<div class="six fields">
+					<div class="field">
+						<div class="ui slider checkbox">
+							{{if loaning}}
+								<input type="checkbox" name="loaning" checked="checked">
+							{{else}}
+								<input type="checkbox" name="loaning">
+							{{/if}}
+							<label>垫付</label>
+						</div>
+						<label></label>
+					</div>
+					<div class="field">
+						<div class="ui slider checkbox">
+							{{if banPublishPost}}
+								<input type="checkbox" checked="checked" name="banPublishPost">
+							{{else}}
+								<input type="checkbox" name="banPublishPost">
+							{{/if}}
+							<label>发布限制</label>
+						</div>
+						<label></label>
+					</div>
+				</div>
+			</div>
+		</form>
+		<div class="actions">
+			<div class="ui button deny">取消</div>
+			<div class="ui button positive submit" data-form="editinfo">提交</div>
+		</div>
+	{{else if userEnterprise}}
+		<form class="ui content small form" name="examine" user-id="{{userEnterprise.userId}}">
+			<h3 class="ui dividing header">审核商户</h3>
+			<div class="three fields">
+				<div class="field">
+					<label>公司名称</label>
+					<input type="text" name="first-name" value="{{userEnterprise.companyName}}" placeholder="公司名称" disabled="disabled">
+				</div>
+				<div class="field">
+					<label>营业执照</label>
+					<input type="text" name="first-name" value="{{userEnterprise.companyCodeId}}" placeholder="营业执照" disabled="disabled">
+				</div>
+				<div class="field">
+					<label>区域</label>
+					<input type="text" value="{{userEnterprise.cityName}}" placeholder="区域" disabled="disabled">
+					<input type="hidden" value="{{userEnterprise.cityId}}" disabled="disabled">
+				</div>
+			</div>
+			<div class="two fields">
+				<div class="field">
+					<label>地址</label>
+					<textarea style="height:300px" disabled="disabled">{{userEnterprise.companyAddress}}</textarea>
+				</div>
+				<div class="field">
+					<label>认证图片</label>
+					<img class="ui medium rounded image" src="http://192.168.199.168/upload/images/attest/merchant/1iQDPJuvTXk.jpg">
+				</div>
+			</div>
+			<div class="field">
+				<label>操作</label>
+				<div class="inline fields">
+				    <div class="field">
+				      <div class="ui radio checkbox">
+				        <input type="radio" name="attestCategory" tabindex="0" checked="checked" value="ENTERPRISE_COMPLETE" class="hidden">
+				        <label>审核通过</label>
+				      </div>
+				    </div>
+				    <div class="field">
+				      <div class="ui radio checkbox">
+				        <input type="radio" name="attestCategory" tabindex="0" value="ENTERPRISE_RETREAT" class="hidden">
+				        <label>审核驳回</label>
+				      </div>
+				    </div>
+				</div>
+			</div>
+			<div class="field">
+				<label>驳回原因</label>
+				<div class="two fields">
+				    <div class="field">
+						<select name="enterpriseRejectReason" class="ui dropdown" id="rejectReason">
+							<option index="0" value="0">驳回原因</option>
+							<option value="1">营业执照注册号不存在</option>
+							<option value="2">虚假证件</option>
+							<option value="3">营业执照注册号与上传证件不符</option>
+						</select>
+					</div>
+				</div>
+			</div>
+			<div class="ui error message">
+				只有填入邮件地址,你才能注册帐号
+			</div>
+		</form>
+		<div class="actions">
+			<div class="ui button deny">取消</div>
+			<div class="ui button submit" data-form="examine">提交</div>
+		</div>
+	{{/if}}
+</script>
+<script type="text/javascript">
+
+	//分页组件
+	;(function(){
+		window.thisLaypage = '';
+		var param = toQueryParams.call(window.location.href);
+		randerForm(param, $('form[name=search]'));
+		var currPage = param.currPage || 1;
+
+	    thisLaypage = laypage({
+	        cont: $('#page'),
+	        //pages: pages, //通过后台拿到的总页数
+	        curr: currPage, //初始化当前页
+	        skip: true,
+	        jump: function(e){ //触发分页后的回调
+	        	param.currPage = e.curr;
+	        	changeHash(param);
+	        	loading();
+	            $.getJSON('/back/queryUserMerchantByPage.json', param, function(res){
+	                e.pages = e.last = Math.ceil(res.count/10) || 1; //重新获取总页数，一般不用写
+                    thisLaypage.rePage();
+                    randerSize(res.count);
+	                rander(res.datas);
+	            });
+	        }
+	    });
+
+
+		function loading(){
+			$('.page-loading').addClass('dimmer');
+		}
+
+		function unload(){
+			$('.page-loading').removeClass('dimmer');
+		}
+
+		function randerSize(count){
+			$('#table-count').text('总条数：' +count+ ' 条');
+		}
+
+		function rander(datas){
+			var data = {};
+			data.datas = datas;
+			data = resolve(data);
+            var _html = template('list', data);
+			$('.page-list tbody').html(_html);
+			unload();
+		}
+
+		//对数据进行解析
+		function resolve(data){
+			for( var i=0; i<data.datas.length; i++ ){
+				data.datas[i].attestCategory = getUserStatus(data.datas[i].attestCategory);
+				data.datas[i].modifyTime = (new Date(data.datas[i].modifyTime)).Format('yyyy-MM-dd HH:mm');
+				data.datas[i].createTime = (new Date(data.datas[i].createTime)).Format('yyyy-MM-dd HH:mm');
+			}
+			console.log(data);
+			return data;
+		}
+
+		//重新渲染表单
+		function randerForm(param, form){
+			for( k in param ){
+				var cv = '[name='+k+']';
+				form.find('input'+cv).val(param[k]);
+				form.find('select'+cv).find('option[value='+ param[k] +']').prop('selected','selected');
+			}
+		}
+	})();
+
+	//事件插件驱动
+	;(function(){
+		$('select.dropdown').dropdown();
+		require(["uikit!datepicker"], function(UI){
+        });
+	})();
+
+	//操作事件
+	;(function(){
+		var table = $('table');
+
+		//删除用户
+		table.on("click", "a:has(.remove)", function(){
+			var param = {};
+			param.userId = $(this).parents('tr').attr('data-id');
+			layer.confirm("确认删除此商户？", {btn:['确认', '取消']}, function(){
+				$.post('/back/deleteUserMerchant.json', param, function(json){
+					if(json && json.status == "successful"){
+						layer.msg(json.message, {icon: 1});
+						thisLaypage.render();
+					}else{
+						layer.msg(json.message, {icon: 0});
+					}
+				}, 'json');
+				return true;
+			});
+		});
+
+		//锁定用户
+		table.on("click", "a:has(.unlock:not(.alternate))", function(){
+			// alert();
+			var param = {};
+			param.userId = $(this).parents('tr').attr('data-id');
+			param.type = 0;
+			$.post('/back/lockLoaningAccount.json', param, function(json){
+				if(json && json.status == "successful"){
+					layer.msg(json.message, {icon: 1});
+					thisLaypage.render();
+				}else{
+					layer.msg(json.message, {icon: 0});
+				}
+			}, 'json');
+		});
+
+		//释放用户
+		table.on("click", "a:has(.unlock.alternate)", function(){
+			var param = {};
+			param.userId = $(this).parents('tr').attr('data-id');
+			param.type = 1;
+			$.post('/back/lockLoaningAccount.json', param, function(json){
+				if(json && json.status == "successful"){
+					layer.msg(json.message, {icon: 1});
+					thisLaypage.render();
+				}else{
+					layer.msg(json.message, {icon: 0});
+				}
+			}, 'json');
+		});
+
+		// 修改用户
+		table.on("click", "a:has(.write)", function(){
+			var param = {};
+			param.userId = $(this).parents('tr').attr('data-id');
+
+			$('#UIModel').modal('show');
+			//获取商户数据
+			$.get("/back/findUseMerchantByUserId.json", param, function(json){
+				var res = {};
+				if(json && (json.enterpriseMessage || json.userEnterprise) ){
+					render(json);
+				}else{
+					res.error = ture;
+					res.message = "没有查找到此用户";
+					layer.msg(res.message, {icon: 1});
+				}
+			}, 'json');
+		});
+
+		var model = $("#UIModel");
+		model.on("click", ".submit[data-form=editinfo]", function(){
+			var param = {};
+			var form = $('form[name=editinfo]');
+			if( form.find('input[name=banPublishPost]:checked').length>0){
+				param.banPublishPost = 1;
+			};
+			if( form.find('input[name=loaning]:checked').length>0){
+				param.loaning = 1;
+			};
+			param.userId = form.attr("user-id");
+			$.post("/back/updateUserMerchant.json", param, function(json){
+				if( json && json.status == "successful" ){
+					layer.msg(json.message, {icon: 1});
+				}else{
+					layer.msg(json.message, {icon: 0});
+				}
+			}, "json");
+
+		});
+
+		model.on("click", ".submit[data-form=examine]", function(event){
+			var param = {};
+			var form = $('form[name=examine]');
+			param.attestCategory = $('input[name=attestCategory]:checked').val();
+			param.enterpriseRejectReason = $('select[name=enterpriseRejectReason]').val();
+			if( param.attestCategory == "ENTERPRISE_RETREAT" && param.enterpriseRejectReason == "0" ){
+				error("请选择驳回原因",form );
+				return false;
+			}
+			clearError(form);
+			param.userId = form.attr("user-id");
+			$.post("/back/updateUserMerchant.json", param, function(json){
+				if( json && json.status == "successful" ){
+					thisLaypage.render();
+					layer.msg(json.message, {icon: 1});
+					window.location.reload();
+				}else{
+					layer.msg(json.message, {icon: 0});
+				}
+			}, "json");
+
+		});
+
+		function render(json){
+			console.log(json);
+			var _html = template('UIModel-tmp', json);
+			$('#UIModel').html(_html);
+			$('.ui.radio.checkbox').checkbox();
+			$('select.dropdown').dropdown();
+		}
+
+		function error(message, form){
+			form.addClass("error");
+			form.find(":enabled").parents('.field').addClass('error');
+
+			form.find('.message').text(message);
+		}
+
+		function clearError(form){
+			form.removeClass("error");
+			form.find('.field').removeClass('error');
+		}
+
+	})();
+</script>
+#parse('/backStageManage/public/BOTTOM.vm')

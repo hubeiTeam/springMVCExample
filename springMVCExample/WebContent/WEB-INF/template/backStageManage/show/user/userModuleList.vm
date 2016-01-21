@@ -1,0 +1,475 @@
+#parse('/backStageManage/public/TOP.vm')
+<link rel="stylesheet" type="text/css" href="/backStageManage/ui/css/components/datepicker.css">
+<link rel="stylesheet" type="text/css" href="/backStageManage/ui/css/components/form-file.css">
+<script type="text/javascript" src="/backStageManage/js/uitl.js"></script>
+<script type="text/javascript" src="/backStageManage/js/system.js"></script>
+<script type="text/javascript" src="/backStageManage/lib/layPage/laypage.dev.js"></script>
+<script type="text/javascript" src="/backStageManage/js/searchPage.js"></script>
+<div class="main">
+
+    <!-- 头部搜索条件  -->
+    <div class="page-center ui segment">
+		<div class="ui dividing header">
+          <i class="user icon"></i>
+          <div class="content">
+            BD与商户关系列表
+          </div>
+          </div>
+         <form class="ui mini form" action="" method="get" name="search">
+             <div class="fields">
+                <div class="field">
+                    <label>模块名称</label>
+                    <input type="text" placeholder="支持模糊查询" name="moduleName">
+                </div>
+                <div class="field">
+            	<label>父模块</label>
+            	<select class="ui dropdown" name="parentId">
+            			<option value="0" selected="selected" >所有</option>
+            			<option value="-1" selected="selected" >无</option>
+            			#foreach ($!parentModule in $!parentList)
+                    	<option value="$!parentModule.id" >$!parentModule.moduleName</option>
+   						#end
+                    </select>
+                </div>
+                <div class="field">
+                    <label>操作</label>
+                    <div class="ui buttons">
+                      <button class="ui button instagram" type="submit"> 查询 </button>
+                      <div class="or" data-text="或"></div>
+                      <button class="ui button" onclick="$('form').form('clear');">重置</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    
+    <!-- 按钮中心 -->
+    <div class="ui page-center page-list">
+        <div class="ui active inverted dimmer page-loading">
+            <div class="ui large text loader">加载中</div>
+        </div>
+        <div class="ui" style="min-height:400px;-webkit-transition:height .5s;">
+            <table class="ui selectable celled table">
+                <thead>
+                    <tr>
+                        <th>序列号</th>
+                        <th width="120">模块名称</th>
+                        <th width="80">模块Url</th>
+                        <th width="200">子模块/子权限</th>
+                        <th>父模块</th>
+                        <th>模块图标</th>
+                        <th width="200">操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 底部按钮 -->
+    <div class="page-center ui segment">
+        #if(${insertUserModule})
+            <div class="ui left primary labeled icon button this_modal" data-type="1">
+                <i class="user icon"></i> 新增模块
+            </div>
+        #end
+        <div id="page" class="ui">
+        </div>
+        <div class="clear"></div>
+    </div>
+</div>
+
+<!-- 弹出层 -->
+<div class="ui small modal" id="adduser">
+</div>
+<!-- 后端渲染数据 parentList -->
+<script type="text/javascript">
+    var userModuleList = [];
+    #foreach($v in $parentList)
+        userModuleList[userModuleList.length] = {
+            id : "$!{v.id}",
+            moduleName : "$!{v.moduleName}"
+        }
+    #end
+</script>
+<!-- modal 弹出框 修改BD与商户关系 新增BD与商户关系 --> 
+<script type="text/html" id="userTemp">
+    {{if type == 1 || type == 2 }}
+        <div class="ui inverted dimmer">	
+    {{else}}
+        <div class="ui active inverted dimmer">
+    {{/if}}
+        <div class="ui text loader">Loading</div>
+    </div>
+    <i class="close icon"></i>
+    <div class="header">
+    {{if type == "1"}}
+        新增模块
+    {{else if type == "2"}}
+        修改模块
+    {{else}}
+        USERNAME
+    {{/if}}
+    </div>
+    <div class="content">
+    {{ if res && res.data }}
+        <form class="ui large form" name="edituser">
+          <div class="two fields">
+                <div class="field">
+                    <label>模块名</label>
+                    <input type="hidden" value="{{res.data.moduleName}}" name="agoName">
+                    <input type="text" placeholder="模块名" value="{{res.data.moduleName}}" name="moduleName">
+                </div>
+                <div class="field">
+                    <label>模块Url</label>
+                    <input type="text" placeholder="/backStageManage/show/***/***.html" value="{{res.data.moduleUrl}}" name="moduleUrl">
+                </div>
+            </div>
+            <div class="two fields">
+                <div class="field">
+                    <label>模块图标</label>
+                    <input type="text" placeholder="模块图标" value="{{res.data.iconSet}}" name="iconSet">
+                </div>
+                <div class="field">
+                    <label>父模块</label>
+                    <select class="ui dropdown" name="parentId">
+                        <option value="0">空</option>
+                        {{each userModuleList as v}}
+                            {{if res.data.parentId == v.id}}
+                            <option value="{{v.id}}" selected = "selected">{{v.moduleName}}</option>
+                            {{else}}
+                            <option value="{{v.id}}">{{v.moduleName}}</option>
+                            {{/if}}
+                        {{/each}}
+                    </select>
+                </div>
+            </div>
+            <div class="ui error message"></div>
+        </form>
+        {{else}}
+        <form class="ui large form" name="newuser">
+            <div class="two fields">
+                <div class="field">
+                    <label>模块名</label>
+                    <input type="text" placeholder="模块名" name="moduleName">
+                </div>
+                <div class="field">
+                    <label>模块Url</label>
+                    <input type="text" placeholder="/backStageManage/show/***/***.html" name="moduleUrl">
+                </div>
+            </div>
+            <div class="two fields">
+                <div class="field">
+                    <label>模块图标</label>
+                    <input type="text" placeholder="模块图标" name="iconSet">
+                </div>
+                <div class="field">
+                    <label>父模块</label>
+                    <select class="ui dropdown" name="parentId">
+                        <option value="0">空</option>
+                        {{each userModuleList as v}}
+                            <option value="{{v.id}}">{{v.moduleName}}</option>
+                        {{/each}}
+                    </select>
+                </div>
+            </div>
+            <div class="ui error message"></div>
+        </form>
+        {{/if}}
+    </div>
+    <div class="actions">
+        <div class="ui black deny button">
+            取消
+        </div>
+        <div class="ui right labeled icon button submit">
+            提交
+            <i class="checkmark icon"></i>
+        </div>
+    </div>
+</script>
+
+<!-- modal 删除确认 -->
+<script type="text/html" id="userDelete">
+    <div class="header">
+        模块名：“{{moduleName}}”
+    </div>
+    <div class="content">
+        <div class="ui negative icon message">
+            <i class="remove icon"></i>
+            <div class="content">
+                <div class="header">确认删除此模块吗？ </div>
+                <p>删除此模块将不存在.</p>
+            </div>
+        </div>
+    </div>
+    <div class="actions">
+        <div class="ui black deny button">
+            取消
+        </div>
+        <div class="ui right red labeled icon button submit-deleteuser">
+            删除
+            <i class="checkmark icon"></i>
+        </div>
+    </div>
+</div>
+</script>
+
+
+<script type="text/html" id="list" >
+
+    {{each datas as v}}
+        <tr data-id="{{v.id}}">
+        	<td>{{v.tableTitle}}</td>
+            <td>{{v.moduleName}}</td>
+            <td>{{v.moduleUrl}}</td>
+            <td>
+            	{{each v.userModuleDtos as m}}
+            		{{m.moduleName}}
+            	{{/each}}
+            	{{each v.userPowerDtos as m}}
+            		{{m.powerName}}
+            	{{/each}}
+            </td>
+            <td>{{v.parentName}}</td>
+            <td>{{v.iconSet}}</td>
+            <td>        
+                #if(${updateUserModule})
+                    <button class="ui circular grey mini button this_modal" data-type="2"><i class="edit icon"></i>修改</button>
+                #end
+                #if(${deleteUserModule})
+                    <button class="ui circular red mini button deleteuser"><i class="remove user icon"></i>删除</button>
+                #end
+            </td>
+        </tr>
+    {{/each}}
+</script>
+
+<script type="text/javascript">
+    ;(function(){
+        thisLaypage({
+            url: '/back/userModuleList.json',
+            resolve: function(res){
+                console.log(res);
+                return res;
+            }
+        });
+    })();
+    ;(function(){
+        //当前的id
+        var g_moduleId = '';
+
+        //弹出框
+        var modal = $("#adduser");
+        var $modal = $("#adduser");
+        var main = $('.main');
+
+        //点击弹出新增和编辑框
+        main.on('click', ".this_modal",function(){
+            var data = {};
+            var type = $(this).attr('data-type');
+
+            if( type == 1 ){
+                data.type = 1;
+            }
+
+            //首次渲染页面
+            rander(data, $modal);
+            $modal.modal('show');
+
+            //二次渲染弹窗
+            if( type == 2 ){
+                //获取参数
+                var param = {};
+                param.moduleId = $(this).parents('tr').attr('data-id');
+                g_moduleId = param.moduleId;
+                //获取数据
+                $.get('/back/findUserModuleById.json', param ,function( res ){
+                    data.type = 2;
+                    data.res = res;
+                    rander(data, $modal);
+                }, 'json');
+            }
+        });
+
+        //删除用户
+        main.on('click', ".deleteuser",function(){
+            var moduleId = $(this).parents('tr').attr('data-id');
+            g_moduleId = moduleId;
+            var moduleName = $(this).parents('tr').find('td').eq(1).text();
+            var data = {};
+                data.moduleName = moduleName;
+            var _html = template('userDelete', data);
+            $modal.html(_html);
+            $modal.modal('show');
+        });
+
+        //提交表单
+        modal.on('click', ".submit", function(){
+            var form = $(this).parents('.modal').find("form");
+            if ( !validate(form) ){
+                return false;
+            }
+            submiting();
+            var formType = form.attr('name');
+            if( formType == "edituser" ){
+                var param = validate(form);
+                param.id = g_moduleId;
+                $.post('/back/updateUserModule.json', param, function(json){
+                    if(json && json.status == "successful"){
+                        sublitsuccess(json.message);
+                    }else{
+                        errormessage($('input,select'), json.message);
+                        submiterror();
+                    }
+                } ,"json");
+
+            }else if( formType == "newuser" ){
+                $.post('/back/insertuserModule.json', validate(form), function(json){
+                    if(json && json.status == "successful"){
+                        sublitsuccess(json.message);
+                    }else{
+                        errormessage($('input,select'), json.message);
+                        submiterror();
+                    }
+                } ,"json");
+
+            }
+        });
+
+                //确认删除用户
+        modal.on('click', ".submit-deleteuser", function(){
+            var param = {};
+            param.moduleId = g_moduleId;
+            $.post('/back/deleteUserModule.json', param, function(json){
+                if(json && json.status == "successful"){
+                    sublitsuccess(json.message);
+                }else{
+                    errormessage($('input,select'), json.message);
+                    submiterror();
+                }
+            }, 'json');
+        });
+        
+        //重新渲染弹窗页面
+        function rander(data, $modal){
+        	data.userModuleList  = userModuleList;
+            console.log(data);
+            var _html = template('userTemp', data);
+            $modal.html(_html);
+            $modal.find('select.dropdown').dropdown();
+        }
+
+        //验证表单信息
+        function validate (form){
+            clearerror(form);
+            //返回值
+            var returnData = {};
+            var moduleName = form.find('input[name=moduleName]'),
+            moduleUrl = form.find('input[name=moduleUrl]'),
+            iconSet = form.find('input[name=iconSet]'),
+            agoName = form.find('input[name=agoName]'),
+            parentId = form.find('select[name=parentId]');
+
+            //错误返回
+           if( !$.trim(moduleName.val()) ){
+                errormessage(moduleName, "模块名不能为空" );
+                return false;
+            }
+            returnData = {
+                moduleName: moduleName.val(),
+                moduleUrl: moduleUrl.val(),
+                iconSet: iconSet.val(),
+                agoName: agoName.val(),
+                parentId: parentId.val()
+            };
+
+            return returnData;
+
+        }
+
+        //报错弹窗
+        function errormessage (field, message){
+            field.parents(".field").addClass('error');
+            field.parents('form').addClass('error');
+            field.parents('form').find('.ui.error.message').html('<ul class="list"><li>'+ message +'</li></ul>');
+        }
+
+        //清除报错
+        function clearerror(form){
+            form.removeClass('error');
+            form.find('.field').removeClass('error');
+            form.find('.ui.error.message').html('');
+        }
+
+        //正在提交
+        function submiting(){
+            var str = '<div class="ui icon message submiting"><i class="notched circle loading icon"></i><div class="content"><div class="header">稍候 </div><p>我们正在为您获取内容。</p></div></div>';
+            modal.find('.content form').hide();
+            modal.find('.content').append(str);
+            modal.find('.submit').hide();
+        }
+
+        //提交报错
+        function submiterror(){
+            modal.find('.content form').show();
+            modal.find('.submiting').remove();
+            modal.find('.submit').show();
+        }
+
+        //提交成功
+        function sublitsuccess(message){
+            modal.find('.actions').remove();
+            modal.find('.content').html('<div class="ui icon message"><i class="inbox icon"></i><div class="content"><div class="header">'+ message +' </div><p>页面即将重新加载!</p></div></div>');
+            setTimeout(function() {
+                window.location.reload();
+            }, 1000);
+        }
+
+
+        require(['uikit!semantic-paginaction,upload,datepicker'], function(uikit){
+
+            var progressbar = $("#progressbar"),
+            bar         = progressbar.find('.uk-progress-bar'),
+            settings    = {
+
+                action: '/back/uploadExcelMerchantGift.json', // 上传路径 url
+
+                allow : '*.(xls|xlsx)', // 只允许上传图片
+
+                loadstart: function() {
+                    bar.css("width", "0%").text("0%");
+                    progressbar.removeClass("uk-hidden");
+                },
+
+                progress: function(percent) {
+                    percent = Math.ceil(percent);
+                    bar.css("width", percent+"%").text(percent+"%");
+                },
+
+                allcomplete: function(response) {
+                    console.log(response);
+
+                    // bar.css("width", "100%").text("100%");
+
+                    // setTimeout(function(){
+                    //     progressbar.addClass("uk-hidden");
+                    //     layer.msg("上传成功", {icon: 1});
+                    // }, 500);
+
+                    // setTimeout(function(){
+                    //     window.location.reload();
+                    // }, 1000);
+                    
+                },
+                param: 'fileData'
+            };
+
+            var select = UIkit.uploadSelect($("#upload-select"), settings),
+                drop   = UIkit.uploadDrop($("#upload-drop"), settings);
+        });
+    })();
+</script>
+
+#parse('/backStageManage/public/BOTTOM.vm')
+

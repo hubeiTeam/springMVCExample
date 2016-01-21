@@ -29,14 +29,14 @@
 		class="org.springframework.web.servlet.view.UrlBasedViewResolver">
 		<property name="viewClass"
 			value="org.springframework.web.servlet.view.JstlView" />
-		<property name="prefix" value="/backBone/" />
+		<property name="prefix" value="/back/" />
 		<property name="suffix" value=".jsp" />
 	</bean> -->
 	
 	<!-- 告诉velocity模板位置 -->
     <bean id="velocityConfigurer" class="org.springframework.web.servlet.view.velocity.VelocityConfigurer"> 
 	    <property name="resourceLoaderPath"> 
-			<value>/WEB-INF/template/</value> 
+			<value>/WEB-INF/template/vm/</value> 
 	    </property> 
 	    <property name="configLocation" value="classpath:caideli/properties/velocity.properties"/>  
 	</bean>  
@@ -67,10 +67,10 @@
 	</bean>
 	
 <!-- 加载静态资源 -->
-<mvc:resources mapping="/resources/**" location="/resources/" />  
-<mvc:resources mapping="/myStatic/**" location="/myStatic/" /> 	
+<!-- <mvc:resources mapping="/backStageManage/**" location="/WEB-INF/template/backStageManage/*" /> --> 
+<mvc:resources mapping="/**" location="/WEB-INF/template/vm/*" /> 
+<!-- <mvc:resources mapping="/backStageManage/**" location="/backStageManage/" />  -->	
 
-	
 	 <!-- 异常解析器 -->  
   <!-- <bean id="simpleMappingExceptionResolver" class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">  
     <property name="exceptionMappings">  

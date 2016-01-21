@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="cn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <title>商户管理后台</title>
+    #parse('/backStageManage/public/inc/baseres.vm')
+</head>
+<body>
+	<div class="spabg">
+		<div class="ui spacontainer">
+			<div class="ui segment">
+				<h3 class="ui header">
+					<i class="settings icon"></i>
+					<div class="content">商户个人信息 </div>
+				</h3>
+			</div>
+			<form role="form">
+				<table class="ui selectable celled table">
+					<tr>
+						<td colspan="4"><b>基础信息</b></td>
+					</tr>
+					<tr>
+						<td>用户账号：</td>
+						<td>$!{merchant.phone}</td>
+						<td>商户评价：</td>
+						<td>$!{rating}</td>
+					</tr>
+					<tr>
+						<td widtd="10%">公司名称：</td>
+						<td>
+							<span>$!{merchant.userEnterpriseDto.companyName}</span>
+						</td>
+						<td>执照编号：</td>
+						<td><span>$!{merchant.userEnterpriseDto.companyCodeId}</span></td>
+					</tr>
+					<tr>
+						<td>公司所在地：</td>
+						<td>
+							<span>$!{companyCity}</span>
+						</td>
+						<td>公司地址：</td>
+						<td>
+							<span>$!{merchant.userEnterpriseDto.companyAddress}</span>
+						</td>
+					</tr>
+					<tr>
+						<td widtd="10%">认证状态：</td>
+						<td colspan="3">
+							<span>
+								#if($stringUtils.equals($!{merchant.attestCategory},'ENTERPRISE_RETREAT'))
+									<font color="red">认证退回</font>
+								#elseif($stringUtils.equals($!{merchant.attestCategory},'ENTERPRISE_COMPLETE'))
+									<font color="green">认证完成</font>
+								#elseif($stringUtils.equals($!{merchant.attestCategory},'INIT'))
+									<font color="red">未认证</font>
+								#elseif($stringUtils.equals($!{merchant.attestCategory},'ENTERPRISE_AUDIT'))
+									<font color="red">已提交认证</font>
+								#end
+							</span>
+						</td>
+					</tr>
+					<tr>
+						<td>企业简介：</td>
+						<td colspan="3">$!{merchant.userEnterpriseDto.companySummary}</td>
+					</tr>
+				</table>
+				<table class="ui selectable celled table">
+					<tr>
+						<td colspan="4" align="center"><b>账户信息</b></td>
+					</tr>
+					<tr>
+						<td>支付宝账号：</td>
+						<td>
+							#if($merchant.userAccountDto.alipayAccount)
+								$merchant.userAccountDto.alipayAccount
+							#else
+								未绑定
+							#end
+						</td>
+						<td>支付宝姓名：</td>
+						<td>
+							#if($merchant.userAccountDto.alipayName)
+								$merchant.userAccountDto.alipayName
+							#else
+								未绑定
+							#end
+						</td>
+					</tr>
+					<tr>
+						<td>账户余额：</td>
+						<td colspan="3">$arithUtils.formatAmount($!merchant.userAccountDto.assetsAmount) 元</td>
+					</tr>
+				</table>
+			</form>
+
+			#if($posts)
+				<table id="signInfoTables" class="ui selectable celled table">
+					<thead>
+						
+							<th>序号</th>
+							<th>岗位标题</th>
+							<th>薪资</th>
+							<th>招聘人数</th>
+							<th>工作日期</th>
+							<th>有效人数</th>
+							<th>状态</th>
+						
+					</thead>
+				#set($validPostComplete=0)
+				#set($validPersonalNumber=0)
+				#set($tradeAmount=0)
+				#set($postsNumber=0)
+				#foreach($post in $!posts)
+					<tr>
+						<td>$velocityCount</td>
+						<td><a href="/backStageManage/show/basic/postInfo.html?id=$!post.id" target="_blank">$!post.title</td>
+						<td>
+							$!post.wage
+							#set($tradeAmount=$tradeAmount+($post.wage*$post.signUpNumber))
+						</td>
+						<td>
+							$!post.personalNumber
+							#set($postsNumber=$postsNumber+$post.personalNumber)
+						</td>
+						<td>$dateUtils.format($!post.workDate)</td>
+						<td>
+							$post.signUpNumber
+							#set($validPersonalNumber=$validPersonalNumber+$post.signUpNumber)
+						</td>
+						<td>
+							#if($stringUtils.equals($post.status,'INIT'))
+								<font color="red">未付款</font>
+								<a href="javascript:;" onclick="offlinePost('$!post.id')">下架</a>
+							#elseif($stringUtils.equals($post.status,'PAY_COMPLETE'))
+								<font color="green">支付完成</font>
+								<a href="javascript:;" onclick="offlinePost('$!post.id')">下架</a>
+							#elseif($stringUtils.equals($post.status,'PUBLISH_ING'))
+								<font color="red">发布中</font>
+								<a href="javascript:;" onclick="offlinePost('$!post.id')">下架</a>
+							#elseif($stringUtils.equals($post.status,'HOUR_24'))
+								<font color="red">紧急发布中</font>
+								<a href="javascript:;" onclick="offlinePost('$!post.id')">下架</a>
+							#elseif($stringUtils.equals($post.status,'SIGN_UP_FULL'))
+								<font color="green">已报满</font>
+								<a href="javascript:;" onclick="offlinePost('$!post.id')">下架</a>
+							#elseif($stringUtils.equals($post.status,'HOUR_24_SIGN_UP_FULL'))
+								<font color="green">24小时报满</font>
+								<a href="javascript:;" onclick="offlinePost('$!post.id')">下架</a>
+							#elseif($stringUtils.equals($post.status,'VERIFI_FULL'))
+								<font color="green">审核已满</font>
+								<a href="javascript:;" onclick="offlinePost('$!post.id')">下架</a>
+							#elseif($stringUtils.equals($post.status,'HOUR_24_VERIFI_FULL'))
+								<font color="green">审核已满</font>
+								<a href="javascript:;" onclick="offlinePost('$!post.id')">下架</a>
+							#elseif($stringUtils.equals($post.status,'WORK_ING'))
+								<font color="red">工作中</font>
+							#elseif($stringUtils.equals($post.status,'WORK_COMPLETE'))
+								<font color="green">工作完成</font>
+							#elseif($stringUtils.equals($post.status,'COMPLETE'))
+								<font color="green">已完成</font>
+								#set($validPostComplete=$validPostComplete+1)
+							#elseif($stringUtils.equals($post.status,'CLOSE'))
+								<font color="green">已关闭</font>
+							#end
+						</td>
+					</tr>
+				#end
+					<tr>
+						<td colspan="7" align="right">已完成：$!validPostComplete 次，招聘人数/成交人数：${postsNumber}/${validPersonalNumber}，总交易金额：$tradeAmount 元</td>
+					</tr>
+				</table>
+			#else
+				<table id="signInfoTables" widtd="80%" class="table table-striped table-bordered table-hover">
+					<tr>
+						<td>序号</td>
+						<td>岗位标题</td>
+						<td>薪资</td>
+						<td>招聘人数</td>
+						<td>工作日期</td>
+						<td>有效人数</td>
+						<td>状态</td>
+					</tr>
+					<tr><td colspan="7">无</td></tr>
+				</table>
+			#end
+		</div>
+	</div>
+</body>
+</html>
+
+<script type="text/javascript">
+	function offlinePost(postId){
+		if (!confirm("是否下架，如果有报名用户则赔付10%？")) {
+			return;
+		}
+		$.post('/control/offlinePost.json',{'id':postId},function(result){
+			alert(result.message);
+			window.location.reload();
+		},'json');
+	}
+</script>

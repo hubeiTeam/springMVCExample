@@ -5,14 +5,14 @@
 	<typeAlias alias="BackUser" type="caideli.bean.BackUser" />
 	<!-- 配置对象映射 -->
 	<resultMap class="BackUser" id="BackUserResult">
-		<result property="id" column="user_id" />
+		<result property="id" column="id" />
 		<result property="userName" column="user_name" />
 		<result property="userPassword" column="user_password" />
 		<result property="status" column="status" />
 	</resultMap>
 	<!-- 查询内容 -->
 	<sql id="BackUser_common_columns">
-		a.user_id,
+		a.id,
 		a.user_name,
 		a.user_password,
 		a.status
@@ -20,7 +20,7 @@
 	<!-- 查询条件 -->
 	<sql id="BackUser_common_condition">
 		<isNotEmpty property="id">
-			and a.user_id=#id#
+			and a.id=#id#
 		</isNotEmpty>
 		<isNotEmpty property="userName">
 			and a.user_name = #userName#
@@ -48,8 +48,8 @@
 		<include refid="BackUser_common_columns" />
 		FROM
 		back_user a
-		WHERE 1=1 and a.user_id=#id#
-		ORDER BY a.user_id DESC
+		WHERE 1=1 and a.id=#id#
+		ORDER BY a.id DESC
 	</select>
 	<!-- 数量 -->
 <select id="count" resultClass="Integer">
@@ -69,18 +69,18 @@
 				#status#
 			)
 		<selectKey resultClass="Long" keyProperty="id"> 
-			SELECT @@IDENTITY AS user_id  
+			SELECT @@IDENTITY AS id  
 		</selectKey>
 	</insert>
 	<!-- 删除 -->
-	<delete id="delete" parameterClass="BackUser">DELETE FROM back_user WHERE user_id=#id#</delete>
+	<delete id="delete" parameterClass="BackUser">DELETE FROM back_user WHERE id=#id#</delete>
 	<!-- 修改 -->
 	<update id="update" parameterClass="BackUser">
 		UPDATE back_user SET
-			<isNotEmpty property="id">id=#user_id#</isNotEmpty>
+			<isNotEmpty property="id">id=#id#</isNotEmpty>
 			<isNotEmpty property="userName" prepend=",">userName=#user_name#</isNotEmpty>
 			<isNotEmpty property="userPassword" prepend=",">userPassword=#user_password#</isNotEmpty>
 			<isNotEmpty property="status" prepend=",">status=#status#</isNotEmpty>
-		WHERE user_id=#id#
+		WHERE id=#id#
 	</update>
 </sqlMap>

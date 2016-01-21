@@ -1,0 +1,364 @@
+#parse('/backStageManage/public/TOP.vm')
+<div class="main">
+    <div class="page-center ui segment">
+		<div class="ui dividing header">
+          <i class="user icon"></i>
+          <div class="content">
+           	维权消息列表
+          </div>
+        </div>
+        <div class="ui">
+            <table class="ui selectable celled table">
+                <thead>
+                    <tr>
+                        <th>用户</th>
+						<th>岗位</th>
+						<th>公司</th>
+						<th>类型</th>
+						<th>创建时间</th>
+						<th>维权状态</th>
+						<th>操作人</th>
+						<th>操作人备注</th>
+						<th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                #foreach($demension in $datas)
+                	<tr data-id="$!{demension.id}">
+                        <td>
+	                         #if($stringUtils.equals($!{demension.type},'PersonDimension'))
+	                        	 <a href="/backStageManage/show/basic/userPeopleInfo.html?userId=$!{demension.userId}" target="_blank"> $!{demension.userName}</a>
+	                         #elseif($stringUtils.equals($!{demension.type},'EnterpriseDemension'))
+	                        	<a href="/backStageManage/show/basic/userPeopleInfo.html?userId=$!{demension.toUserId}" target="_blank">$!{demension.userName}</a>
+	                         #end
+                        </td>
+                        <td>
+                        	<a href="/backStageManage/show/basic/postInfo.html?id=$!{demension.postId}" target="_blank">$!{demension.title}</a>
+                        </td>
+                        <td>
+	                         #if($stringUtils.equals($!{demension.type},'PersonDimension'))
+	                         	<a href="/backStageManage/show/basic/userMerchantInfo.html?merchantId=$!{demension.toUserId}" target="_blank">$!{demension.companyName}</a>
+	                         #elseif($stringUtils.equals($!{demension.type},'EnterpriseDemension'))
+	                         	<a href="/backStageManage/show/basic/userMerchantInfo.html?merchantId=$!{demension.userId}" target="_blank">$!{demension.companyName}</a>
+	                         #end
+                        </td> 
+                        <td>
+	                        #if($stringUtils.equals($!{demension.type},'PersonDimension'))
+	                        		个人维权
+	                        #elseif($stringUtils.equals($!{demension.type},'EnterpriseDemension'))
+	                        		企业维权
+	                        #end
+                        </td>
+						<td>$!dateUtils.format($!{demension.createTime},'yyyy-MM-dd HH:mm') </td>
+						<td>
+							#if($stringUtils.equals($!{demension.status},'DEAL_ING'))
+                        		处理中
+                        	#elseif($stringUtils.equals($!{demension.status},'DEAL_COMPLETE'))
+                        		处理完成
+                        	#end
+						</td>
+						<td>$!{demension.modifyUser}</td>
+                        <td>$!{demension.desc}</td>
+                        <td>
+                        	#if(${updateDemension})
+								#if($stringUtils.equals($!{demension.status},'DEAL_ING'))
+								<button class="ui circular grey mini button this_modal" data-type="2"><i class="edit icon"></i>修改</button>
+								#end
+							#end
+							#if(${deleteDemensionMessage})
+								#if($stringUtils.equals($!{demension.status},'DEAL_COMPLETE'))
+								<button class="ui circular red mini button deleteuser"><i class="remove user icon"></i>删除</button>
+	                        	#end
+	                        #end
+                        </td>  
+                    </tr>
+                #end
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th colspan="9">
+                            <h5 class="ui dividing header " align="right" id="table-count">总条数：$!count 条</h5>
+
+                            <div class="ui right floated pagination menu" id="page" data-uk-pagination="{items:$count, itemsOnPage: 10, currentPage: $currPage}">
+                            </div>
+                            <div class="ui right labeled input" id="gopage">
+                                    <input type="text" placeholder="输入页数" onkeyup="this.value=this.value.replace(/\D/g,'')"  onafterpaste="this.value=this.value.replace(/\D/g,'')" maxlength="5" size="14" name="currPage">
+                                    <a class="ui tag label">跳至</a>
+                            </div>
+                        </th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="ui small modal" id="adduser">
+</div>
+
+<!-- modal 删除确认 -->
+<script type="text/html" id="userDelete">
+    <div class="header">
+       维权类型：“{{type}}” 
+    </div>
+    <div class="content">
+        <div class="ui negative icon message">
+            <i class="remove icon"></i>
+            <div class="content">
+                <div class="header">确认删除此条信息吗？ </div>
+            </div>
+        </div>
+    </div>
+    <div class="actions">
+        <div class="ui black deny button">
+            取消
+        </div>
+        <div class="ui right red labeled icon button submit-deleteuser">
+            删除
+            <i class="checkmark icon"></i>
+        </div>
+    </div>
+</script>
+
+<!-- modal 弹出框 修改用户信息 新增用户 --> 
+<script type="text/html" id="userTemp">
+    {{if type == 1 || type == 2 }}
+        <div class="ui inverted dimmer">
+    {{else}}
+        <div class="ui active inverted dimmer">
+    {{/if}}
+        <div class="ui text loader">Loading</div>
+    </div>
+    <i class="close icon"></i>
+    <div class="header">
+    {{if type == "1"}}
+    {{else if type == "2"}}
+        修改
+    {{else}}
+        USERNAME
+    {{/if}}
+    </div>
+    <div class="content">
+        {{ if res && res.data }}
+        <form class="ui large form" name="editReportPost">
+            <div class="two fields">
+                <div class="field">
+                    <label>争议金额</label>
+                    <input type="text" placeholder="" readonly="" value="{{res.data.disputeAmount}}" name="disputeAmount">
+                </div>
+                <div class="field">
+                    <label>商户金额</label>
+                    <input type="text" placeholder=""  value="{{res.data.merchantAmount}}" name="merchantAmount">
+                </div>
+            </div>
+			<div class="two fields">
+				<div class="field">
+                    <label>学生金额</label>
+                    <input type="text" placeholder=""  value="{{res.data.pluralismAmount}}" name="pluralismAmount">
+                </div>
+                <div class="field">
+                    <label>争议原因</label>
+                    <input type="text" placeholder=""  value="{{res.data.reason}}" name="reason">
+                </div>
+            </div>
+			<div class="two fields">
+				<div class="field">
+                    <label>分配原因</label>
+                    <input type="text" placeholder=""  value="{{res.data.resolve}}" name="resolve">
+                </div>
+                <div class="field">
+                    <label>操作备注</label>
+                    <input type="text" placeholder=""  value="{{res.data.desc}}" name="desc">
+                </div>
+            </div>
+		
+            <div class="ui error message"></div>
+        </form>
+        {{/if}}
+    </div>
+    <div class="actions">
+        <div class="ui black deny button">
+            取消
+        </div>
+        <div class="ui right labeled icon button submit">
+            提交
+            <i class="checkmark icon"></i>
+        </div>
+    </div>
+</script>
+
+
+<script type="text/javascript">
+    ;(function(){
+
+        //当前的id
+        var g_id = '';
+
+        //弹出框
+        var modal = $("#adduser");
+        var $modal = $("#adduser");
+
+        //点击弹出新增和编辑框
+        $(".this_modal").on('click', function(){
+            var data = {};
+            var type = $(this).attr('data-type');
+
+            if( type == 1 ){
+                data.type = 1;
+            }
+
+            //首次渲染页面
+            rander(data, $modal);
+            $modal.modal('show');
+
+            //二次渲染弹窗
+            if( type == 2 ){
+
+                //获取参数
+                var param = {};
+                param.id = $(this).parents('tr').attr('data-id');
+                g_id = param.id;
+
+              //获取数据
+                $.get('/back/queryDemensionMessageById.json', param ,function( res ){
+                    //console.log(res);
+                    data.type = 2;
+                    data.res = res;
+                    rander(data, $modal);
+                }, 'json');
+            }
+        });
+
+        //调制页面
+        $('#gopage a').on('click', function(){
+            var page = $('#gopage').find('input[name=currPage]').val();
+            if( page ){
+                window.location.href="?currPage="+page;
+            }
+        });
+      //删除用户
+        $('.deleteuser').on('click', function(){
+            var id = $(this).parents('tr').attr('data-id');
+            g_id = id;
+            var type = $(this).parents('tr').find('td').eq(3).text();
+            var data = {};
+                data.type = type;
+            var _html = template('userDelete', data);
+            $modal.html(_html);
+            $modal.modal('show');
+        });
+        //提交表单
+        modal.on('click', ".submit", function(){
+            var form = $(this).parents('.modal').find("form");
+            if ( !validate(form) ){
+                return false;
+            }
+            submiting();
+            var formType = form.attr('name');
+            if( formType == "editReportPost" ){
+
+                var param = validate(form);
+                param.id = g_id;
+                $.post('/back/updateDemension.json', param, function(json){
+                    if(json && json.status == "successful"){
+                        sublitsuccess(json.message);
+                    }else{
+                        errormessage($('input,select'), json.message);
+                        submiterror();
+                    }
+                } ,"json");
+            }
+        });
+
+        //确认删除用户
+        modal.on('click', ".submit-deleteuser", function(){
+            var param = {};
+            param.id = g_id;
+            $.post('/back/deleteDemensionMessage.json', param, function(json){
+                if(json && json.status == "successful"){
+                    sublitsuccess(json.message);
+                }else{
+                    errormessage($('input,select'), json.message);
+                    submiterror();
+                }
+            }, 'json');
+        });
+        //重新渲染弹窗页面
+        function rander(data, $modal){
+            console.log(data);
+            var _html = template('userTemp', data);
+            $modal.html(_html);
+            $modal.find('select.dropdown').dropdown();
+        }
+
+        //验证表单信息
+        function validate (form){
+            clearerror(form);
+            //返回值
+            var returnData = {};
+            var disputeAmount = form.find('input[name=disputeAmount]'),
+	            merchantAmount = form.find('input[name=merchantAmount]'),
+	            pluralismAmount = form.find('input[name=pluralismAmount]'),
+	            reason = form.find('input[name=reason]'),
+	            resolve = form.find('input[name=resolve]'),
+	            desc = form.find('input[name=desc]');
+            returnData = {
+            		disputeAmount: disputeAmount.val(),
+            		merchantAmount: merchantAmount.val(),
+            		pluralismAmount: pluralismAmount.val(),
+            		reason: reason.val(),
+            		resolve: resolve.val(),
+            		desc: desc.val()
+            };
+
+            return returnData;
+
+        }
+
+        //报错弹窗
+        function errormessage (field, message){
+            field.parents(".field").addClass('error');
+            field.parents('form').addClass('error');
+            field.parents('form').find('.ui.error.message').html('<ul class="list"><li>'+ message +'</li></ul>');
+        }
+
+        //清除报错
+        function clearerror(form){
+            form.removeClass('error');
+            form.find('.field').removeClass('error');
+            form.find('.ui.error.message').html('');
+        }
+
+        //正在提交
+        function submiting(){
+            var str = '<div class="ui icon message submiting"><i class="notched circle loading icon"></i><div class="content"><div class="header">稍候 </div><p>我们正在为您获取内容。</p></div></div>';
+            modal.find('.content form').hide();
+            modal.find('.content').append(str);
+            modal.find('.submit').hide();
+        }
+
+        //提交报错
+        function submiterror(){
+            modal.find('.content form').show();
+            modal.find('.submiting').remove();
+            modal.find('.submit').show();
+        }
+
+        //提交成功
+        function sublitsuccess(message){
+            modal.find('.actions').remove();
+            modal.find('.content').html('<div class="ui icon message"><i class="inbox icon"></i><div class="content"><div class="header">'+ message +' </div><p>页面即将重新加载!</p></div></div>');
+            setTimeout(function() {
+                window.location.reload();
+            }, 1000);
+        }
+    })();
+    require(['uikit!semantic-paginaction'], function(uikit){
+        $('[data-uk-pagination]').on('select.uk.pagination', function(e, pageIndex){
+            window.location.href="?currPage="+(pageIndex+1);
+        });
+    });
+</script>
+
+#parse('/backStageManage/public/BOTTOM.vm')
+

@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="cn">
+<head>
+<meta charset="UTF-8">
+<title>没事找事管理系统</title>
+<link rel="stylesheet" type="text/css" href="./semantic/semantic.css">
+<link rel="stylesheet" type="text/css" href="./ui/css/uikit.css">
+<link rel="stylesheet" type="text/css" href="./css/improve.css">
+</head>
+<body id="index">
+    <div class="page-slidebar">
+        <div class="ui visible inverted left vertical sidebar accordion menu">
+        <div class="item">
+            <a class="ui logo icon image" href="/"> <img
+                src="./images/logo.png" width="40px">
+            </a> <a href="./"><b>没事找事用户中心</b></a>
+        </div>
+        <div class="item">
+            <a class="title"><i class="dropdown icon"></i> <b>用户管理中心</b></a>
+            <div class="content menu">
+                <a class="item" href="#buule">列表</a> <a class="item"
+                    href="#bulleted">符号</a> <a class="item" href="#ordered">有序列表</a> <a
+                    class="item" href="#link">Link</a>
+            </div>
+        </div>
+        <div class="item">
+            <a class="title"><i class="dropdown icon"></i> <b>城市列表</b></a>
+            <div class="content menu">
+                <a class="item" href="#item">条目</a> <a class="item" href="#icon">图标</a>
+                <a class="item" href="#image">图片</a> <a class="item" href="#link">Link</a>
+                <a class="item" href="#header">标题</a> <a class="item"
+                    href="#description">Description</a>
+            </div>
+        </div>
+        <div class="item">
+            <a class="title"><i class="dropdown icon"></i> <b>Variations</b></a>
+            <div class="content menu">
+                <a class="item" href="#horizontal">Horizontal</a> <a class="item"
+                    href="#inverted">Inverted</a> <a class="item" href="#selection">Selection</a>
+                <a class="item" href="#animated">Animated</a> <a class="item"
+                    href="#relaxed">松散列表</a> <a class="item" href="#divided">分割</a> <a
+                    class="item" href="#celled">单元格</a> <a class="item" href="#size">Size</a>
+                <a class="item" href="#horizontal">Horizontal</a> <a class="item"
+                    href="#inverted">Inverted</a> <a class="item" href="#selection">Selection</a>
+                <a class="item" href="#animated">Animated</a> <a class="item"
+                    href="#relaxed">松散列表</a> <a class="item" href="#divided">分割</a> <a
+                    class="item" href="#celled">单元格</a> <a class="item" href="#size">Size</a>
+                <a class="item" href="#horizontal">Horizontal</a> <a class="item"
+                    href="#inverted">Inverted</a> <a class="item" href="#selection">Selection</a>
+                <a class="item" href="#animated">Animated</a> <a class="item"
+                    href="#relaxed">松散列表</a> <a class="item" href="#divided">分割</a> <a
+                    class="item" href="#celled">单元格</a> <a class="item" href="#size">Size</a>
+                <a class="item" href="#horizontal">Horizontal</a> <a class="item"
+                    href="#inverted">Inverted</a> <a class="item" href="#selection">Selection</a>
+                <a class="item" href="#animated">Animated</a> <a class="item"
+                    href="#relaxed">松散列表</a> <a class="item" href="#divided">分割</a> <a
+                    class="item" href="#celled">单元格</a> <a class="item" href="#size">Size</a>
+                <a class="item" href="#horizontal">Horizontal</a> <a class="item"
+                    href="#inverted">Inverted</a> <a class="item" href="#selection">Selection</a>
+                <a class="item" href="#animated">Animated</a> <a class="item"
+                    href="#relaxed">松散列表</a> <a class="item" href="#divided">分割</a> <a
+                    class="item" href="#celled">单元格</a> <a class="item" href="#size">Size</a>
+            </div>
+        </div>
+        <div class="item">
+            <a class="title"><i class="dropdown icon"></i> <b>Content
+                    Variations</b></a>
+            <div class="content menu">
+                <a class="item" href="#vertically-aligned">竖直对齐</a> <a class="item"
+                    href="#floated">浮动</a>
+            </div>
+        </div>
+        </div>
+    </div>
+    <div class="main">
+        <div class="page-center ui segment">
+            <div class="ui teal dividing header">
+              <i class="user icon"></i>
+              <div class="content">
+                用户列表
+              </div>
+            </div>
+            <div class="ui">
+                <form class="">
+                    <div class="ui input">
+                        <input type="text" placeholder="搜索手机号" onkeyup="this.value=this.value.replace(/\D/g,'')"  onafterpaste="this.value=this.value.replace(/\D/g,'')" maxlength="11" size="20">
+                    </div>
+                    <div class="ui input">
+                        <input type="text" placeholder="注册时间" data-uk-datepicker="{format:'DD.MM.YYYY'}">
+                    </div>
+                    <div class="ui input">
+                        <input type="text" placeholder="登陆时间" data-uk-datepicker="{format:'DD.MM.YYYY'}" value="">
+                    </div>
+                </form>
+                <table class="ui selectable celled table">
+                    <thead>
+                        <tr>
+                            <th>用户名</th>
+                            <th>手机号</th>
+                            <th>状态</th>
+                            <th>注册时间</th>
+                            <th>最近活动时间</th>
+                            <th>最近登陆时间</th>
+                            <th>兼职次数</th>
+                            <th>登陆次数</th>
+                            <th>兼职总额</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>约翰</td>
+                            <td>18611225951</td>
+                            <td>已完成注册</td>
+                            <td>2015年3月15</td>
+                            <td>2015年4月3</td>
+                            <td>2015年3月4</td>
+                            <td>20</td>
+                            <td>100</td>
+                            <td>1000元</td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <th colspan="9">
+                                <div class="ui right floated pagination menu">
+                                    <a class="icon item">
+                                        <i class="left chevron icon"></i>
+                                    </a>
+                                    <a class="item">1</a>
+                                    <a class="item">2</a>
+                                    <a class="item">3</a>
+                                    <a class="item">4</a>
+                                    <a class="icon item">
+                                        <i class="right chevron icon"></i>
+                                    </a>
+                                </div>
+                                <div class="ui right labeled input">
+                                    <input type="text" placeholder="输入页数" onkeyup="this.value=this.value.replace(/\D/g,'')"  onafterpaste="this.value=this.value.replace(/\D/g,'')" maxlength="5" size="14">
+                                    <a class="ui tag label">跳至</a>
+                                </div>
+                            </th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript" src="./lib/jquery.2.0.js"></script>
+    <script type="text/javascript" src="./semantic/semantic.js"></script>
+    <script type="text/javascript" src="./lib/require-2.1.14.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="./ui/css/components/datepicker.css">
+    <script type="text/javascript">
+        requirejs.config({
+            baseUrl: "./",
+            paths: {
+                "uikit": './ui/js/uikit'
+            },
+            config: {
+                "uikit": {
+                    "base": "./ui/js"
+                }
+            }
+        });
+        require(["uikit!datepicker"], function(UI){
+        });
+
+    </script>
+    <script type="text/javascript">
+        $('.ui.accordion').accordion();
+    </script>
+</body>
+</html>

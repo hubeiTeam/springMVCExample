@@ -1,0 +1,550 @@
+#parse('/backStageManage/public/TOP.vm')
+<link rel="stylesheet" type="text/css" href="/backStageManage/ui/css/components/datepicker.css">
+<script type="text/javascript" src="/backStageManage/js/uitl.js"></script>
+<div class="main">
+    <div class="page-center ui segment">
+		<div class="ui teal dividing header">
+          <i class="user icon"></i>
+          <div class="content">
+            活动页面列表
+          </div>
+        </div>
+        <div class="ui">
+            <table class="ui selectable celled table">
+                <thead>
+                    <tr>
+                        <th>活动名称</th>
+						<th>活动奖品</th>
+						<th>活动图片</th>
+						<th>http链接</th>
+						<th>状态</th>
+						<th>创建时间</th>
+						<th>活动开始时间</th>
+						<th>活动结束时间</th>
+						<th width="200">操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                #foreach($activity in $datas)
+                	<tr data-id="$!{activity.id}">
+                        <td>$!{activity.activityName}</td>
+                        <td>$!{activity.activityPrizeName}</td>
+						<td>$!{activity.activityImages}</td>
+                        <td>
+                        	<a href=" $!{activity.http}" target="_blank"> $!{activity.http}<a>
+                       </td>
+                        <td>
+                        	#if($stringUtils.equals($!{activity.status},'ONLINE'))
+                        		上线
+                        	#else
+                        		下线
+                        	#end
+                        </td>
+                        <td>
+                        	$!dateUtils.format($!{activity.createTime},'yyyy-MM-dd HH:mm')
+                        </td>
+                        <td>$!dateUtils.format($!{activity.startTime},'yyyy-MM-dd HH:mm')</td>
+                        <td>$!dateUtils.format($!{activity.stopTime},'yyyy-MM-dd HH:mm')</td>
+                         <td>
+                         	#if(${updateActivity})
+							<button class="ui circular grey mini button this_modal" data-type="2"><i class="edit icon"></i>修改</button>
+                            #end
+                            #if(${deleteActivity})
+                            <button class="ui circular red mini button deleteActicity"><i class="remove user icon"></i>删除</button>
+                        	#end
+                        </td>
+                    </tr>
+                #end
+                
+                </tbody>
+                 <tfoot>
+                    <tr>
+                        <th colspan="9">
+                            <h5 class="ui dividing header " align="right" id="table-count">总条数：$!count 条</h5>
+                            <div class="ui right floated pagination menu" id="page" data-uk-pagination="{items:$count, itemsOnPage: 10, currentPage: $currPage}">
+                                
+                            </div>
+                            <div class="ui right labeled input" id="gopage">
+                                    <input type="text" placeholder="输入页数" onkeyup="this.value=this.value.replace(/\D/g,'')"  onafterpaste="this.value=this.value.replace(/\D/g,'')" maxlength="5" size="14" name="currPage">
+                                    <a class="ui tag label">跳至</a>
+                            </div>
+                            #if(${insertActivity})
+                            <div class="ui left primary labeled icon button this_modal" data-type="1">
+                                <i class="user icon"></i> 新增活动
+                            </div>
+                            #end
+                        </th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>
+<div class="ui small modal" id="addActivity">
+</div>
+<!-- 后端渲染数据 activityPrizeList -->
+<script type="text/javascript">
+   var activityPrizeList = [];
+    #foreach($prize in $activityPrizeList)
+        activityPrizeList[activityPrizeList.length] = {
+            id : "$!{prize.id}",
+            name : "$!{prize.name}"
+        }
+    #end
+</script>
+
+<!-- modal 弹出框 修改用户信息 新增用户 --> 
+<script type="text/html" id="activityTemp">
+    {{if type == 1 || type == 2 }}
+        <div class="ui inverted dimmer">
+    {{else}}
+        <div class="ui active inverted dimmer">
+    {{/if}}
+        <div class="ui text loader">Loading</div>
+    </div>
+    <i class="close icon"></i>
+    <div class="header">
+    {{if type == "1"}}
+        新增活动
+    {{else if type == "2"}}
+        修改活动
+    {{else}}
+        activityName
+    {{/if}}
+    </div>
+    <div class="content">
+        {{ if res && res.activity }}
+        <form class="ui large form" name="editActivity">
+            <div class="two fields">
+                <div class="field">
+                    <label>活动名称</label>
+                    <input type="text" placeholder="活动名称" readonly="" value="{{res.activity.activityName}}" name="activityName">
+                </div>
+                <div class="field">
+                    <label>活动奖品</label>
+                    
+                    <select class="ui dropdown" name="activityPrizeId">
+                        <option value="">请选择奖品</option>
+                        {{each activityPrizeList as prize}}
+                            {{if res.activity.activityPrizeId == prize.id}}
+                            <option value="{{prize.id}}" selected = "selected">{{prize.name}}</option>
+                            {{else}}
+                            <option value="{{prize.id}}">{{prize.name}}</option>
+                            {{/if}}
+                        {{/each}}
+                    </select>
+                </div>
+            </div>
+            <div class="two fields">
+        			<div class="field">
+        			<label>活动图片地址</label>
+                    <input type="text" placeholder="" value="{{res.activity.activityImages}}" name="activityImages">
+					</div>
+					
+                <div class="field">
+                    <label>http链接</label>
+                    <input type="text" placeholder="" value="{{res.activity.http}}" name="http">
+                </div>
+            </div>
+			<div class="two fields">
+				<div class="field">
+                    <label>状态</label>
+					{{if res.activity.status == "ONLINE" }}
+					<input type="radio" name="status" value="ONLINE" checked="checked"/>上线
+                    <input type="radio" name="status" value="OFFLINE"/>下线
+					{{else if res.activity.status == "OFFLINE" }}
+					<input type="radio" name="status" value="ONLINE"/>上线
+                    <input type="radio" name="status" value="OFFLINE" checked="checked"/>下线
+					{{else}}
+					<input type="radio" name="status" value="ONLINE"/>上线
+                    <input type="radio" name="status" value="OFFLINE"/>下线
+					{{/if}}
+                </div>
+                <div class="field">
+                    <label>活动开始时间</label>
+                    <input type="text" placeholder="" readonly="" value="{{res.activity.startTime}}" name="startTime" data-uk-datepicker="{format:'YYYY-MM-DD HH:mm:ss'}">
+                </div>
+			</div>
+            <div class="two fields">
+                <div class="field">
+                    <label>活动结束时间</label>
+                    <input type="text" placeholder="" name="stopTime" data-uk-datepicker="{format:'YYYY-MM-DD HH:mm:ss'}" value="{{res.activity.stopTime}}">
+                </div>
+				<div class="field">
+                    <label>需工作次数</label>
+                    <input type="text" placeholder="" value="{{res.activityDesc.workcount}}" name="workCount">
+                </div>
+            </div>
+			<div class="two fields">
+                <div class="field">
+                    <label>需集赞数量</label>
+                    <input type="text" placeholder="" value="{{res.activityDesc.claim}}" name="claim">
+                </div>
+				<div class="field">
+                    <label>其他要求</label>
+                    <input type="text" placeholder="" value="{{res.activityDesc.desc}}" name="desc">
+                </div>
+            </div>
+			<div class="two fields">
+                <div class="field">
+                    <label>活动具体描述</label>
+                    <input type="text" placeholder="" value="{{res.activity.desc}}" name="totalDesc">
+                </div>
+            </div>
+            <div class="ui error message"></div>
+        </form>
+        {{else}}
+        <form class="ui large form" name="newActivity">
+            <div class="two fields">
+                <div class="field">
+                    <label>活动名称</label>
+                    <input type="text" placeholder="活动名"  name="activityName">
+                </div>
+                <div class="field">
+                    <label>活动奖品</label>
+                    <select class="ui dropdown" name="activityPrizeId">
+                    <option value="">请选择奖品</option>
+                        {{each activityPrizeList as prize}}
+                            <option value="{{prize.id}}">{{prize.name}}</option>
+                        {{/each}}
+                     </option>
+                    </select>    
+                </div>         
+            </div>
+            <div class="two fields">
+				<div class="field">
+                    <label>图片地址</label>
+                    <input type="text" placeholder="" name="activityImages">
+                </div>
+                <div class="field">
+                    <label>http链接</label>
+                    <input type="text" placeholder="" name="http">
+                </div>
+                
+            </div>
+            <div class="two fields">
+			<div class="field">
+                    <label>状态</label>
+                    <input type="radio" name="status" value="ONLINE" checked="checked"/>上线
+                    <input type="radio" name="status" value="OFFLINE"/>下线
+                </div>
+                <div class="field">
+                    <label>活动开始时间</label>
+                    <input type="text" placeholder=""  name="startTime" data-uk-datepicker="{format:'YYYY-MM-DD HH:mm:ss'}">
+                </div>
+               
+            </div>
+			<div class="two fields">
+				 <div class="field">
+                    <label>活动结束时间</label>
+                    <input type="text" placeholder=""  name="stopTime" data-uk-datepicker="{format:'YYYY-MM-DD HH:mm:ss'}">
+                </div>
+            	<div class="field">
+                    <label>需工作次数</label>
+                    <input type="text" placeholder="" name="workCount">
+                </div>
+            </div>
+			<div class="two fields">
+                <div class="field">
+                    <label>需集赞数量</label>
+                    <input type="text" placeholder=""  name="claim">
+                </div>
+				<div class="field">
+                    <label>其他要求</label>
+                    <input type="text" placeholder="" name="desc">
+                </div>
+            </div>
+			<div class="two fields">
+                <div class="field">
+                    <label>活动具体描述</label>
+                    <input type="text" placeholder="" name="totalDesc">
+                </div>
+            </div>
+            <div class="ui error message"></div>
+        </form>
+        {{/if}}
+    </div>
+    <div class="actions">
+        <div class="ui black deny button">
+            取消
+        </div>
+        <div class="ui right labeled icon button submit">
+            提交
+            <i class="checkmark icon"></i>
+        </div>
+    </div>
+</script>
+
+<!-- modal 删除确认 -->
+<script type="text/html" id="activityDelete">
+    <div class="header">
+        	活动名：“{{activityName}}” 
+    </div>
+    <div class="content">
+        <div class="ui negative icon message">
+            <i class="remove icon"></i>
+            <div class="content">
+                <div class="header">确认删除此活动吗？ </div>
+                <p>删除此活动将不能使用.</p>
+            </div>
+        </div>
+    </div>
+    <div class="actions">
+        <div class="ui black deny button">
+            取消
+        </div>
+        <div class="ui right red labeled icon button submit-deleteActicity">
+            删除
+            <i class="checkmark icon"></i>
+        </div>
+    </div>
+</script>
+
+<script type="text/javascript">
+    ;(function(){
+
+        //当前的acticityId
+        var g_activityId = '';
+
+        //弹出框
+        var modal = $("#addActivity");
+        var $modal = $("#addActivity");
+
+        //点击弹出新增和编辑框
+        $(".this_modal").on('click', function(){
+            var data = {};
+            var type = $(this).attr('data-type');
+
+            if( type == 1 ){
+                data.type = 1;
+            }
+
+            //首次渲染页面
+            rander(data, $modal);
+            $modal.modal('show');
+
+            //二次渲染弹窗
+            if( type == 2 ){
+
+                //获取参数
+                var param = {};
+                param.id = $(this).parents('tr').attr('data-id');
+                g_activityId = param.id;
+
+                //获取数据
+                $.get('/back/findActivityById.json',param,function(res){
+                    console.log(res);
+                    data.type = 2;
+                    res.activity.startTime = (new Date(res.activity.startTime)).Format("yyyy-MM-dd hh:mm:ss");
+                    res.activity.stopTime = (new Date(res.activity.stopTime)).Format("yyyy-MM-dd hh:mm:ss");
+                    data.res = res;
+                    rander(data, $modal);
+                }, 'json');
+            }
+        });
+
+        //删除用户
+        $('.deleteActicity').on('click', function(){
+            var activityId = $(this).parents('tr').attr('data-id');
+            g_activityId = activityId;
+            var activityName = $(this).parents('tr').find('td').eq(0).text();
+            var data = {};
+                data.activityName = activityName;
+            var _html = template('activityDelete', data);
+            $modal.html(_html);
+            $modal.modal('show');
+        });
+
+        //调制页面
+        $('#gopage a').on('click', function(){
+            var page = $('#gopage').find('input[name=currPage]').val();
+            if( page ){
+                window.location.href="?currPage="+page;
+            }
+        });
+
+        //提交表单
+        modal.on('click', ".submit", function(){
+            var form = $(this).parents('.modal').find("form");
+            if ( !validate(form) ){
+                return false;
+            }
+            submiting();
+            var formType = form.attr('name');
+            if( formType == "editActivity" ){
+                var param = validate(form);
+                param.id = g_activityId;
+                $.post('/back/updateActivity.json', param, function(json){
+                    if(json && json.status == "successful"){
+                        sublitsuccess(json.message);
+                    }else{
+                        errormessage($('input,select'), json.message);
+                        submiterror();
+                    }
+                } ,"json");
+
+            }else if( formType == "newActivity" ){
+                $.post('/back/insertActivity.json', validate(form), function(json){
+                    if(json && json.status == "successful"){
+                        sublitsuccess(json.message);
+                    }else{
+                        errormessage($('input,select'), json.message);
+                        submiterror();
+                    }
+                } ,"json");
+            }
+        });
+
+        //确认删除用户
+        modal.on('click', ".submit-deleteActicity", function(){
+            var param = {};
+            param.id = g_activityId;
+            $.post('/back/deleteActivity.json', param, function(json){
+                if(json && json.status == "successful"){
+                    sublitsuccess(json.message);
+                }else{
+                    errormessage($('input,select'), json.message);
+                    submiterror();
+                }
+            }, 'json');
+        });
+        
+        //重新渲染弹窗页面
+        function rander(data, $modal){
+            data.activityPrizeList  = activityPrizeList;
+            console.log(data);
+            var _html = template('activityTemp', data);
+            $modal.html(_html);
+            $modal.find('select.dropdown').dropdown();
+        }
+
+        //验证表单信息
+        function validate (form){
+            clearerror(form);
+            //返回值
+            var returnData = {};
+            var activityName = form.find('input[name=activityName]'),
+                activityImages = form.find('input[name=activityImages]'),
+                http = form.find('input[name=http]'),
+                status = form.find('input[name=status]'),
+				activityPrizeId = form.find('select[name=activityPrizeId]'),
+                startTime = form.find('input[name=startTime]'),
+                stopTime = form.find('input[name=stopTime]');
+				workCount = form.find('input[name=workCount]');
+				claim = form.find('input[name=claim]');
+				desc = form.find('input[name=desc]');
+				totalDesc = form.find('input[name=totalDesc]');
+				
+			var regu = /^[-]{0,1}[0-9]{1,}$/; 
+            //错误返回
+            if( !$.trim(activityName.val()) ){
+                errormessage( activityName, "活动名不能为空" );
+                return false;
+            }
+
+            if( !$.trim(activityImages.val()) ){
+                errormessage( activityImages, "活动图片不能为空" );
+                return false;
+            }
+
+            if( !$.trim(http.val()) ){
+                errormessage( http, "http链接不能为空" );
+                return false;
+            }
+            if(!$.trim(status.val()) ){
+            	errormessage( status, "活动状态不能为空" );
+                return false;
+            }
+            if(!$.trim(activityPrizeId.val()) ){
+            	errormessage( activityPrizeId, "活动奖品不能为空" );
+                return false;
+            }
+            if(!$.trim(startTime.val()) ){
+            	errormessage( startTime, "活动开始时间不能为空" );
+                return false;
+            }
+            if(!$.trim(stopTime.val()) ){
+            	errormessage( stopTime, "活动结束时间不能为空" );
+                return false;
+            }
+            if(!$.trim(workCount.val()) ){
+            	errormessage( workCount, "workCount不能为空" );
+                return false;
+            }
+            if(!regu.test(workCount.val())){
+            	errormessage( workCount, "工作次数请填入整数" );
+                return false;
+            }
+            if(!regu.test(claim.val())){
+            	errormessage( claim, "集赞数量请填入整数" );
+                return false;
+            }
+            if(!$.trim(totalDesc.val()) ){
+            	errormessage( totalDesc, "活动具体描述不能为空" );
+                return false;
+            }
+            returnData = {
+                activityName: activityName.val(),
+                activityImages: activityImages.val(),
+				activityPrizeId: activityPrizeId.val(),
+                http: http.val(),
+                status: status.val(),
+                startTime: startTime.val(),
+                stopTime: stopTime.val(),
+				workCount: workCount.val(),
+                claim: claim.val(),
+                desc: desc.val(),
+                totalDesc: totalDesc.val()
+            };
+
+            return returnData;
+
+        }
+
+        //报错弹窗
+        function errormessage (field, message){
+            field.parents(".field").addClass('error');
+            field.parents('form').addClass('error');
+            field.parents('form').find('.ui.error.message').html('<ul class="list"><li>'+ message +'</li></ul>');
+        }
+
+        //清除报错
+        function clearerror(form){
+            form.removeClass('error');
+            form.find('.field').removeClass('error');
+            form.find('.ui.error.message').html('');
+        }
+
+        //正在提交
+        function submiting(){
+            var str = '<div class="ui icon message submiting"><i class="notched circle loading icon"></i><div class="content"><div class="header">稍候 </div><p>我们正在为您获取内容。</p></div></div>';
+            modal.find('.content form').hide();
+            modal.find('.content').append(str);
+            modal.find('.submit').hide();
+        }
+
+        //提交报错
+        function submiterror(){
+            modal.find('.content form').show();
+            modal.find('.submiting').remove();
+            modal.find('.submit').show();
+        }
+
+        //提交成功
+        function sublitsuccess(message){
+            modal.find('.actions').remove();
+            modal.find('.content').html('<div class="ui icon message"><i class="inbox icon"></i><div class="content"><div class="header">'+ message +' </div><p>页面即将重新加载!</p></div></div>');
+            setTimeout(function() {
+                window.location.reload();
+            }, 1000);
+        }
+    })();
+    require(['uikit!semantic-paginaction,datepicker'], function(uikit){
+        $('[data-uk-pagination]').on('select.uk.pagination', function(e, pageIndex){
+            window.location.href="?currPage="+(pageIndex+1);
+        });
+    });
+	
+</script>
+#parse('/backStageManage/public/BOTTOM.vm')
+

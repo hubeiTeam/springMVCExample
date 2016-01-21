@@ -1,0 +1,36 @@
+<div class="page-slidebar">
+    <div class="ui visible inverted left vertical sidebar accordion menu">
+	    <div class="item">
+            <div class="slidebar-title">
+    	        <a class="ui logo icon image" href="/backStageManage/show/index.html"> <img src="/backStageManage/images/logo.png" width="40px">
+    	        </a> <a href="/backStageManage/show/index.html"><b>事亲管理中心</b></a>
+            </div>
+	    </div>
+    	#foreach($userModule in $userModuleTree)
+     		<div class="item" data-model="$!userModule.moduleUrl">
+				#if(!$userModule.parentId)
+					<a class="title"><i class="dropdown icon"></i><b>
+                        #if($userModule.iconSet)
+                        <i class="icon $!userModule.iconSet"></i>
+                        #else
+                        <i class="icon tasks"></i>
+                        #end
+                        $userModule.moduleName</b></a>
+					#if($userModule.userModuleDtos)
+						<div class="content menu">
+		  	 			#foreach($moduleDto in $userModule.userModuleDtos)
+                        <a class="item" href="$moduleDto.moduleUrl" data-parent="$moduleDto.parentModuleName"><b>
+                            #if($moduleDto.iconSet)
+                            <i class="icon $!moduleDto.iconSet"></i>
+                            #else
+                            <i class="arrow circle right icon"></i>
+                            #end
+                            $moduleDto.moduleName</b></a> 
+		            	#end
+		            	</div>
+					#end
+	            #end
+            </div>
+		#end
+    </div>
+</div>

@@ -1,0 +1,34 @@
+<script type="text/javascript">
+    ;(function(){
+        $('select.dropdown').dropdown();
+        $('.ui.accordion').accordion();
+    })();
+    ;(function(){
+        //渲染左侧栏
+        var URI = window.location.pathname;
+        var jQ_sidebar = $('.page-slidebar .sidebar');
+        var jQ_item = jQ_sidebar.find('a[href="'+ URI +'"]').addClass('active').parents('.item');
+        jQ_item.find('.title').addClass('active');
+        jQ_item.find('.content').addClass('active');
+    })();
+    //心跳判断是否登录
+    ;(function(){
+        setInterval(function(){
+            $.get('/back/isLogin.json', function(json){
+                if(!json || !json.flag ){
+
+                    layer.alert('登录超时，请重新登录！', {
+                    skin: 'layui-layer-molv' //样式类名
+                    ,closeBtn: 0
+                    ,title:'提示：'
+                    ,move:false
+                    }, function(){
+                        window.location.href="/back";
+                    });
+                }
+            });
+        }, 10000);
+    })();
+
+    
+</script>

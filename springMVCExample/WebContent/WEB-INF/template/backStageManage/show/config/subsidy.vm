@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="zh">
+	<head>
+		<meta charset="utf-8" />
+		<title>没事找事后台管理</title>
+		#parse('/control/common/common-head.vm')
+		<style>
+			.table-form th{width:10%;text-align:right;}
+		</style>
+	</head>
+
+	<body>
+		<!-- 左侧导航结束 -->
+		<div class="breadcrumbs" id="breadcrumbs">
+			<script type="text/javascript">
+				try{ace.settings.check('breadcrumbs' , 'fixed')}catch(e){}
+			</script>
+
+			<ul class="breadcrumb">
+				<li>
+					<i class="icon-home home-icon"></i>
+					<a href="javascript:;">首页</a>
+				</li>
+				<li>
+					<a href="/control/userManager/configList.html">配置列表</a>
+				</li>
+			</ul><!-- .breadcrumb -->
+
+			<div class="nav-search" id="nav-search">
+			</div><!-- #nav-search -->
+		</div>
+
+		<div class="page-content">
+			<div class="page-header">
+				<h1 class="image-h1">
+					<a href="/control/userManager/configList.html">配置列表</a>
+					<small>
+						<i class="icon-double-angle-right"></i>
+						工作补贴配置
+					</small>
+				</h1>
+		</div><!-- /.page-header -->
+
+		<div class="row">
+			<div class="col-xs-12">
+			<!-- PAGE CONTENT BEGINS -->
+				<form id="dataForm" class="form-horizontal" role="form">
+					#foreach($subsidy in $subsidys)
+					<table class="table-form table table-striped table-bordered table-hover">
+						<tr>
+							<th style="text-align:center;" colspan="4">补贴规则$subsidy.id</th>
+						</tr>
+    					<tr>
+							<th style="vertical-align:middle;">星级范围</th>
+							<td colspan="3" style="vertical-align:middle;">
+								<input type="hidden" class="id" value="$subsidy.id" /> 
+								<input type="text" class="starLevelMin" value="$subsidy.starLevelMin" /> ~ 
+								<input type="text" class="starLevelMax" value="$subsidy.starLevelMax" />
+							</td>
+						</tr>
+    					<tr>
+							<th style="vertical-align:middle;">日最高补贴</th>
+							<td style="vertical-align:middle;">
+								<input type="text" class="maxSubsidy" value="$subsidy.maxSubsidy"/>
+							</td>
+							<th style="vertical-align:middle;">每次补贴百分比</th>
+							<td style="vertical-align:middle;">
+								#set($proportion = $subsidy.proportion * 100)
+								<input type="text" size="5" class="proportion" value="$arithUtils.round($proportion,0)"/> %
+							</td>
+						</tr>
+					</table>
+					#end
+					
+					
+					<div class="clearfix form-actions">
+						<div class="col-md-offset-3 col-md-9">
+							<button class="btn btn-info" type="button" id="submit">
+								<i class="icon-ok bigger-110"></i>
+								提交
+							</button>
+							&nbsp; &nbsp; &nbsp;
+							<button class="btn" type="reset">
+								<i class="icon-undo bigger-110"></i>
+								重置
+							</button>
+						</div>
+					</div>
+				</form>
+			</div><!-- /.col -->
+		</div><!-- /.row -->
+	</body>
+</html>
+
+<script>
+	//提交按钮绑定事件
+	$('#submit').click(function(){
+		var starLevelMins = $('.starLevelMin');
+		var starLevelMaxs = $('.starLevelMax');
+		var maxSubsidys = $('.maxSubsidy');
+		var proportions = $('.proportion');
+		var ids = $('.id');
+		var data = new Array();
+		for(var i=0;i<starLevelMins.length;i++){
+			data.push({starLevelMin:$(starLevelMins).eq(i).val(),starLevelMax:$(starLevelMaxs).eq(i).val(),maxSubsidy:$(maxSubsidys).eq(i).val(),proportion:$(proportions).eq(i).val()/100,id:$(ids).eq(i).val()});
+		}
+		
+		$.ajax({
+			type: "POST",
+			url: "/back/config/updateSubsidy.json",
+			data: JSON.stringify(data),
+			dataType: 'json',
+			contentType:"application/json",
+			success: function(data){
+				alert(data.message);
+    			if(data.status == 'successful'){
+    				reload();
+    			}
+			},
+			error: function(json){
+			}
+		});
+	});
+</script>
+
+<link rel="stylesheet" href="/resources/css/jquery-ui-1.10.3.full.min.css" />
+

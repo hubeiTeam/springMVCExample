@@ -1,0 +1,163 @@
+#parse('/backStageManage/public/TOP.vm')
+<link rel="stylesheet" type="text/css" href="/backStageManage/ui/css/components/datepicker.css">
+<link rel="stylesheet" type="text/css" href="/backStageManage/ui/css/components/form-file.css">
+<script type="text/javascript" src="/backStageManage/js/uitl.js"></script>
+<script type="text/javascript" src="/backStageManage/js/system.js"></script>
+<script type="text/javascript" src="/backStageManage/lib/layPage/laypage.dev.js"></script>
+<script type="text/javascript" src="/backStageManage/js/searchPage.js"></script>
+<div class="main">
+	<!-- 头部搜索条件  -->
+    <div class="page-center ui segment">
+		<div class="ui dividing header">
+          <i class="user icon"></i>
+          <div class="content">
+           保险列表
+          </div>
+         </div>
+         <form class="ui mini form" action="" method="get" name="search">
+            <div class="fields">
+            	<div class="field">
+            	<label>状态</label>
+            	<select class="ui dropdown" name="status">
+            			#if($!status=="0")
+                    	<option value="0" selected="selected">所有</option>
+                    	#else
+                    	<option value="0">所有</option>
+                    	#end
+                    	#if($!status=="ALREADY_COMPLETE")
+                    	<option value="ALREADY_COMPLETE" selected="selected">已生效</option>
+                    	#else
+                    	<option value="ALREADY_COMPLETE">已生效</option>
+                    	#end
+                    	#if($!status=="NO_COMPLETE")
+                    	<option value="NO_COMPLETE" selected="selected">未生效</option>
+                    	#else
+                    	<option value="NO_COMPLETE">未生效</option>
+                    	#end
+                    	#if($!status=="CANCEL")
+                    	<option value="CANCEL" selected="selected">取消</option>
+                    	#else
+                    	<option value="CANCEL">取消</option>
+                    	#end
+                    	#if($!status=="PART_COMPLETE")
+                    	<option value="PART_COMPLETE" selected="selected">部分完成</option>
+                    	#else
+                    	<option value="PART_COMPLETE">部分完成</option>
+                    	#end
+                    </select>
+                </div>
+                <div class="field">
+                    <label>保单号</label>
+                    #if($!insureId)
+                    <input type="text" placeholder="支持模糊查询" value="$!{insureId}" name="insureId">
+                    #else
+                    <input type="text" placeholder="支持模糊查询" name="insureId">
+                    #end
+                </div>
+                <div class="field">
+                    <label>用户姓名</label>
+                    #if($!realName)
+                    <input type="text" placeholder="支持模糊查询" value="$!{realName}" name="realName">
+                    #else
+                    <input type="text" placeholder="支持模糊查询" name="realName">
+                    #end
+                </div>
+                 <div class="field">
+                    <label>用户手机号</label>
+                    #if($!phone)
+                    <input type="text" placeholder="支持模糊查询" value="$!{phone}" name="phone">
+                    #else
+                    <input type="text" placeholder="支持模糊查询" name="phone">
+                    #end
+                </div>
+                
+                
+                <div class="field">
+                    <label>操作</label>
+                    <div class="ui buttons">
+                      <button class="ui button instagram" type="submit"> 查询 </button>
+                      <div class="or" data-text="或"></div>
+                      <button class="ui button" onclick="$('form').form('clear');">重置</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+	
+	<div class="ui page-center page-list">
+        <div class="ui active inverted dimmer page-loading">
+            <div class="ui large text loader">加载中</div>
+        </div>
+        <div class="ui" style="min-height:400px;-webkit-transition:height .5s;">
+            <table class="ui selectable celled table">
+                <thead>
+                    <tr>
+                        <th>序列号</th>
+                       	<th>用户名称</th>
+						<th>用户手机号</th>
+						<th>保单号</th>
+						<th>保险金额</th>
+						<th>保单开始时间</th>
+						<th>保单结束时间</th>
+						<th>状态</th>
+						<th>创建时间</th>
+						<th>最后修改时间</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+	<div class="page-center ui segment">
+        <div id="page" class="ui">
+        </div>
+        <div class="clear"></div>
+    </div>    
+</div>
+<script type="text/html" id="list" >
+    {{each datas as v}}
+        <tr data-id="{{v.insureId}}">
+			<td>{{v.tableTitle}}</td>
+            <td><a href="/backStageManage/show/basic/userPeopleInfo.html?userId={{v.userId}}" target="_blank">{{v.realName}}</a></td>
+            <td>{{v.phone}}</td>
+            <td>{{v.insureId}}</td>
+            <td>{{v.amount}}</td>
+            <td>{{v.insureStartTime}}</td>
+            <td>{{v.insureEndTime}}</td>
+            <td>{{v.status.name}}</td>
+            <td>{{v.createTime}}</td>
+            <td>{{v.modifyTime}}</td>
+        </tr>
+    {{/each}}
+</script>
+<script type="text/javascript">
+    ;(function(){
+        thisLaypage({
+            url: '/back/queryInsureListByPage.json',
+            resolve: function(res){
+                for( var i=0; i<res.datas.length; i++ ){
+                	res.datas[i].insureStartTime = (new Date(res.datas[i].insureStartTime)).Format('yyyy-MM-dd hh:mm');
+                    res.datas[i].insureEndTime = (new Date(res.datas[i].insureEndTime)).Format('yyyy-MM-dd hh:mm');
+                    res.datas[i].createTime = (new Date(res.datas[i].createTime)).Format('yyyy-MM-dd hh:mm');
+                    res.datas[i].modifyTime = (new Date(res.datas[i].modifyTime)).Format('yyyy-MM-dd hh:mm');
+                    res.datas[i].status = getInsureStatus(res.datas[i].status);
+                }
+                console.log(res);
+                return res;
+            }
+        });
+    })();
+</script>
+<script type="text/javascript">
+	require([ 'uikit!semantic-paginaction' ], function(uikit) {
+		$('[data-uk-pagination]').on('select.uk.pagination',
+				function(e, pageIndex) {
+					window.location.href = "?currPage=" + (pageIndex + 1);
+				});
+	});
+</script>
+
+#parse('/backStageManage/public/BOTTOM.vm')
+

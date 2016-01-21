@@ -87,15 +87,15 @@
 		<url-pattern>/resources/*</url-pattern>
 	</servlet-mapping> -->
 	<!-- 异常跳转页面 -->
-	<error-page>
+	<!-- <error-page>
 		<exception-type>java.lang.Exception</exception-type>
-		<location>/backBone/error/error.html</location>
+		<location>/backStageMange/error/error.html</location>
 		<error-code>404</error-code>
-		<location>/backBone/error/error404.html</location>
-	</error-page>
+		<location>/backStageMange/error/error404.html</location>
+	</error-page> -->
 
 	<!-- 欢迎页面 -->
 	<welcome-file-list>
-		<welcome-file>login.vm</welcome-file>
+		<welcome-file>/backStageMange/show/logon.html</welcome-file>
 	</welcome-file-list>
 </web-app>

@@ -47,7 +47,7 @@ public class LoginInterceptor implements MethodInterceptor {
 			return invocation.proceed();
 		}
 		ModelAndView result=new ModelAndView();
-		result.setViewName("/backBone/login");
+		result.setViewName("/backStageManage/show/logon");
 		return result;
 	}
 	
@@ -75,7 +75,7 @@ public class LoginInterceptor implements MethodInterceptor {
 	 * @return
 	 */
 	private Boolean isLogin(HttpServletRequest request){
-		if(request.getSession().getAttribute("userName")!=null){
+		if(request.getSession().getAttribute("userAdmin")!=null){
 			return true;
 		}
 		return false;

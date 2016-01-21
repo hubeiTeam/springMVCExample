@@ -1,0 +1,363 @@
+#parse('/backStageManage/public/TOP.vm')
+<script type="text/javascript" src="/backStageManage/lib/layPage/laypage.dev.js"></script>
+<script type="text/javascript" src="/backStageManage/lib/layer/layer.js"></script>
+<script type="text/javascript" src="/backStageManage/js/uitl.js"></script>
+<script type="text/javascript" src="/backStageManage/js/system.js"></script>
+<link rel="stylesheet" type="text/css" href="/backStageManage/ui/css/components/datepicker.css">
+<div class="main">
+    <div class="page-center ui segment">
+        <div class="ui dividing header">
+            <i class="user icon"></i>
+            <div class="content">
+                岗位列表
+            </div>
+        </div>
+        <form class="ui small form" action="" method="get" name="search">
+            <div class="fields">
+                <div class="field">
+                    <label>岗位状态</label>
+                    <select class="ui dropdown" name="status">
+                            <option value="0" selected="selected">全部状态</option>
+                        #foreach($attest in $!{postStatusList.keySet()})
+                        <option value="$attest">${postStatusList.get($attest)}</option>
+                        #end
+                    </select>
+                </div>
+                <div class="field">
+                    <label>兼职类目</label>
+                    <select class="ui dropdown" name="categoryId">
+                        <option value="0" selected="selected">全部分类</option>
+                        #foreach($val in $categoryList)
+                        <option value="$val.id">$val.categoryName</option>
+                        #end
+                    </select>
+                </div>
+                <div class="field">
+                    <label>单/多天</label>
+                    <select class="ui dropdown" name="postCategory">
+                        <option value="0" selected="selected">全部类别</option>
+                        <option value="SINGLE">单天 </option>
+                        <option value="SEVERAL">多天</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label>岗位标题</label>
+                    <input type="text" placeholder="支持模糊查询" name="title">
+                </div>
+                <div class="field">
+                    <label>工作时间(起始)</label>
+                        <input type="text" placeholder="年/月/日" data-uk-datepicker="{format:'YYYY-MM-DD'}" name="workDateBegin">
+                </div>
+                <div class="field">
+                    <label>工作时间(结束)</label>
+                    <input type="text" placeholder="年/月/日" data-uk-datepicker="{format:'YYYY-MM-DD'}" name="workDateEnd">
+                </div>
+            </div>
+            <div class="fields">
+                <div class="field">
+                    <label>公司名称</label>
+                    <input type="text" placeholder="支持模糊查询" name="companyName">
+                </div>
+                <div class="field">
+                    <label>发布时间(起始)</label>
+                        <input type="text" placeholder="年/月/日" data-uk-datepicker="{format:'YYYY-MM-DD'}" name="publishTimeBegin">
+                </div>
+                <div class="field">
+                    <label>发布时间(结束)</label>
+                    <input type="text" placeholder="年/月/日" data-uk-datepicker="{format:'YYYY-MM-DD'}" name="publishTimeEnd">
+                </div>
+                <div class="field">
+                    <label>地区/城市</label>
+                    <input type="text" placeholder="支持模糊查询" name="city">
+                </div>
+                <div class="field">
+                    <label>操作</label>
+                    <!-- <input class="ui button mini" type="submit" value="查询" > -->
+                    <div class="ui buttons">
+                      <button class="ui button instagram" type="submit"> 查询 </button>
+                      <div class="or" data-text="或"></div>
+                      <button class="ui button" onclick="$('form').form('clear');">重置</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="page-center ui page-list">
+        <div class="ui active inverted dimmer page-loading">
+            <div class="ui large text loader">加载中</div>
+        </div>
+        <div class="ui" style="min-height:400px;-webkit-transition:height .5s;">
+            <table class="ui selectable celled table">
+                <thead>
+                    <tr>
+                        <th>公司名称</th>
+                        <th>岗位标题</th>
+                        <th>工资</th>
+                        <th>招聘人数</th>
+                        <th>发布日期</th>
+                        <th>工作日期</th>
+                        <th>回复时间</th>
+                        <th>岗位状态</th>
+                        <th>单/多天</th>
+                        <th>地区/城市</th>
+                        <!-- <th>操作</th> -->
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+            <h5 class="ui dividing header " align="right" id="table-count"></h5>
+        </div>
+    </div>
+
+    <div class="page-center ui segment">
+            <div id="page">
+            </div>
+            <div class="clear"></div>
+    </div>
+
+</div>
+
+<!-- 弹出层窗口 -->
+<div class="ui modal" id="UIModel" data-type="" style="min-height:600px;">
+    
+</div>
+
+<!-- 列表模板 -->
+<script type="text/html" id="list">
+    {{each datas as v}}
+    <tr data-id="{{v.id}}">
+        <td>
+			<a href="/backStageManage/show/basic/userMerchantInfo.html?merchantId={{v.publishUserId}}" target="_blank">
+				{{v.companyName}}
+			</a>
+		</td>
+        <td>
+			<a href="/backStageManage/show/basic/postInfo.html?id={{v.id}}" target="_blank">
+				{{v.title}}
+			</a>
+		</td>
+        <td>{{v.wage}}</td>
+        <td>{{v.personalNumber}}</td>
+        <td>{{v.createTime}}</td>
+		<td>{{v.workDate}}</td>
+        <td>{{v.replyTime}}小时</td>
+        <td>{{v.status.name}}</td>
+		<td>{{v.postCategory.name}}</td>
+		<td>{{v.city}}</td>
+        <!-- <td><a class="ui green label"> <i class="write square icon"></i>修改</a></td> -->
+    </tr>
+    {{/each}}
+</script>
+
+<!-- 弹出层模板 （） -->
+<script type="texr/html" id="UIModel-tmp">
+    <i class="close icon"></i>
+    <form class="ui content small form" name="editinfo">
+        <h3 class="ui dividing header">岗位修改</h3>
+        <div class="field">
+           <label>公司名称</label>
+           <input type="text" value="{{userEnterprise.companyName}}" disabled="disabled">
+        </div>
+        <div class="field">
+           <label>公司地址</label>
+           <textarea disabled="disabled">{{userEnterprise.companyAddress}}</textarea>
+        </div>
+        <div class="field">
+           <label>招聘标题</label>
+           <textarea>{{pluralismPost.title}}</textarea>
+        </div>
+        <div class="fields">
+            <div class="field">
+               <label>联系人</label>
+               <input disabled="disabled" type="text" value="{{postInfo.linkName}}">
+            </div>
+            <div class="field">
+               <label>联系电话</label>
+               <input disabled="disabled" type="text" value="{{postInfo.linkPhone}}">
+            </div>
+        </div>
+        <div class="fields">
+            <div class="field">
+               <label>招聘职位</label>
+               <input disabled="disabled" type="text" value="{{category.categoryName}}">
+            </div>
+            <div class="field">
+               <label>招聘人数</label>
+               <input disabled="disabled" type="text" value="{{pluralismPost.personalNumber}}">
+            </div>
+        </div>
+        <div class="field">
+           <label>工作区域</label>
+           <input disabled="disabled" type="text" value="{{city.name}}">
+        </div>
+        <div class="field">
+           <label>工作地点</label>
+           <textarea>{{addressCoordinate.addressName}}</textarea>
+        </div>
+        <div class="field">
+           <label>工作日期</label>
+           <input type="text" value="{{pluralismPost.workDate}}" onclick="laydate({format: 'YYYY-MM-DD'})">
+        </div>
+        <div class="fields">
+            <div class="field">
+                <label>工作开始时间</label>
+                <input class="button" type="text" value="{{postInfo.workStartTime}}" onclick="laydate({istime: true, format: 'YYYY-MM-DD hh:mm:ss'})" >
+            </div>
+            <div class="field">
+               <label>工作结束时间</label>
+               <input type="text" value="{{postInfo.workStopTime}}" onclick="laydate({istime: true, format: 'YYYY-MM-DD hh:mm:ss'})" >
+            </div>
+        </div>
+        {{if postClaim}}
+        <div class="field">
+           <label>性别要求</label>
+           <input disabled="disabled" type="text" value="{{postClaim.sex}}">
+        </div>
+        <div class="fields">
+            <div class="field">
+               <label>最低年龄</label>
+               <input disabled="disabled" type="text" value="{{postClaim.ageMin}}">
+            </div>
+            <div class="field">
+               <label>最高年龄</label>
+               <input disabled="disabled" type="text" value="{{postClaim.ageMax}}">
+            </div>
+        </div>
+        <div class="fields">
+            <div class="field">
+               <label>最低身高</label>
+               <input disabled="disabled" type="text" value="{{postClaim.bodyHeightMin}}">
+            </div>
+            <div class="field">
+               <label>最高身高</label>
+               <input disabled="disabled" type="text" value="{{postClaim.bodyHeightMax}}">
+            </div>
+        </div>
+        <div class="fields">
+            <div class="field">
+               <label>最低体重</label>
+               <input disabled="disabled" type="text" value="{{postClaim.bodyWeightMin}}">
+            </div>
+            <div class="field">
+               <label>最高体重</label>
+               <input disabled="disabled" type="text" value="{{postClaim.bodyWeightMax}}">
+            </div>
+        </div>
+        {{/if}}
+        <div class="field">
+           <label>工作描述</label>
+           <textarea>{{postInfo.workDesc}}</textarea>
+        </div>
+    </form>
+    <div class="actions">
+        <div class="ui button deny">取消</div>
+        <div class="ui button positive submit" data-form="editinfo">提交</div>
+    </div>
+</script>
+<script type="text/javascript">
+
+    //分页组件
+    ;(function(){
+        window.thisLaypage = '';
+        var param = toQueryParams.call(window.location.href);
+        randerForm(param, $('form[name=search]'));
+        var currPage = param.currPage || 1;
+        
+        thisLaypage = laypage({
+            cont: $('#page'),
+            //pages: pages, //通过后台拿到的总页数
+            curr: currPage, //初始化当前页
+            skip: true,
+            jump: function(e){ //触发分页后的回调
+                param.currPage = e.curr;
+                changeHash(param);
+                loading();
+                $.getJSON('/back/getPluralismPostListByPage.json', param, function(res){
+                    e.pages = e.last = Math.ceil(res.count/10) || 1; //重新获取总页数，一般不用写
+                    randerSize(res.count);
+                    thisLaypage.rePage();
+                    rander(res.datas);
+                });
+            }
+        });
+
+        function loading(){
+            $('.page-loading').addClass('dimmer');
+        }
+
+        function unload(){
+            $('.page-loading').removeClass('dimmer');
+        }
+
+        function rander(datas){
+            var data = {};
+            data.datas = datas;
+            data = resolve(data);
+            var _html = template('list', data);
+            $('.page-list tbody').html(_html);
+            unload();
+        }
+
+        function randerSize(count){
+            $('#table-count').text('总条数：' +count+ ' 条');
+        }
+
+
+        //对数据进行解析
+        function resolve(data){
+            console.log(data);
+
+            for( var i=0; i<data.datas.length; i++ ){
+                data.datas[i].status = getPluralismStatus(data.datas[i].status);
+                data.datas[i].createTime = (new Date(data.datas[i].createTime)).Format('yyyy-MM-dd');
+                data.datas[i].postCategory = getPostCategoryStatus(data.datas[i].postCategory);
+                data.datas[i].workDate = (new Date(data.datas[i].workDate)).Format('yyyy-MM-dd');
+            }
+            console.log(data);
+            return data;
+        }
+
+        //重新渲染表单
+        function randerForm(param, form){
+            for( k in param ){
+                var cv = '[name='+k+']';
+                form.find('input'+cv).val(param[k]);
+                form.find('select'+cv).find('option[value='+ param[k] +']').prop('selected','selected');
+            }
+        }
+    })();
+
+    //列表上的事件操作
+    ;(function(){
+        var bigTable = $('.page-center table');
+        var model = $('#UIModel');
+        //修改
+        bigTable.on('click', 'td .label.ui:has(.square)', function(){
+            var id = $(this).parents('tr').attr('data-id');
+            var param = {};
+            param.id = id;
+            $.post('/control/queryPluralismPostMessage.json', param, function(json){
+                render(json);
+            }, 'json');
+        });
+
+        function render(json){
+            json.pluralismPost.workDate = (new Date(json.pluralismPost.workDate)).Format('yyyy-MM-dd');
+            json.postInfo.workStartTime = (new Date(json.postInfo.workStartTime)).Format('yyyy-MM-dd hh:mm:ss');
+            json.postInfo.workStopTime = (new Date(json.postInfo.workStopTime)).Format('yyyy-MM-dd hh:mm:ss');
+            var _html = template('UIModel-tmp', json);
+            model.html(_html);
+            model.modal('show');
+        }
+    })();
+
+    //事件插件驱动
+    ;(function(){
+        $('select.dropdown').dropdown();
+        require(["uikit!datepicker"], function(UI){
+        });
+    })();
+</script>
+#parse('/backStageManage/public/BOTTOM.vm')

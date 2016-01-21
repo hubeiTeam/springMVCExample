@@ -1,0 +1,66 @@
+#parse('/backStageManage/public/TOP.vm')
+<script type="text/javascript" src="/backStageManage/lib/layer/layer.js"></script>
+<link rel="stylesheet" type="text/css" href="/backStageManage/semantic/components/checkbox.css">
+<div class="main">
+	<div class="page-center ui segment">
+		<div class="ui dividing header">
+			<i class="user icon"></i>
+			<div class="content">推送</div>
+		</div>
+		<form class="ui form clearing" action="/back/push.json" method="post" onsubmit="return false;" name="pushMessage" >
+			<div class="field">
+				<label>消息内容</label>
+	    		<textarea name="message"></textarea>
+	    	</div>
+	    	<div class="field">
+				<label>推送类别</label>
+	    		<div class="seven fields">
+					<div class="field">
+						<div class="ui toggle checkbox">
+							<input type="checkbox" tabindex="0" name="people" value="PERSON">
+							<label>个人用户</label>
+						</div>
+					</div>
+					<div class="field">
+						<div class="ui toggle checkbox">
+							<input type="checkbox" tabindex="0" name="merchant" value="MERCHART">
+							<label>商家用户</label>
+						</div>
+					</div>
+	    		</div>
+	    	</div>
+	    	<div class="field">
+	    		<button class="ui blue button right floated">推送</button>
+	    	</div>
+	    	<div class="clear"></div>
+		</form>
+	</div>
+</div>
+<!-- 后端渲染数据 userRoleList -->
+<script type="text/javascript">
+	$('form[name=pushMessage]').on('submit', function(){
+		var segment= $(this).parents('.segment');
+		segment.addClass('loading');
+		var param = {};
+		param.message = $(this).find('[name=message]').val();
+		param.people = $(this).find('[name=people]:checked').val() || '';
+		param.merchant = $(this).find('[name=merchant]:checked').val() || '';
+
+		$.post('/control/push.json', param, function(json){
+			if(json && json.status == "successful"){
+				segment.removeClass('loading');
+                layer.msg(json.message, {icon: 1});
+                setTimeout(function() {
+                	window.location.reload();
+                }, 500);
+			}else{
+				segment.removeClass('loading');
+                layer.msg(json.message, {icon: 0});
+			}
+		}, 'json');
+	});
+</script>
+
+
+#parse('/backStageManage/public/BOTTOM.vm')
+

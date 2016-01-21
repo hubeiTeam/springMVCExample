@@ -1,0 +1,165 @@
+@charset "utf-8";
+/* CSS Document */
+body{
+	width:100%;
+/*	background-color:#666666; */
+	background:url(../../images/back3.jpg) no-repeat;
+	background-position:50% 50%;
+	background-size:100%;
+	color:#333333;
+	line-height:35px;
+}
+
+a{
+	color:#FFF;
+}
+.bezel{
+	width:99%;
+	height:755px;
+	margin:5px auto;
+	color:#FFF;
+}
+.head{
+	width:100%;
+	height:10%;
+	background:#3c4145;
+	background:rgba(0,0,0,0.5);
+	line-height:60px;
+	border-top-left-radius:4px;
+	border-top-right-radius:4px;
+	-moz-border-top-left-radius:4px;
+	-moz-border-top-right-radius:4px;/* Old Firefox */
+	overflow:hidden;
+	border-bottom:2px #000 solid;
+}
+.head div{
+	height:100%;
+	float:left;
+	line-height:60px;
+}
+.hleft{
+	width:15%;
+	font:bold 15px 宋体;
+}
+
+.head-icon{
+	height:60px;
+	background:url(../../images/logo-right.png) no-repeat;
+	background-position:10px 0;
+	display:block;
+	margin-top:10px;
+	padding-left:70px;
+}
+.center{
+	width:100%;
+	height:90%;
+	clear:both;
+}
+.rleft{
+	width:100%;
+	height:100%;
+	background:#30383b;
+	background:rgba(0,0,0,0.6);
+	overflow-y:auto;
+	float:left;
+}
+/*.center{
+	width:100%;
+	height:86%;
+}*/
+.search{
+	width:99%;
+	clear:both;
+	margin:1% 1%;
+}
+.search span{
+	margin:5px auto;
+}
+.search input{
+	height:20px;
+	line-height:20px;
+	border-radius:4px;
+	-moz-border-radius:4px;/* Old Firefox */
+}
+#search-btn{
+	width:55px;
+	height:25px;
+	border:1px rgba(0,0,0,0.4) solid;
+	background:rgba(0,0,0,0.4);
+	color:#FFF;
+	cursor:pointer;
+}
+
+.topMenu ul{
+	widht:100%;
+	height:25px;
+	margin-left:5px;
+}
+.topMenu ul li{
+	height:25px;
+	line-height:25px;
+	text-align:center;
+	border:1px rgba(0,0,0,0.4) solid;
+	background:rgba(0,0,0,0.4);
+	border-radius:4px;
+	-moz-border-radius:4px;/* Old Firefox */
+	margin-left:4px;
+	float:left;
+	display:inline;
+
+}
+
+.tableMain{
+	width:100%;
+	height:85%;
+	overflow-y:auto;
+	color:#FFF;
+}
+
+.right-table{
+	font-size:13px;
+	margin:0px auto;
+}
+.right-table th{
+	height:35px;
+	line-height:35px;
+	background:rgba(0,0,0,0.4);
+	border:1px rgba(0,0,0,0.4) solid;
+	border-right:0px;
+	border-top:0px;
+}
+.right-table td{
+	height:35px;
+	line-height:35px;
+	border:1px rgba(0,0,0,0.4) solid;
+	border-right:0px;
+	border-top:0px;
+}
+#clearTDrightBorder{
+	border-right:1px rgba(0,0,0,0.4) solid;
+}
+
+#page ul{
+	width:600px;
+	height:25px;
+	margin:0px auto;
+	margin-top:10px;
+}
+#page ul li{
+	height:25px;
+	line-height:25px;
+	text-align:center;
+	border:1px rgba(0,0,0,0.4) solid;
+	background:rgba(0,0,0,0.4);
+	border-radius:4px;
+	-moz-border-radius:4px;/* Old Firefox */
+	margin-left:5px;
+	float:left;
+	display:inline;
+}
+*{
+	list-style:none;
+	text-decoration:none;
+	margin:0px;
+	padding:0px;
+}

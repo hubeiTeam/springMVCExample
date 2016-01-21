@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.servlet.ModelAndView;
 
+import caideli.bean.BackUser;
+
 public class BaseController implements Serializable {
 
 
@@ -116,5 +118,16 @@ public class BaseController implements Serializable {
 	protected void setView(ModelAndView result, String viewName) {
 		result.setViewName(viewName);
 	}
+	/**
+	 * 获取后台当前登陆用户
+	 * @return
+	 */
+	/*public BackUser getLoginUserAdmin() {
+		BackUser user = null;
+		if(request.getSession().getAttribute("userAdmin")!=null){
+			user =(BackUser)request.getSession().getAttribute("userAdmin");
+		}
+		return user;
+	}*/
 	
 }

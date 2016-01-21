@@ -1,0 +1,183 @@
+#parse('/backStageManage/public/TOP.vm')
+<div class="main">
+    <div class="page-center ui segment">
+		<div class="ui dividing header">
+          <i class="user icon"></i>
+          <div class="content">
+            客户端错误信息列表
+          </div>
+        </div>
+        <div class="ui">
+            <table class="ui selectable celled table">
+                <thead>
+                    <tr>
+                        <th>手机类别</th>
+						<th>错误类别</th>
+						<th width="200">错误信息</th>
+						<th>版本号</th>
+						<th>创建时间</th>
+						<th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                #foreach($clientError in $datas)
+                	<tr data-id="$!{clientError.id}">
+                        <td>$!{clientError.systemCategory}</td>
+                        <td>$!{clientError.errorCategory}</td>
+                        <td>$!{clientError.message}</td>
+                        <td>$!{clientError.version}</td>
+                        <td>$!dateUtils.format($!{clientError.createTime},'yyyy-MM-dd HH:mm')</td>
+                        <td>
+                        	#if(${deleteClientError})
+                            <button class="ui circular red mini button deleteuser"><i class="remove user icon"></i>删除</button>
+                        	#end
+                        </td>
+                    </tr>
+                #end
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th colspan="9">
+                            <h5 class="ui dividing header " align="right" id="table-count">总条数：$!count 条</h5>
+
+                            <div class="ui right floated pagination menu" id="page" data-uk-pagination="{items:$count, itemsOnPage: 10, currentPage: $currPage}">
+                                
+                            </div>
+                            <div class="ui right labeled input" id="gopage">
+                                    <input type="text" placeholder="输入页数" onkeyup="this.value=this.value.replace(/\D/g,'')"  onafterpaste="this.value=this.value.replace(/\D/g,'')" maxlength="5" size="14" name="currPage">
+                                    <a class="ui tag label">跳至</a>
+                            </div>
+                        </th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="ui small modal" id="adduser">
+</div>
+
+<!-- 后端渲染数据 userRoleList -->
+<script type="text/javascript">
+</script>
+<!-- modal 删除确认 -->
+<script type="text/html" id="userDelete">
+    <div class="header">
+        错误信息：“{{errorCategory}}” 
+    </div>
+    <div class="content">
+        <div class="ui negative icon message">
+            <i class="remove icon"></i>
+            <div class="content">
+                <div class="header">确认删除 错误信息吗？ </div>
+            </div>
+        </div>
+    </div>
+    <div class="actions">
+        <div class="ui black deny button">
+            取消
+        </div>
+        <div class="ui right red labeled icon button submit-deleteuser">
+            删除
+            <i class="checkmark icon"></i>
+        </div>
+    </div>
+</script>
+
+<script type="text/javascript">
+	var g_id='';
+	//弹出框
+    var modal = $("#adduser");
+    var $modal = $("#adduser");
+    ;(function(){
+        //删除用户
+        $('.deleteuser').on('click', function(){
+            var userId = $(this).parents('tr').attr('data-id');
+            g_id = userId;
+            var errorCategory = $(this).parents('tr').find('td').eq(2).text();
+            var data = {};
+                data.errorCategory = errorCategory;
+            var _html = template('userDelete', data);
+            $modal.html(_html);
+            $modal.modal('show');
+        });
+
+        //调制页面
+        $('#gopage a').on('click', function(){
+            var page = $('#gopage').find('input[name=currPage]').val();
+            if( page ){
+                window.location.href="?currPage="+page;
+            }
+        });
+
+        //确认删除用户
+        modal.on('click', ".submit-deleteuser", function(){
+            var param = {};
+            param.id = g_id;
+            $.post('/back/deleteClientError.json', param, function(json){
+                if(json && json.status == "successful"){
+                    sublitsuccess(json.message);
+                }else{
+                    errormessage($('input,select'), json.message);
+                    submiterror();
+                }
+            }, 'json');
+        });
+        
+        //重新渲染弹窗页面
+        function rander(data, $modal){
+            data.userRoleList  = userRoleList;
+            console.log(data);
+            var _html = template('userTemp', data);
+            $modal.html(_html);
+            $modal.find('select.dropdown').dropdown();
+        }
+
+        //报错弹窗
+        function errormessage (field, message){
+            field.parents(".field").addClass('error');
+            field.parents('form').addClass('error');
+            field.parents('form').find('.ui.error.message').html('<ul class="list"><li>'+ message +'</li></ul>');
+        }
+
+        //清除报错
+        function clearerror(form){
+            form.removeClass('error');
+            form.find('.field').removeClass('error');
+            form.find('.ui.error.message').html('');
+        }
+
+        //正在提交
+        function submiting(){
+            var str = '<div class="ui icon message submiting"><i class="notched circle loading icon"></i><div class="content"><div class="header">稍候 </div><p>我们正在为您获取内容。</p></div></div>';
+            modal.find('.content form').hide();
+            modal.find('.content').append(str);
+            modal.find('.submit').hide();
+        }
+
+        //提交报错
+        function submiterror(){
+            modal.find('.content form').show();
+            modal.find('.submiting').remove();
+            modal.find('.submit').show();
+        }
+
+        //提交成功
+        function sublitsuccess(message){
+            modal.find('.actions').remove();
+            modal.find('.content').html('<div class="ui icon message"><i class="inbox icon"></i><div class="content"><div class="header">'+ message +' </div><p>页面即将重新加载!</p></div></div>');
+            setTimeout(function() {
+                window.location.reload();
+            }, 1000);
+        }
+    })();
+    require(['uikit!semantic-paginaction'], function(uikit){
+        $('[data-uk-pagination]').on('select.uk.pagination', function(e, pageIndex){
+            window.location.href="?currPage="+(pageIndex+1);
+        });
+    });
+</script>
+
+#parse('/backStageManage/public/BOTTOM.vm')
+

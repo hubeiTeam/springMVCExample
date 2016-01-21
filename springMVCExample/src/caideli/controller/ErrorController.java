@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
+import caideli.annotation.NoLogin;
 import caideli.base.BaseController;
 
 /**
@@ -30,7 +31,8 @@ public class ErrorController extends BaseController {
 	 * 2015年10月8日
 	 * @return
 	 */
-	@RequestMapping(value="/backBone/error/error.html",method=RequestMethod.GET)
+	@NoLogin
+	@RequestMapping(value="/backStageManage/error/error.html",method=RequestMethod.GET)
 	public ModelAndView fowardError(){
 		ModelAndView result=new ModelAndView();
 		return result;
@@ -41,7 +43,8 @@ public class ErrorController extends BaseController {
 	 * 2015年10月8日
 	 * @return
 	 */
-	@RequestMapping(value="/backBone/error/error404.html",method=RequestMethod.GET)
+	@NoLogin
+	@RequestMapping(value="/backStageMange/error/error404.html",method=RequestMethod.GET)
 	public ModelAndView fowardError404(){
 		ModelAndView result=new ModelAndView();
 		return result;

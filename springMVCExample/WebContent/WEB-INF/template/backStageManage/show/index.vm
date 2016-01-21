@@ -1,0 +1,163 @@
+#parse('/backStageManage/public/TOP.vm')
+<script type="text/javascript" src="/backStageManage/js/uitl.js"></script>
+<script type="text/javascript" src="/backStageManage/lib/layer/layer.js"></script>
+<div class="main">
+
+    <div class="ui">
+
+        <div class="ui pointing menu" id="index-menu">
+            <a class="green item" attr-url="/backStageManage/show/chart/regist.html">
+                <i class="home icon"></i> 注册相关
+            </a>
+            #if(${forwardPluralismStat})
+            <a class="red item" attr-url="/backStageManage/show/chart/pluralismStat.html">
+                <i class="mail icon"></i> 岗位相关
+            </a>
+            #end
+            #if(${forwardSystemStat})
+            <a class="blue item" attr-url="/backStageManage/show/chart/subsidyStat.html">
+                <i class="user icon"></i> 红包补贴
+            </a>
+            #end
+            #if(${forwardTradeStat})
+            <a class="orange item" attr-url="/backStageManage/show/chart/tradeStat.html">
+                <i class="home icon"></i> 财务统计
+            </a>
+            #end
+            <!-- <a class="orange item" attr-url="/backStageManage/show/chart/hotStat.html">
+                <i class="home icon"></i> 城市热点统计
+            </a> -->
+            
+            <div class="right menu">
+                <div class="ui dropdown item">
+                    <a class="ui red ribbon label">$!userAdmin.userRole</a>
+                    <i class="icon user"></i>
+                    $!userAdmin.userAccount
+                    <i class="icon dropdown"></i>
+                    <div class="menu">
+                        <a class="item" id="changepasswd"><i class="globe icon"></i> 修改密码</a>
+                        <a class="item" id="logout"><i class="settings icon"></i> 退出登录</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <iframe src="" frameborder="0" style="width:100%" height="700" style="border:none;" id="census" name="census">
+            
+        </iframe>
+    </div>
+    <script type="text/html" id="template">
+        <form class="ui form segment large" name="changepasswd" onsubmit="return false;">
+            <div class="field">
+                <label>原始密码</label>
+                <input placeholder="原始密码" type="password" name="oldPassword">
+            </div>
+            <div class="field">
+                <label>新密码</label>
+                <input placeholder="新密码" type="password" name="newPassword">
+            </div>
+            <div class="field">
+                <label>重复密码</label>
+                <input placeholder="重复密码" type="password" name="rePassword">
+            </div>
+            <div class="ui error message">
+                <p>每一个e-mail只允许注册一次</p>
+            </div>
+            <button class="ui fluid large teal submit button">确认修改密码</button>
+        </form>
+    </script>
+    <script type="text/javascript">
+
+        //iframe
+        var jQ_iframe = $('#census');
+        $('.ui.dropdown').dropdown();
+
+        $('#index-menu>a').on('click', function(){
+            // if( !getCookie('JSESSIONID') ){
+            //     window.location.reload();
+            //     return false;
+            // }
+            if( $(this).is('.active') ){
+                return false;
+            }
+            $('#index-menu>a').removeClass('active');
+            $(this).addClass('active');
+            var url = $(this).attr('attr-url') || "http://baidu.com";
+            jQ_iframe.attr('src', url);
+        });
+
+        //渲染iframe
+        var url = "/backStageManage/show/chart/regist.html";
+        var param = toQueryParams.call(window.location.href); //获取URL参数
+        if( param['url'] ){
+            url = param['url'];
+        }
+        jQ_iframe.attr('src', url);
+
+        //渲染菜单
+        $('#index-menu>a').removeClass('active');
+        $('#index-menu>a[attr-url="'+ url.split('?')[0] +'"]').addClass('active');
+
+        //退出登录
+        $('#logout').on('click', function(){
+            $.get('/back/doLoginOut.json', function(json){
+                window.location.reload();
+            });
+        });
+
+        //修改密码
+        $('#changepasswd').on('click', function(){
+
+            var _html = template('template', {});
+            layer.open({
+                type: 1,
+                title: false,
+                area: ['500px', '400px'],
+                shade: 0.2,
+                closeBtn: true,
+                shadeClose: true,
+                content: _html
+            });
+        });
+
+        $('body').on('submit', 'form[name=changepasswd]', function(){
+            var jQ_form = $('form[name=changepasswd]');
+            var jQ_oldPassword = jQ_form.find('input[name=oldPassword]');
+            var jQ_newPassword = jQ_form.find('input[name=newPassword]');
+            var jQ_rePassword = jQ_form.find('input[name=rePassword]');
+            if( jQ_newPassword.val() != jQ_rePassword.val() ){
+                jQ_form.addClass('error');
+                jQ_form.find('.message>p').text('重复密码错误');
+                return false;
+            }
+
+            if( jQ_newPassword.val() == '' ){
+                jQ_form.addClass('error');
+                jQ_form.find('.message>p').text('新密码不能为空');
+                return false;
+            }
+
+            var param = {oldPassword : jQ_oldPassword.val(), newPassword: jQ_newPassword.val() }
+            $.post('/back/updatePassword.json', param, function(json){
+                if( json && json.status == "successful" ){
+                    layer.msg('密码修改成功', {icon: 1});
+                    setTimeout(function() {
+                        window.location.href = "/back";
+                    }, 500);
+                }else{
+                    jQ_form.addClass('error');
+                    jQ_form.find('.message>p').text(json.message);
+                }
+            }, 'json')
+
+        });
+        
+        // $('body').on('click', function(){
+        //     isLogin();
+        // });
+
+        
+
+    </script>
+</div>
+#parse('/backStageManage/public/BOTTOM.vm')

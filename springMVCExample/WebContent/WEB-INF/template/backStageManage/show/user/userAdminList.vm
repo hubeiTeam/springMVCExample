@@ -1,0 +1,404 @@
+#parse('/backStageManage/public/TOP.vm')
+<div class="main">
+    <div class="page-center ui segment">
+		<div class="ui dividing header">
+          <i class="user icon"></i>
+          <div class="content">
+            用户列表
+          </div>
+        </div>
+        <div class="ui">
+            <table class="ui selectable celled table">
+                <thead>
+                    <tr>
+                        <th width="200">用户名称</th>
+                        <th>用户email</th>
+                        <th>用户角色</th>
+                        <th width="200">操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                #foreach($userAdmin in $datas)
+                	<tr data-id="$!{userAdmin.id}">
+                        <td>$!{userAdmin.userAccount}</td>
+                        <td>$!{userAdmin.userEmail}</td>
+                        <td>$!{userAdmin.userRole}</td>
+                        <td>
+                        #if(${updateUserAdmin})
+							<button class="ui circular grey mini button this_modal" data-type="2"><i class="edit icon"></i>修改</button>
+						#end
+                        #if(${deleteUserAdmin})
+                            <button class="ui circular red mini button deleteuser"><i class="remove user icon"></i>删除</button>
+
+                        #end
+                        </td>
+                    </tr>
+                #end
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th colspan="9">
+                            <h5 class="ui dividing header " align="right" id="table-count">总条数：$!count 条</h5>
+                            <div class="ui right floated pagination menu" id="page" data-uk-pagination="{items:$count, itemsOnPage: 10, currentPage: $currPage}">
+                                
+                            </div>
+                            <div class="ui right labeled input" id="gopage">
+                                    <input type="text" placeholder="输入页数" onkeyup="this.value=this.value.replace(/\D/g,'')"  onafterpaste="this.value=this.value.replace(/\D/g,'')" maxlength="5" size="14" name="currPage">
+                                    <a class="ui tag label">跳至</a>
+                            </div>
+                            #if(${insertUserAdmin})
+                            <div class="ui left primary labeled icon button this_modal" data-type="1">
+                                <i class="user icon"></i> 新增用户
+                            </div>
+                            #end
+                        </th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="ui small modal" id="adduser">
+</div>
+
+<!-- 后端渲染数据 userRoleList -->
+<script type="text/javascript">
+    var userRoleList = [];
+    #foreach($v in $userRoleList)
+        userRoleList[userRoleList.length] = {
+            id : "$!{v.id}",
+            roleName : "$!{v.roleName}"
+        }
+    #end
+</script>
+
+<!-- modal 弹出框 修改用户信息 新增用户 --> 
+<script type="text/html" id="userTemp">
+    {{if type == 1 || type == 2 }}
+        <div class="ui inverted dimmer">
+    {{else}}
+        <div class="ui active inverted dimmer">
+    {{/if}}
+        <div class="ui text loader">Loading</div>
+    </div>
+    <i class="close icon"></i>
+    <div class="header">
+    {{if type == "1"}}
+        新增用户
+    {{else if type == "2"}}
+        修改用户
+    {{else}}
+        USERNAME
+    {{/if}}
+    </div>
+    <div class="content">
+        {{ if res && res.data }}
+        <form class="ui large form" name="edituser">
+            <div class="two fields">
+                <div class="field">
+                    <label>用户名</label>
+                    <input type="hidden" value="{{res.data.roleId}}" name="roleId">
+                    <input type="text" placeholder="用户名" disabled="disabled" value="{{res.data.userAccount}}" name="userAccount">
+                </div>
+                <div class="field">
+                    <label>电子邮箱</label>
+                    <input type="text" placeholder="XXXX@XX.com" value="{{res.data.userEmail}}" name="userEmail">
+                </div>
+            </div>
+            <div class="two fields">
+                <div class="field">
+                    <label>用户密码</label>
+                    <input type="password" placeholder="密码" value="{{res.data.userPassword}}" name="userPassword">
+                </div>
+                <div class="field">
+                    <label>用户角色</label>
+                    <select class="ui dropdown" name="userRole">
+                        <option value="">请选择角色</option>
+                        {{each userRoleList as v}}
+                            {{if res.data.roleId == v.id}}
+                            <option value="{{v.id}}" selected = "selected">{{v.roleName}}</option>
+                            {{else}}
+                            <option value="{{v.id}}">{{v.roleName}}</option>
+                            {{/if}}
+                        {{/each}}
+                    </select>
+                </div>
+            </div>
+            <div class="ui error message"></div>
+        </form>
+        {{else}}
+        <form class="ui large form" name="newuser">
+            <div class="two fields">
+                <div class="field">
+                    <label>用户名</label>
+                    <input type="text" placeholder="用户名" value="" name="userAccount">
+                </div>
+                <div class="field">
+                    <label>电子邮箱</label>
+                    <input type="text" placeholder="XXXX@XX.com" name="userEmail">
+                </div>
+            </div>
+            <div class="two fields">
+                <div class="field">
+                    <label>用户密码</label>
+                    <input type="password" placeholder="密码" name="userPassword">
+                </div>
+                <div class="field">
+                    <label>用户角色</label>
+                    <select class="ui dropdown" name="userRole">
+                        <option value="">请选择角色</option>
+                        {{each userRoleList as v}}
+                            <option value="{{v.id}}">{{v.roleName}}</option>
+                        {{/each}}
+                    </select>
+                </div>
+            </div>
+            <div class="ui error message"></div>
+        </form>
+        {{/if}}
+    </div>
+    <div class="actions">
+        <div class="ui black deny button">
+            取消
+        </div>
+        <div class="ui right labeled icon button submit">
+            提交
+            <i class="checkmark icon"></i>
+        </div>
+    </div>
+</script>
+
+<!-- modal 删除确认 -->
+<script type="text/html" id="userDelete">
+    <div class="header">
+        用户名：“{{userName}}” 
+    </div>
+    <div class="content">
+        <div class="ui negative icon message">
+            <i class="remove icon"></i>
+            <div class="content">
+                <div class="header">确认删除此用户吗？ </div>
+                <p>删除用户此用户将不能登陆.</p>
+            </div>
+        </div>
+    </div>
+    <div class="actions">
+        <div class="ui black deny button">
+            取消
+        </div>
+        <div class="ui right red labeled icon button submit-deleteuser">
+            删除
+            <i class="checkmark icon"></i>
+        </div>
+    </div>
+</script>
+
+<script type="text/javascript">
+    ;(function(){
+
+        //当前的userId
+        var g_userId = '';
+
+        //弹出框
+        var modal = $("#adduser");
+        var $modal = $("#adduser");
+
+        //点击弹出新增和编辑框
+        $(".this_modal").on('click', function(){
+            var data = {};
+            var type = $(this).attr('data-type');
+
+            if( type == 1 ){
+                data.type = 1;
+            }
+
+            //首次渲染页面
+            rander(data, $modal);
+            $modal.modal('show');
+
+            //二次渲染弹窗
+            if( type == 2 ){
+
+                //获取参数
+                var param = {};
+                param.userId = $(this).parents('tr').attr('data-id');
+                g_userId = param.userId;
+
+                //获取数据
+                $.get('/back/findUserAdminById.json', param ,function( res ){
+                    //console.log(res);
+                    data.type = 2;
+                    data.res = res;
+                    rander(data, $modal);
+                }, 'json');
+            }
+        });
+
+        //删除用户
+        $('.deleteuser').on('click', function(){
+            var userId = $(this).parents('tr').attr('data-id');
+            g_userId = userId;
+            var userName = $(this).parents('tr').find('td').eq(0).text();
+            var data = {};
+                data.userName = userName;
+            var _html = template('userDelete', data);
+            $modal.html(_html);
+            $modal.modal('show');
+        });
+
+        //调制页面
+        $('#gopage a').on('click', function(){
+            var page = $('#gopage').find('input[name=currPage]').val();
+            if( page ){
+                window.location.href="?currPage="+page;
+            }
+        });
+
+        //提交表单
+        modal.on('click', ".submit", function(){
+            var form = $(this).parents('.modal').find("form");
+            if ( !validate(form) ){
+                return false;
+            }
+            submiting();
+            var formType = form.attr('name');
+            if( formType == "edituser" ){
+
+                var param = validate(form);
+                param.id = g_userId;
+                $.post('/back/updateUserAdmin.json', param, function(json){
+                    if(json && json.status == "successful"){
+                        sublitsuccess(json.message);
+                    }else{
+                        errormessage($('input,select'), json.message);
+                        submiterror();
+                    }
+                } ,"json");
+
+            }else if( formType == "newuser" ){
+
+                $.post('/back/insertUserAdmin.json', validate(form), function(json){
+                    if(json && json.status == "successful"){
+                        sublitsuccess(json.message);
+                    }else{
+                        errormessage($('input,select'), json.message);
+                        submiterror();
+                    }
+                } ,"json");
+
+            }
+        });
+
+        //确认删除用户
+        modal.on('click', ".submit-deleteuser", function(){
+            var param = {};
+            param.userId = g_userId;
+            $.post('/back/deleteUserAdmin.json', param, function(json){
+                if(json && json.status == "successful"){
+                    sublitsuccess(json.message);
+                }else{
+                    errormessage($('input,select'), json.message);
+                    submiterror();
+                }
+            }, 'json');
+        });
+        
+        //重新渲染弹窗页面
+        function rander(data, $modal){
+            data.userRoleList  = userRoleList;
+            console.log(data);
+            var _html = template('userTemp', data);
+            $modal.html(_html);
+            $modal.find('select.dropdown').dropdown();
+        }
+
+        //验证表单信息
+        function validate (form){
+            clearerror(form);
+            //返回值
+            var returnData = {};
+            var userAccount = form.find('input[name=userAccount]'),
+                userEmail = form.find('input[name=userEmail]'),
+                userPassword = form.find('input[name=userPassword]'),
+                userRole = form.find('select[name=userRole]');
+
+            //错误返回
+            if( !$.trim(userAccount.val()) ){
+                errormessage( userAccount, "用户名不能为空" );
+                return false;
+            }
+
+            if( !$.trim(userEmail.val()) ){
+                errormessage( userEmail, "邮箱不能为空" );
+                return false;
+            }
+
+            if( !$.trim(userPassword.val()) ){
+                errormessage( userPassword, "密码不能为空" );
+                return false;
+            }
+
+            if( !$.trim(userRole.val()) ){
+                errormessage( userRole, "用户角色不能为空" );
+                return false;
+            }
+
+            returnData = {
+                userAccount: userAccount.val(),
+                userEmail: userEmail.val(),
+                userPassword: userPassword.val(),
+                userRole: userRole.val()
+            };
+
+            return returnData;
+
+        }
+
+        //报错弹窗
+        function errormessage (field, message){
+            field.parents(".field").addClass('error');
+            field.parents('form').addClass('error');
+            field.parents('form').find('.ui.error.message').html('<ul class="list"><li>'+ message +'</li></ul>');
+        }
+
+        //清除报错
+        function clearerror(form){
+            form.removeClass('error');
+            form.find('.field').removeClass('error');
+            form.find('.ui.error.message').html('');
+        }
+
+        //正在提交
+        function submiting(){
+            var str = '<div class="ui icon message submiting"><i class="notched circle loading icon"></i><div class="content"><div class="header">稍候 </div><p>我们正在为您获取内容。</p></div></div>';
+            modal.find('.content form').hide();
+            modal.find('.content').append(str);
+            modal.find('.submit').hide();
+        }
+
+        //提交报错
+        function submiterror(){
+            modal.find('.content form').show();
+            modal.find('.submiting').remove();
+            modal.find('.submit').show();
+        }
+
+        //提交成功
+        function sublitsuccess(message){
+            modal.find('.actions').remove();
+            modal.find('.content').html('<div class="ui icon message"><i class="inbox icon"></i><div class="content"><div class="header">'+ message +' </div><p>页面即将重新加载!</p></div></div>');
+            setTimeout(function() {
+                window.location.reload();
+            }, 1000);
+        }
+    })();
+    require(['uikit!semantic-paginaction'], function(uikit){
+        $('[data-uk-pagination]').on('select.uk.pagination', function(e, pageIndex){
+            window.location.href="?currPage="+(pageIndex+1);
+        });
+    });
+</script>
+
+#parse('/backStageManage/public/BOTTOM.vm')
+

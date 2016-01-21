@@ -1,0 +1,469 @@
+#parse('/backStageManage/public/TOP.vm')
+<link rel="stylesheet" type="text/css" href="/backStageManage/ui/css/components/datepicker.css">
+<link rel="stylesheet" type="text/css" href="/backStageManage/ui/css/components/form-file.css">
+<script type="text/javascript" src="/backStageManage/js/uitl.js"></script>
+<script type="text/javascript" src="/backStageManage/js/system.js"></script>
+<script type="text/javascript" src="/backStageManage/lib/layPage/laypage.dev.js"></script>
+<script type="text/javascript" src="/backStageManage/js/searchPage.js"></script>
+<div class="main">
+
+    <!-- 头部搜索条件  -->
+    <div class="page-center ui segment">
+		<div class="ui dividing header">
+          <i class="user icon"></i>
+          <div class="content">
+            补贴日志列表
+          </div>
+          </div>
+         <form class="ui mini form" action="" method="get" name="search">
+            <div class="fields">
+            	<div class="field"> 
+                	<label>手机号</label>
+					<input name="phone" />
+				</div>
+				<div class="field"> 
+                	<label>报名编号</label>
+					<input name="signNo" />
+				</div>
+                <div class="field">
+                    <label>操作</label>
+                    <div class="ui buttons">
+                      <button class="ui button instagram" type="submit"> 查询 </button>
+                      <div class="or" data-text="或"></div>
+                      <button class="ui button" onclick="$('form').form('clear');">重置</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    
+    <!-- 按钮中心 -->
+    <div class="ui page-center page-list">
+        <div class="ui active inverted dimmer page-loading">
+            <div class="ui large text loader">加载中</div>
+        </div>
+        <div class="ui" style="min-height:400px;-webkit-transition:height .5s;">
+            <table class="ui selectable celled table">
+                <thead>
+                    <tr>
+                        <th>序列号</th>
+                        <th>手机号~姓名</th>
+						<th>报名编号~岗位</th>
+						<th>创建时间</th>
+						<th>描述</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 底部按钮 -->
+    <div class="page-center ui segment">      
+        <div id="page" class="ui">
+        </div>
+        <div class="clear"></div>
+    </div>
+</div>
+
+<!-- 弹出层 -->
+<div class="ui small modal" id="adduser">
+</div>
+
+<!-- modal 弹出框 修改用户信息 新增用户 --> 
+<script type="text/html" id="userTemp">
+    {{if type == 1 || type == 2 }}
+        <div class="ui inverted dimmer">
+    {{else}}
+        <div class="ui active inverted dimmer">
+    {{/if}}
+        <div class="ui text loader">Loading</div>
+    </div>
+    <i class="close icon"></i>
+    <div class="header">
+    {{if type == "1"}}
+        新增打款
+    {{else if type == "2"}}
+        修改打款
+    {{else}}
+        USERNAME
+    {{/if}}
+    </div>
+    <div class="content">
+    {{ if res && res.data }}
+        <form class="ui large form" name="edituser">
+            <div class="two fields">
+                <div class="field">
+                    <label>红包标题</label>
+                    <input type="text" placeholder="红包标题" value="{{res.merchantGift.giftTitle}}" name="giftTitle">
+                </div>
+                <div class="field">
+                    <label>红包金额</label>
+                    <input type="text" placeholder="红包金额" value="{{res.merchantGift.amount}}" name="amount">
+                </div>
+            </div>
+            <div class="two fields">
+                <div class="field">
+                    <label>最低金额要求</label>
+                    <input type="text" placeholder="最低金额要求" value="{{res.merchantGift.lowAmount}}" name="lowAmount">
+                </div>
+                <div class="field">
+                    <label>过期时间</label>
+                    <input type="text" placeholder="过期时间" data-uk-datepicker="{format:'YYYY-MM-DD'}" value="{{res.merchantGift.closingTime}}" name="closingTime">
+                </div>
+            </div>
+            <div class="two fields">
+                <div class="field">
+                    <label>红包状态</label>
+                    <select class="ui dropdown" name="status">
+                        <option value="">--请选择红包状态--</option>
+                        {{if res.merchantGift.status == "UNUSED"}}
+                            <option value="UNUSED" selected = "selected">未使用</option>
+                        {{else}}
+                            <option value="UNUSED">未使用</option>
+                        {{/if}}
+                        {{if res.merchantGift.status == "USED"}}
+                            <option value="USED" selected = "selected">已使用</option>
+                        {{else}}
+                            <option value="USED">已使用</option>
+                        {{/if}}
+                        {{if res.merchantGift.status == "INVALID"}}
+                            <option value="INVALID" selected = "selected">已过期</option>
+                        {{else}}
+                            <option value="INVALID">已过期</option>
+                        {{/if}}
+                    </select>
+                </div>
+            </div>
+            <div class="ui error message"></div>
+        </form>
+        {{else}}
+        <form class="ui large form" name="newuser">
+            <div class="two fields">
+                <div class="field">
+                    <label>用户手机号</label>
+                    <input type="text" placeholder="手机号" value="" name="phone">
+                </div>
+                <div class="field">
+                    <label>打款金额</label>
+                    <input type="text" placeholder="金额" value="" name="money">
+                </div>
+            </div>
+            <div class="two fields">
+                <div class="field">
+                    <label>打款原因</label>
+					<textarea name="reason" col="20" row="30" placeholder="打款原因"></textarea>
+                </div>
+            </div>
+            <div class="ui error message"></div>
+        </form>
+        {{/if}}
+    </div>
+    <div class="actions">
+        <div class="ui black deny button">
+            取消
+        </div>
+        <div class="ui right labeled icon button submit">
+            提交
+            <i class="checkmark icon"></i>
+        </div>
+    </div>
+</script>
+
+<!-- modal 删除确认 -->
+<script type="text/html" id="userDelete">
+    <div class="header">
+        手机号：“{{phone}}”  
+    </div>
+    <div class="content">
+        <div class="ui negative icon message">
+            <i class="remove icon"></i>
+            <div class="content">
+                <div class="header">确认删除此条消息吗？</div>
+            </div>
+        </div>
+    </div>
+    <div class="actions">
+        <div class="ui black deny button">
+            取消
+        </div>
+        <div class="ui right red labeled icon button submit-deleteuser">
+            删除
+            <i class="checkmark icon"></i>
+        </div>
+    </div>
+</div>
+</script>
+
+
+<script type="text/html" id="list" >
+
+    {{each datas as v}}
+        <tr data-id="{{v.id}}">
+            <td>{{v.tableTitle}}</td>
+            <td>
+            {{if v.userName}}
+				<a href="/backStageManage/show/basic/userPeopleInfo.html?userId={{v.userId}}" target="_blank">	
+            	{{v.phone}}~{{v.userName}}
+				</a>
+            {{else}}
+             	{{v.phone}}
+            {{/if}}
+            </td>
+            <td>
+            {{if v.postTitle}}
+				<a href="/backStageManage/show/basic/postInfo.html?id={{v.postId}}" target="_blank">
+            	{{v.signNo}}~{{v.postTitle}}
+				</a>
+            {{else}}
+             	{{v.signNo}}
+            {{/if}}
+            </td>
+            <td>{{v.createTime}}</td>
+            <td>{{v.desc}}</td>
+        </tr>
+    {{/each}}
+</script>
+
+<script type="text/javascript">
+    ;(function(){
+        thisLaypage({
+            url: '/back/extcitationLogList.json',
+            resolve: function(res){
+                for( var i=0; i<res.datas.length; i++ ){
+                    
+                    res.datas[i].createTime = (new Date(res.datas[i].createTime)).Format('yyyy-MM-dd hh:mm');
+            
+                }
+                console.log(res);
+                return res;
+            }
+        });
+    })();
+    ;(function(){
+        //当前的id
+        var g_id = '';
+
+        //弹出框
+        var modal = $("#adduser");
+        var $modal = $("#adduser");
+        var main = $('.main');
+
+        //点击弹出新增和编辑框
+        main.on('click', ".this_modal",function(){
+            var data = {};
+            var type = $(this).attr('data-type');
+
+            if( type == 1 ){
+                data.type = 1;
+            }
+
+            //首次渲染页面
+            rander(data, $modal);
+            $modal.modal('show');
+
+            //二次渲染弹窗
+            if( type == 2 ){
+                //获取参数
+                var param = {};
+                param.id = $(this).parents('tr').attr('data-id');
+                g_id = param.id;
+                //获取数据
+                $.get('/back/findMerchantGiftById.json', param ,function( res ){
+                    data.type = 2;
+                    data.res = res;
+                    rander(data, $modal);
+                }, 'json');
+            }
+        });
+
+        //删除用户
+        main.on('click', ".deleteuser",function(){
+            var id = $(this).parents('tr').attr('data-id');
+            g_id = id;
+            var phone = $(this).parents('tr').find('td').eq(1).text();
+            
+            var data = {};
+                data.phone = phone;
+            var _html = template('userDelete', data);
+            $modal.html(_html);
+            $modal.modal('show');
+        });
+
+        //提交表单
+        modal.on('click', ".submit", function(){
+            var form = $(this).parents('.modal').find("form");
+            var param=validate(form, form.attr("name"));
+            if ( !param ){
+                return false;
+            }
+            submiting();
+            var formType = form.attr('name');
+            if( formType == "edituser" ){
+            //alert(formType);
+                //var param = validate(form,formType);
+                param.id = g_id;
+                $.post('/back/updateMerchantGift.json', param, function(json){
+                    if(json && json.status == "successful"){
+                        sublitsuccess(json.message);
+                    }else{
+                        errormessage($('input,select'), json.message);
+                        submiterror();
+                    }
+                } ,"json");
+
+            }else if( formType == "newuser" ){
+                var param = validate(form,formType);
+                $.post('/back/insertPayLog.json', param, function(json){
+                    if(json && json.status == "successful"){
+                        sublitsuccess(json.message);
+                    }else{
+                        errormessage($('input,select'), json.message);
+                        submiterror();
+                    }
+                } ,"json");
+
+            }
+        });
+
+                //确认删除用户
+        modal.on('click', ".submit-deleteuser", function(){
+            var param = {};
+            param.id = g_id;
+            $.post('/back/deletePayLog.json', param, function(json){
+                if(json && json.status == "successful"){
+                    sublitsuccess(json.message);
+                }else{
+                    errormessage($('input,select'), json.message);
+                    submiterror();
+                }
+            }, 'json');
+        });
+        
+        //重新渲染弹窗页面
+        function rander(data, $modal){
+            console.log(data);
+            
+            var _html = template('userTemp', data);
+            $modal.html(_html);
+            $modal.find('select.dropdown').dropdown();
+        }
+
+        //验证表单信息
+        function validate (form){
+            clearerror(form);
+            //返回值
+            var returnData = {};
+            var phone = form.find('input[name=phone]'),
+           		money = form.find('input[name=money]'),
+           		reason = form.find('textarea[name=reason]');
+            //错误返回
+             if( !$.trim(phone.val()) ){
+                errormessage( phone, "用户名不能为空" );
+                return false;
+            }
+
+            if( !$.trim(money.val()) ){
+                errormessage( money, "邮箱不能为空" );
+                return false;
+            }
+
+            if( !$.trim(reason.val()) ){
+                errormessage( reason, "打款原因不能为空" );
+                return false;
+            }
+            returnData = {
+            		phone: phone.val(),
+            		money: money.val(),
+            		reason: reason.val()
+            };
+            return returnData;
+
+        }
+
+        //报错弹窗
+        function errormessage (field, message){
+            field.parents(".field").addClass('error');
+            field.parents('form').addClass('error');
+            field.parents('form').find('.ui.error.message').html('<ul class="list"><li>'+ message +'</li></ul>');
+        }
+
+        //清除报错
+        function clearerror(form){
+            form.removeClass('error');
+            form.find('.field').removeClass('error');
+            form.find('.ui.error.message').html('');
+        }
+
+        //正在提交
+        function submiting(){
+            var str = '<div class="ui icon message submiting"><i class="notched circle loading icon"></i><div class="content"><div class="header">稍候 </div><p>我们正在为您获取内容。</p></div></div>';
+            modal.find('.content form').hide();
+            modal.find('.content').append(str);
+            modal.find('.submit').hide();
+        }
+
+        //提交报错
+        function submiterror(){
+            modal.find('.content form').show();
+            modal.find('.submiting').remove();
+            modal.find('.submit').show();
+        }
+
+        //提交成功
+        function sublitsuccess(message){
+            modal.find('.actions').remove();
+            modal.find('.content').html('<div class="ui icon message"><i class="inbox icon"></i><div class="content"><div class="header">'+ message +' </div><p>页面即将重新加载!</p></div></div>');
+            setTimeout(function() {
+                window.location.reload();
+            }, 1000);
+        }
+
+
+        require(['uikit!semantic-paginaction,upload,datepicker'], function(uikit){
+
+            var progressbar = $("#progressbar"),
+            bar         = progressbar.find('.uk-progress-bar'),
+            settings    = {
+
+                action: '/back/uploadExcelMerchantGift.json', // 上传路径 url
+
+                allow : '*.(xls|xlsx)', // 只允许上传图片
+
+                loadstart: function() {
+                    bar.css("width", "0%").text("0%");
+                    progressbar.removeClass("uk-hidden");
+                },
+
+                progress: function(percent) {
+                    percent = Math.ceil(percent);
+                    bar.css("width", percent+"%").text(percent+"%");
+                },
+
+                allcomplete: function(response) {
+                    console.log(response);
+
+                    // bar.css("width", "100%").text("100%");
+
+                    // setTimeout(function(){
+                    //     progressbar.addClass("uk-hidden");
+                    //     layer.msg("上传成功", {icon: 1});
+                    // }, 500);
+
+                    // setTimeout(function(){
+                    //     window.location.reload();
+                    // }, 1000);
+                    
+                },
+                param: 'fileData'
+            };
+
+            var select = UIkit.uploadSelect($("#upload-select"), settings),
+                drop   = UIkit.uploadDrop($("#upload-drop"), settings);
+        });
+    })();
+</script>
+
+#parse('/backStageManage/public/BOTTOM.vm')
+

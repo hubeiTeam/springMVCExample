@@ -1,0 +1,295 @@
+#parse('/backStageManage/public/TOP.vm')
+<link rel="stylesheet" type="text/css" href="/backStageManage/ui/css/components/datepicker.css">
+<link rel="stylesheet" type="text/css" href="/backStageManage/ui/css/components/form-file.css">
+<script type="text/javascript" src="/backStageManage/js/uitl.js"></script>
+<script type="text/javascript" src="/backStageManage/js/system.js"></script>
+<script type="text/javascript" src="/backStageManage/lib/layPage/laypage.dev.js"></script>
+<script type="text/javascript" src="/backStageManage/js/searchPage.js"></script>
+<script type="text/javascript" src="/backStageManage/js/uitl.js"></script>
+<div class="main">
+    <!-- 头部搜索条件  -->
+    <div class="page-center ui segment">
+		<div class="ui dividing header">
+          <i class="user icon"></i>
+          <div class="content">
+            提现列表
+          </div>
+          </div>
+         <form class="ui mini form" action="" method="get" name="search">
+            <div class="fields">
+            	<div class="field">
+            	<label>状态</label>
+            	<select class="ui dropdown" name="status">
+            			#if($!status=="0")
+                    	<option value="0" selected="selected">所有</option>
+                    	#else
+                    	<option value="0">所有</option>
+                    	#end
+                    	#if($!status=="INIT")
+                    	<option value="INIT" selected="selected">未提取</option>
+                    	#else
+                    	<option value="INIT">未使用</option>
+                    	#end
+                    	#if($!status=="FAIL")
+                    	<option value="FAIL" selected="selected">提现失败</option>
+                    	#else
+                    	<option value="FAIL">提现失败</option>
+                    	#end
+                    	#if($!status=="COMPLETE")
+                    	<option value="COMPLETE" selected="selected">提现成功</option>
+                    	#else
+                    	<option value="COMPLETE">提现成功</option>
+                    	#end
+                    	#if($!status=="RETREAT")
+                    	<option value="RETREAT" selected="selected">提取驳回</option>
+                    	#else
+                    	<option value="RETREAT">提取驳回</option>
+                    	#end
+                    </select>
+                </div>
+                <div class="field">
+                    <label>支付宝账号</label>
+                    #if($!alipayAccount)
+                    <input type="text" placeholder="支持模糊查询" value="$!{alipayAccount}" name="alipayAccount">
+                    #else
+                    <input type="text" placeholder="支持模糊查询" name="alipayAccount">
+                    #end
+                </div>
+                <div class="field">
+                    <label>账户名称</label>
+                    #if($!alipayRealName)
+                    <input type="text" placeholder="支持模糊查询" value="$!{alipayRealName}" name="alipayRealName">
+                    #else
+                    <input type="text" placeholder="支持模糊查询" name="alipayRealName">
+                    #end
+                </div>
+                <div class="field">
+                    <label>操作</label>
+                    <div class="ui buttons">
+                      <button class="ui button instagram" type="submit"> 查询 </button>
+                      <div class="or" data-text="或"></div>
+                      <button class="ui button" onclick="$('form').form('clear');">重置</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+     <!-- 按钮中心 -->
+    <div class="ui page-center page-list">
+        <div class="ui active inverted dimmer page-loading">
+            <div class="ui large text loader">加载中</div>
+        </div>
+        <div class="ui" style="min-height:400px;-webkit-transition:height .5s;">
+            <table class="ui selectable celled table">
+                <thead>
+                    <tr>
+                    	<th>序列号</th>
+                        <th>流水号</th>
+						<th>支付宝账号</th>
+						<th>账户姓名</th>
+						<th>金额</th>
+						<th>状态</th>
+						<th>提现描述</th>
+						<th>创建时间</th>
+						<th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+     <!-- 底部按钮 -->
+    <div class="page-center ui segment">
+    	#if(${extractAmount2Alipay})
+        <div class="ui left primary labeled icon button this_modal" data-type="1">
+             <i class="user icon"></i> 提现
+         </div>
+        #end
+        <div id="page" class="ui">
+        </div>
+        <div class="clear"></div>
+    </div>
+ </div>   
+
+<script type="text/html" id="list" >
+    {{each datas as v}}
+        <tr data-id="{{v.orderId}}">
+            <td>{{v.tableTitle}}</td>
+            <td>{{v.orderId}}</td>
+            <td>{{v.alipayAccount}}</td>
+            <td>
+
+            {{if v.super == 7 }}
+                <a href="/backStageManage/show/basic/userPeopleInfo.html?userId={{v.userId}}" target="_blank">{{v.alipayRealName}}（个人）</a>
+            {{else}}
+                <a href="/backStageManage/show/basic/userMerchantInfo.html?merchantId={{v.userId}}" target="_blank">{{v.alipayRealName}}（企业）</a>
+            {{/if}}
+
+            			</td>
+            <td>{{v.amount}}</td>
+            <td>{{v.status.name}}</td>
+            <td>{{v.desca}}</td>
+            <td>{{v.createTime}}</td>
+            <td>        
+				#if(${updateExtracatStatus})
+				 {{if v.status.code=='FAIL' || v.status.code=='INIT'}}                
+       				<button class="ui circular red mini button returnExtract"><i class="remove user icon"></i>提现退回</button>
+                 {{else}}
+                                               无操作
+                 {{/if}}
+				#end
+            </td>
+        </tr>
+    {{/each}}
+</script>   
+<script type="text/javascript">
+    ;(function(){
+        thisLaypage({
+            url: '/back/queryExtractAmountListByPage.json',
+            resolve: function(res){
+                for( var i=0; i<res.datas.length; i++ ){
+                    res.datas[i].createTime = (new Date(res.datas[i].createTime)).Format('yyyy-MM-dd');
+                    res.datas[i].status = getExtractAmountStatus(res.datas[i].status);
+                    res.datas[i].super = res.datas[i].userId.toString().substring(0,1);
+                }
+                console.log(res);
+                return res;
+            }
+        });
+    })();
+    </script>
+<div class="ui small modal" id="adduser"></div>
+<!-- modal 删除确认 -->
+<script type="text/html" id="extractReturn">
+    <div class="header">
+        支付宝：“{{alipayAccount}}” 
+    </div>
+    <div class="content">
+        <div class="ui negative icon message">
+            <i class="remove icon"></i>
+            <div class="content">
+                <div class="header">确认将此提现驳回吗？ </div>
+            </div>
+        </div>
+    </div>
+    <div class="actions">
+        <div class="ui black deny button">
+            取消
+        </div>
+        <div class="ui right red labeled icon button submit-returnExtract">
+            确认
+            <i class="checkmark icon"></i>
+        </div>
+    </div>
+</script>
+
+<script type="text/javascript">
+    //注册template公用方法
+    template.helper('substring', function(string, n1, n2){
+        return (string.toString()).substring(n1, n2);
+    });
+
+    ;(function(){
+
+        //当前的orderId
+        var g_orderId = '';
+
+        //弹出框
+        var modal = $("#adduser");
+        var $modal = $("#adduser");
+		var main=$(".main");
+        //删除用户
+        main.on('click', '.returnExtract',function(){
+            var orderId = $(this).parents('tr').attr('data-id');
+            g_orderId = orderId;
+            var alipayAccount = $(this).parents('tr').find('td').eq(2).text();
+            var data = {};
+                data.alipayAccount = alipayAccount;
+            var _html = template('extractReturn', data);
+            $modal.html(_html);
+            $modal.modal('show');
+        });
+        
+        $('.this_modal').on('click',function(){
+        	$.StandardPost('/control/extractAmount2Alipay.html',{}, "blank");
+        });
+
+        //调制页面
+        $('#gopage a').on('click', function(){
+            var page = $('#gopage').find('input[name=currPage]').val();
+            if( page ){
+                window.location.href="?currPage="+page;
+            }
+        });
+
+        //确认删除用户
+        modal.on('click', ".submit-returnExtract", function(){
+            var param = {};
+            param.orderId = g_orderId;
+            $.post('/control/updateExtracatStatus.json', param, function(json){
+                if(json && json.status == "successful"){
+                    sublitsuccess(json.message);
+                }else{
+                    errormessage($('input,select'), json.message);
+                    submiterror();
+                }
+            }, 'json');
+        });
+        
+        //重新渲染弹窗页面
+        function rander(data, $modal){
+            data.userRoleList  = userRoleList;
+            console.log(data);
+            var _html = template('userTemp', data);
+            $modal.html(_html);
+            $modal.find('select.dropdown').dropdown();
+        }
+
+        //报错弹窗
+        function errormessage (field, message){
+            field.parents(".field").addClass('error');
+            field.parents('form').addClass('error');
+            field.parents('form').find('.ui.error.message').html('<ul class="list"><li>'+ message +'</li></ul>');
+        }
+
+        //清除报错
+        function clearerror(form){
+            form.removeClass('error');
+            form.find('.field').removeClass('error');
+            form.find('.ui.error.message').html('');
+        }
+
+        //正在提交
+        function submiting(){
+            var str = '<div class="ui icon message submiting"><i class="notched circle loading icon"></i><div class="content"><div class="header">稍候 </div><p>我们正在为您获取内容。</p></div></div>';
+            modal.find('.content form').hide();
+            modal.find('.content').append(str);
+            modal.find('.submit').hide();
+        }
+
+        //提交报错
+        function submiterror(){
+            modal.find('.content form').show();
+            modal.find('.submiting').remove();
+            modal.find('.submit').show();
+        }
+
+        //提交成功
+        function sublitsuccess(message){
+            modal.find('.actions').remove();
+            modal.find('.content').html('<div class="ui icon message"><i class="inbox icon"></i><div class="content"><div class="header">'+ message +' </div><p>页面即将重新加载!</p></div></div>');
+            setTimeout(function() {
+                window.location.reload();
+            }, 1000);
+        }
+    })();
+    require(['uikit!semantic-paginaction'], function(uikit){
+        $('[data-uk-pagination]').on('select.uk.pagination', function(e, pageIndex){
+            window.location.href="?currPage="+(pageIndex+1);
+        });
+    });
+</script>
+
+#parse('/backStageManage/public/BOTTOM.vm')
+

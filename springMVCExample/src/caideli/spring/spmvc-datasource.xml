@@ -37,7 +37,7 @@
     <value>root</value>  
   </property>  
   <property name="password">  
-    <value>123456</value>  
+    <value>123</value>  
   </property>  
   <property name="url">  
     <value>jdbc:mysql://localhost:3306/test</value>  

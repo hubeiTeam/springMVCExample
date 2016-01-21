@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="cn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <title>商户管理后台</title>
+    #parse('/backStageManage/public/inc/baseres.vm')
+</head>
+<body>
+	<div class="spabg">
+		<div class="ui spacontainer">
+			<div class="ui segment">
+				<h3 class="ui header">
+					<i class="settings icon"></i>
+					<div class="content">用户个人信息 </div>
+				</h3>
+			</div>
+
+			<form class="form-horizontal" role="form">
+				<table class="ui selectable celled table">
+					<tr>
+						<td colspan="4" align="center"><b>基础信息</b></td>
+					</tr>
+					<tr>
+						<td width="10%">用户昵称：</td>
+						<td>
+							<span>$!{people.nickname}</span>
+						</td>
+						<td>用户头像：</td>
+						<td rowspan="4"><a href="$!{domain}$!{people.headPicture}"><img width="100px" height="100px;" src="$!{domain}$!{people.headPicture}"/></a></td>
+					</tr>
+					<tr>
+						<td>用户手机号：</td>
+						<td colspan="2">
+							<span>$!{people.phone}</span>
+						</td>
+					</tr>
+					<tr>
+						<td>性别：</td>
+						<td colspan="2">
+							<span>
+								#if(!$people.userPersonalDto || !$people.userPersonalDto.sex)
+									无
+								#else
+									#if($people.userPersonalDto.sex == 'M')
+										男
+									#elseif($people.userPersonalDto.sex == 'W')
+										女
+									#end
+								#end
+							</span>
+						</td>
+					</tr>
+					<tr>
+						<td width="10%">真实姓名：</td>
+						<td colspan="2">
+							<span>$!{people.userPersonalDto.realName}</span>
+						</td>
+					</tr>
+					<tr>
+						<td>年龄：</td>
+						<td>$!dateUtils.dateDiffYear($!{people.userPersonalDto.birthday},$dateUtils.createDate())</td>
+						<td>生日：</td>
+						<td>$!dateUtils.format($!{people.userPersonalDto.birthday})</td>
+					</tr>
+					<tr>
+						<td>身份证号：</td>
+						<td>$!{people.userPersonalDto.numberId}</td>
+						<td>评分：</td>
+						<td>
+							<span>
+								$!rating
+							</span>
+						</td>
+					</tr>
+					<tr>
+						<td>学校：</td>
+						<td>
+							<span><b>$!{people.schoolName}</b></span>
+						</td>
+						<td>专业：</td>
+						<td><span>$!{people.userPersonalDto.specName}</span></td>
+					</tr>
+					<tr>
+						<td>身高：</td>
+						<td>
+							<span>
+								#if($!{people.userPersonalDto.bodyHeight})
+									$!{people.userPersonalDto.bodyHeight} cm
+								#else
+									无
+								#end
+							</span>
+						</td>
+						<td>体重：</td>
+						<td>
+							<span>
+								#if($!{people.userPersonalDto.bodyWeight})
+									$!{people.userPersonalDto.bodyWeight} kg
+								#else
+									无
+								#end
+							</span>
+						</td>
+					</tr>
+					<tr>
+						<td>个人签名：</td>
+						<td colspan="3">$!{people.userPersonalDto.summary}</td>
+					</tr>
+					<tr>
+						<td colspan="4" align="center"><b>账户信息</b></td>
+					</tr>
+					<tr>
+						<td>支付宝账号：</td>
+						<td>
+							#if($people.userAccountDto.alipayAccount)
+								$people.userAccountDto.alipayAccount
+							#else
+								未绑定
+							#end
+						</td>
+						<td>支付宝姓名：</td>
+						<td>
+							#if($people.userAccountDto.alipayName)
+								$people.userAccountDto.alipayName
+							#else
+								未绑定
+							#end
+						</td>
+					</tr>
+					<tr>
+						<td>账户余额：</td>
+						<td colspan="3">$arithUtils.formatAmount($!people.userAccountDto.assetsAmount) 元</td>
+					</tr>
+				</table>
+			</form>
+
+            <div class="ui tiny header">岗位报名信息</div>
+			#if($signs)
+				<table id="signInfoTables" class="ui selectable celled table">
+					<thead>
+						<th>序号</th>
+						<th>发布公司</th>
+						<th>报名编号</td>
+						<th>岗位标题</th>
+						<th>工作日期</th>
+						<th>报名时间</th>
+						<th>保单单号</th>
+						<th>岗位状态</th>
+						<th>实际工资</th>
+						<th>岗位工资</th>
+						<th>发工资时间</th>
+						<th>评分</th>
+					</thead>
+				#set($validPeople=0)
+				#set($refuse=0)
+				#set($noPromise=0)
+				#set($avgWage = 0)
+				#set($fullWageCount = 0)
+				#foreach($sign in $!signs)
+					<tr>
+						<td>$velocityCount</td>
+						<td><a href="/backStageManage/show/basic/userMerchantInfo.html?merchantId=$sign.pluralismPost.publishUserId" target="_blank">$sign.pluralismPost.companyName</a></td>
+						<td>$sign.signNo</td>
+						<td><a href="/backStageManage/show/basic/postInfo.html?id=$sign.postId" target="_blank">$sign.pluralismPost.title</a></td>
+						<td>$dateUtils.format($sign.pluralismPost.workDate)</td>
+						<td>$dateUtils.format($sign.createTime,'yyyy-MM-dd HH:mm')</td>
+						<td>
+							#if($sign.insureId)
+								#if($stringUtils.equals($sign.insureId,'INSURE_CALCEL'))
+									<font color="red">已取消</font>
+								#else
+									$sign.insureId
+								#end
+							#else
+								无
+							#end
+						</td>
+						<td>
+							#if($stringUtils.equals($sign.status,'SIGN_UP'))
+								待录取
+							#elseif($stringUtils.equals($sign.status,'ENROLL'))
+								<font color="green">已录取</font>
+							#elseif($stringUtils.equals($sign.status,'REFUSE'))
+								<font color="red">已拒绝</font>
+								#set($refuse=$refuse+1)
+							#elseif($stringUtils.equals($sign.status,'NO_PROMISE'))
+								<font color="red">已爽约</font>
+								#set($noPromise=$noPromise+1)
+							#elseif($stringUtils.equals($sign.status,'HOUR_24'))
+								<font color="green">进入24小时</font>
+							#elseif($stringUtils.equals($sign.status,'WORK_ING'))
+								<font color="green">工作中</font>
+							#elseif($stringUtils.equals($sign.status,'WORK_COMPLETE'))
+								<font color="green">未领工资</font>
+							#elseif($stringUtils.equals($sign.status,'ASK'))
+								<font color="green">领取工资中</font>
+							#elseif($stringUtils.equals($sign.status,'REFUSE_ASK_WAGE'))
+								<font color="green">商户拒绝发工资</font>
+							#elseif($stringUtils.equals($sign.status,'SIGN_COMPLETE'))
+								<font color="green"><b>已领工资</b></font>
+								#set($validPeople=$validPeople+1)
+							#elseif($stringUtils.equals($sign.status,'DEMENSION'))
+								<font color="red">维权</font>
+							#elseif($stringUtils.equals($sign.status,'MERCHANT_NO_PROMISE'))
+								<font color="green">商户爽约</font>
+							#end
+						</td>
+						<td>
+							#if($sign.actualWage == $sign.pluralismPost.wage && $stringUtils.equals($sign.status,'SIGN_COMPLETE'))
+								#set($avgWage = $avgWage + $sign.actualWage)
+								#set($fullWageCount = $fullWageCount + 1)
+							#end
+							$arithUtils.formatAmount($sign.actualWage)
+						</td>
+						<td>
+							$sign.pluralismPost.wage
+						</td>
+						<td>
+							#if($stringUtils.equals($sign.status,'SIGN_COMPLETE') || $stringUtils.equals($sign.status,'MERCHANT_NO_PROMISE'))
+								$dateUtils.format($sign.modifyTime,'yyyy-MM-dd HH:mm:ss')
+							#end
+						</td>
+						<td>
+							$!sign.rating
+						</td>
+					</tr>
+				#end
+					#set($avgWage = $avgWage / $fullWageCount)
+					<tr>
+						<td colspan="12" align="right">满薪平均薪资：#if($!avgWage > 0) $arithUtils.formatAmount($!avgWage) #else $!avgWage #end ， 满薪次数：$fullWageCount ， 工作完成：${validPeople} 次，爽约：${noPromise} 次，被拒绝：${refuse} 次</td>
+					</tr>
+				</table>
+			#else
+				<table id="signInfoTables" width="80%" class="ui selectable celled table">
+					<thead>
+						<th>报名编号</th>
+						<th>岗位标题</th>
+						<th>报名时间</th>
+						<th>保单单号</th>
+						<th>岗位状态</th>
+						<th>实际工资</th>
+						<th>岗位工资</th>
+						<th>发工资时间</th>
+					<thead>
+					<tr><td colspan="8">无</td></tr>
+				</table>
+			#end
+
+			
+            <div class="ui tiny header">收款信息</div>
+			#if($incomeLogs)
+				<table id="signInfoTables" width="80%" class="ui selectable celled table">
+	    			<thead>
+	    				<th>收款金额</th>
+	    				<th>收款原因</th>
+						<th>到账时间</th>
+	    			</thead>
+					#foreach($incomeLog in $incomeLogs)
+						<tr>
+							<td>$arithUtils.formatAmount($incomeLog.amount)</td>
+							<td>$incomeLog.reason</td>
+							<td>$!dateUtils.format($!incomeLog.createTime,'yyyy-MM-dd HH:mm:ss')</td>
+						</tr>
+					#end
+				</table>
+			#end
+		</div>
+	</div>
+	</body>
+</html>

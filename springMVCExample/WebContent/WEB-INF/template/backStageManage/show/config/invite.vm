@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="zh">
+	<head>
+		<meta charset="utf-8" />
+		<title>没事找事后台管理</title>
+		#parse('/control/common/common-head.vm')
+		<style>
+			.table-form th{width:10%;text-align:right;}
+		</style>
+	</head>
+
+	<body>
+		<!-- 左侧导航结束 -->
+		<div class="breadcrumbs" id="breadcrumbs">
+			<script type="text/javascript">
+				try{ace.settings.check('breadcrumbs' , 'fixed')}catch(e){}
+			</script>
+
+			<ul class="breadcrumb">
+				<li>
+					<i class="icon-home home-icon"></i>
+					<a href="javascript:;">首页</a>
+				</li>
+				<li>
+					<a href="/control/userManager/configList.html">配置列表</a>
+				</li>
+			</ul><!-- .breadcrumb -->
+
+			<div class="nav-search" id="nav-search">
+			</div><!-- #nav-search -->
+		</div>
+
+		<div class="page-content">
+			<div class="page-header">
+				<h1 class="image-h1">
+					<a href="/control/userManager/configList.html">配置列表</a>
+					<small>
+						<i class="icon-double-angle-right"></i>
+						邀请补贴配置
+					</small>
+				</h1>
+		</div><!-- /.page-header -->
+
+		<div class="row">
+			<div class="col-xs-12">
+			<!-- PAGE CONTENT BEGINS -->
+				<form id="dataForm" class="form-horizontal" role="form">
+					<div class="form-group">
+						<label class="col-sm-3 control-label no-padding-right" for="form-field-1">被邀请者奖励金额: </label>
+						<div class="col-sm-9">
+							<input type="text" id="lordSubsidyAmount" name="lordSubsidyAmount" value="$!inviteSubsidyConfig.lordSubsidyAmount" />
+						</div>
+					</div>
+					
+					<div class="space-4"></div>
+					
+					<div class="form-group">
+						<label class="col-sm-3 control-label no-padding-right" for="form-field-1">邀请者奖励金额: </label>
+						<div class="col-sm-9">
+							<input type="text" id="fromSubsidyAmount" name="fromSubsidyAmount" value="$!inviteSubsidyConfig.fromSubsidyAmount" />
+						</div>
+					</div>
+					
+					<div class="space-4"></div>
+					
+					<div class="form-group">
+						<label class="col-sm-3 control-label no-padding-right" for="form-field-1">完成最低岗位金额: </label>
+						<div class="col-sm-9">
+							<input type="text" id="completeMinWagePost" name="completeMinWagePost" value="$!inviteSubsidyConfig.completeMinWagePost" />
+						</div>
+					</div>
+					
+					<div class="space-4"></div>
+					
+					<div class="form-group">
+						<label class="col-sm-3 control-label no-padding-right" for="form-field-1">邀请补贴开关: </label>
+						<div class="col-sm-9">
+							<input name="isSwitch" value="true" type="radio" #if($!inviteSubsidyConfig.powerSwitch) checked #end /> 开启
+							<input name="isSwitch" value="false" type="radio" #if(!$!inviteSubsidyConfig.powerSwitch) checked #end /> 关闭
+						</div>
+					</div>
+					
+					<div class="space-4"></div>
+					<div class="clearfix form-actions">
+						<div class="col-md-offset-3 col-md-9">
+							<button class="btn btn-info" type="button" id="submit">
+								<i class="icon-ok bigger-110"></i>
+								提交
+							</button>
+							&nbsp; &nbsp; &nbsp;
+							<button class="btn" type="reset">
+								<i class="icon-undo bigger-110"></i>
+								重置
+							</button>
+						</div>
+					</div>
+				</form>
+			</div><!-- /.col -->
+		</div><!-- /.row -->
+	</body>
+</html>
+
+<script>
+	//提交按钮绑定事件
+	$('#submit').click(function(){
+		//获取表单数据
+		var amountReg = "^(([0-9]+\.[0-9]*[1-9][0-9]*)|([0-9]*[1-9][0-9]*\.[0-9]+)|([0-9]*[1-9][0-9]*))$";
+		
+		var lordSubsidyAmount = $('#lordSubsidyAmount').val();
+		if(lordSubsidyAmount.match(amountReg)==null){
+			alert("请输入有效的被邀请者补贴金额！");
+			return;
+		}
+		
+		var fromSubsidyAmount = $('#fromSubsidyAmount').val();
+		if(fromSubsidyAmount.match(amountReg)==null){
+			alert("请输入有效的邀请者补贴金额！");
+			return;
+		}
+		
+		var completeMinWagePost= $('#completeMinWagePost').val();
+		if(completeMinWagePost.match(amountReg)==null){
+			alert("请输入有效的完成最低工资金额！");
+			return;
+		}
+		
+		var swit = $("input[name='isSwitch']:checked").val();
+		if(swit == null){
+			alert("请选择补贴开关是否开启！");
+			return;
+		}
+		var data = $('#dataForm').serialize();
+		$.post('/back/config/updateInvite.json',data,function(data){
+			alert(data.message);
+			if(data.status == 'successful'){
+				reload();
+			}
+		},'json');
+	});
+</script>
+
+<link rel="stylesheet" href="/resources/css/jquery-ui-1.10.3.full.min.css" />
+

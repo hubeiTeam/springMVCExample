@@ -1,0 +1,23 @@
+<link rel="stylesheet" type="text/css" href="/backStageManage/semantic/semantic.base.css">
+
+<link rel="stylesheet" type="text/css" href="/backStageManage/ui/css/uikit.css">
+<link rel="stylesheet" type="text/css" href="/backStageManage/ui/css/components/progress.css">
+<link rel="stylesheet" type="text/css" href="/backStageManage/css/improve.css">
+<script type="text/javascript" src="/backStageManage/lib/jquery.2.0.js"></script>
+<script type="text/javascript" src="/backStageManage/lib/template-debug.js"></script>
+<script type="text/javascript" src="/backStageManage/semantic/semantic.js"></script>
+<script type="text/javascript" src="/backStageManage/lib/require-2.1.14.min.js"></script>
+<script type="text/javascript">
+    requirejs.config({
+        baseUrl: "/backStageManage/",
+        paths: {
+            "uikit": '/backStageManage/ui/js/uikit'
+        },
+        config: {
+            "uikit": {
+                "base": "./ui/js"
+            }
+        }
+    });
+</script>
+

@@ -1,0 +1,180 @@
+#parse('/backStageManage/public/TOP.vm')
+<link rel="stylesheet" type="text/css" href="/backStageManage/ui/css/components/datepicker.css">
+<link rel="stylesheet" type="text/css" href="/backStageManage/ui/css/components/form-file.css">
+<script type="text/javascript" src="/backStageManage/js/uitl.js"></script>
+<script type="text/javascript" src="/backStageManage/js/system.js"></script>
+<script type="text/javascript" src="/backStageManage/lib/layPage/laypage.dev.js"></script>
+<script type="text/javascript" src="/backStageManage/js/searchPage.js"></script>
+<div class="main">
+	<!-- 头部搜索条件  -->
+    <div class="page-center ui segment">
+		<div class="ui dividing header">
+          <i class="user icon"></i>
+          <div class="content">
+            邀请补贴列表
+          </div>
+          </div>
+         <form class="ui mini form" action="" method="get" name="search">
+            <div class="fields">
+            	<div class="field">
+            	<label>状态</label>
+            	<select class="ui dropdown" name="status">
+            			#if($!status=="0")
+                    	<option value="0" selected="selected">所有</option>
+                    	#else
+                    	<option value="0">所有</option>
+                    	#end
+                    	#if($!status=="REGISTER")
+                    	<option value="REGISTER" selected="selected">注册完成</option>
+                    	#else
+                    	<option value="REGISTER">注册完成</option>
+                    	#end
+                    	#if($!status=="ATTEST_COMPLETE")
+                    	<option value="ATTEST_COMPLETE" selected="selected">认证完成</option>
+                    	#else
+                    	<option value="ATTEST_COMPLETE">认证完成</option>
+                    	#end
+                    	#if($!status=="GIVE")
+                    	<option value="GIVE" selected="selected">已发放</option>
+                    	#else
+                    	<option value="GIVE">已发放</option>
+                    	#end
+                    </select>
+                </div>
+                <div class="field">
+                    <label>邀请人电话号码</label>
+                    #if($!fromUserPhone)
+                    <input type="text" placeholder="支持模糊查询" value="$!{fromUserPhone}" name="fromUserPhone">
+                    #else
+                    <input type="text" placeholder="支持模糊查询" name="fromUserPhone">
+                    #end
+                </div>
+                <div class="field">
+                    <label>邀请人姓名</label>
+                    #if($!fromUserName)
+                    <input type="text" placeholder="支持模糊查询" value="$!{fromUserName}" name="fromUserName">
+                    #else
+                    <input type="text" placeholder="支持模糊查询" name="fromUserName">
+                    #end
+                </div>
+                <div class="field">
+                    <label>被邀请人电话号码</label>
+                    #if($!lordUserPhone)
+                    <input type="text" placeholder="支持模糊查询" value="$!{lordUserPhone}" name="lordUserPhone">
+                    #else
+                    <input type="text" placeholder="支持模糊查询" name="lordUserPhone">
+                    #end
+                </div>
+                <div class="field">
+                    <label>被邀请人姓名</label>
+                    #if($!lordUserName)
+                    <input type="text" placeholder="支持模糊查询" value="$!{lordUserName}" name="lordUserName">
+                    #else
+                    <input type="text" placeholder="支持模糊查询" name="lordUserName">
+                    #end
+                </div>
+                <div class="field">
+                    <label>操作</label>
+                    <div class="ui buttons">
+                      <button class="ui button instagram" type="submit"> 查询 </button>
+                      <div class="or" data-text="或"></div>
+                      <button class="ui button" onclick="$('form').form('clear');">重置</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+ <!-- 按钮中心 -->
+    <div class="ui page-center page-list">
+        <div class="ui active inverted dimmer page-loading">
+            <div class="ui large text loader">加载中</div>
+        </div>
+        <div class="ui" style="min-height:400px;-webkit-transition:height .5s;">
+            <table class="ui selectable celled table">
+                <thead>
+                    <tr>
+                        <th>序列号</th>
+                         <th width="200">邀请人</th>
+                        <th>被邀请人</th>
+                        <th>邀请人补贴</th>
+						<th>被邀请人补贴</th>
+                        <th>状态</th>
+                        <th>创建时间</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+ 	<!-- 底部按钮 -->
+    <div class="page-center ui segment">
+        <div id="page" class="ui">
+        </div>
+        <div class="clear"></div>
+    </div>
+</div>
+
+<script type="text/html" id="list" >
+    {{each datas as v}}
+        <tr data-id="{{v.id}}">
+            <td>{{v.tableTitle}}</td>
+            <td>
+				{{if v.fromUserName==null}}
+					{{v.fromUserName}}
+				{{else}}
+					<a href="/backStageManage/show/basic/userPeopleInfo.html?userId={{v.fromUserId}}" target="_blank">
+						{{v.fromUserPhone}} ~{{v.fromUserName}}
+					</a>
+				{{/if}}
+			</td>
+            <td>
+				{{if v.lordUserName==null}}
+					{{v.lordUserName}}
+				{{else}}
+					<a href="/backStageManage/show/basic/userPeopleInfo.html?userId={{v.lordUserId}}" target="_blank">
+						{{v.lordUserPhone}} ~{{v.lordUserName}}
+					</a>
+				{{/if}}
+			</td>
+            <td>{{v.fromSubsidy}}</td>
+            <td>{{v.lordSubsidy}}</td>
+            <td>{{v.status.name}}</td>
+            <td>{{v.createTime}}</td>
+        </tr>
+    {{/each}}
+</script>
+<script type="text/javascript">
+	;(function(){
+	    thisLaypage({
+	        url: '/back/querySubsidyListByPage.json',
+	        resolve: function(res){
+	            for( var i=0; i<res.datas.length; i++ ){
+	                res.datas[i].createTime = (new Date(res.datas[i].createTime)).Format('yyyy-MM-dd');
+	                res.datas[i].status = getInviteSubsidyStatus(res.datas[i].status);
+	            }
+	            console.log(res);
+	            return res;
+	        }
+	    });
+	})();
+</script>
+<script type="text/javascript">
+    ;(function(){
+        //调制页面
+        $('#gopage a').on('click', function(){
+            var page = $('#gopage').find('input[name=currPage]').val();
+            if( page ){
+                window.location.href="?currPage="+page;
+            }
+        });
+    })();
+    require(['uikit!semantic-paginaction'], function(uikit){
+        $('[data-uk-pagination]').on('select.uk.pagination', function(e, pageIndex){
+            window.location.href="?currPage="+(pageIndex+1);
+        });
+    });
+</script>
+
+#parse('/backStageManage/public/BOTTOM.vm')
+

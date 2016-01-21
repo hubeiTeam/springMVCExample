@@ -1,0 +1,238 @@
+#parse('/backStageManage/public/TOP.vm')
+<script type="text/javascript" src="/backStageManage/lib/layer/layer.js"></script>
+<link rel="stylesheet" type="text/css" href="/backStageManage/ui/css/components/form-file.css">
+<div class="main">
+    <div class="page-center ui segment">
+		<div class="ui dividing header">
+          <i class="user icon"></i>
+          <div class="content">
+            图片信息列表
+          </div>
+        </div>
+        <div class="ui">
+            <table class="ui selectable celled table">
+                <thead>
+                    <tr>
+                        <th>源名称</th>
+						<th>新名称</th>
+						<th>访问路径</th>
+						<th>高</th>
+						<th>宽</th>
+						<th>后缀</th>
+						<th>大小</th>
+						<th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                #foreach($imgResource in $datas)
+                	<tr data-id="$!{imgResource.id}">
+                        <td>$!{imgResource.sourceName}
+                        </td>
+                        <td>$!{imgResource.name}</td>
+                        <td>
+                        <a href="$!{domainName}$!{imgResource.path}" target="_black">$!{imgResource.path}</a>
+                        </td>
+                        <td>$!{imgResource.height}</td>
+                        <td>$!{imgResource.width}</td>
+                        <td>$!{imgResource.suffix}</td>
+                        <td>$!{imgResource.size}k</td>
+                        <td>
+                        	#if(${deleteResource})
+                            <button class="ui circular red mini button deleteuser"><i class="remove user icon"></i>删除</button>
+                        	#end
+                        </td>
+                    </tr>
+                #end
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th colspan="9">
+                            <h5 class="ui dividing header " align="right" id="table-count">总条数：$!count 条</h5>
+
+                            <div class="ui right floated pagination menu" id="page" data-uk-pagination="{items:$count, itemsOnPage: 10, currentPage: $currPage}">
+                            </div>
+                            <div class="ui right labeled input" id="gopage">
+                                    <input type="text" placeholder="输入页数" onkeyup="this.value=this.value.replace(/\D/g,'')"  onafterpaste="this.value=this.value.replace(/\D/g,'')" maxlength="5" size="14" name="currPage">
+                                    <a class="ui tag label">跳至</a>
+                            </div>
+                        </th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+
+    <div class="ui segment uk-containe">
+        <div id="upload-drop" class="uk-placeholder uk-text-center">
+            <i class="uk-icon-cloud-upload uk-icon-medium uk-text-muted uk-margin-small-right"></i> 将文件拖拽至此 或 <a class="uk-form-file">选择一个文件<input id="upload-select" type="file"></a>.
+        </div>
+        <div id="progressbar" class="uk-progress uk-hidden">
+            <div class="uk-progress-bar" style="width: 0%;">0%</div>
+        </div>
+    </div>
+</div>
+
+<div class="ui small modal" id="adduser">
+</div>
+
+<!-- 后端渲染数据 userRoleList -->
+<script type="text/javascript">
+</script>
+<!-- modal 删除确认 -->
+<script type="text/html" id="userDelete">
+    <div class="header">
+        图片名称：“{{name}}” 
+    </div>
+    <div class="content">
+        <div class="ui negative icon message">
+            <i class="remove icon"></i>
+            <div class="content">
+                <div class="header">确认删除这张照片吗？ </div>
+            </div>
+        </div>
+    </div>
+    <div class="actions">
+        <div class="ui black deny button">
+            取消
+        </div>
+        <div class="ui right red labeled icon button submit-deleteuser">
+            删除
+            <i class="checkmark icon"></i>
+        </div>
+    </div>
+</script>
+
+<script type="text/javascript">
+	var g_id='';
+	//弹出框
+    var modal = $("#adduser");
+    var $modal = $("#adduser");
+    ;(function(){
+        //删除用户
+        $('.deleteuser').on('click', function(){
+            var id = $(this).parents('tr').attr('data-id');
+            g_id = id;
+            var name = $(this).parents('tr').find('td').eq(1).text();
+            var data = {};
+                data.name = name;
+            var _html = template('userDelete', data);
+            $modal.html(_html);
+            $modal.modal('show');
+        });
+
+        //调制页面
+        $('#gopage a').on('click', function(){
+            var page = $('#gopage').find('input[name=currPage]').val();
+            if( page ){
+                window.location.href="?currPage="+page;
+            }
+        });
+
+        //确认删除用户
+        modal.on('click', ".submit-deleteuser", function(){
+            var param = {};
+            param.id = g_id;
+            $.post('/back/deleteResource.json', param, function(json){
+                if(json && json.status == "successful"){
+                    sublitsuccess(json.message);
+                }else{
+                    errormessage($('input,select'), json.message);
+                    submiterror();
+                }
+            }, 'json');
+        });
+        
+        //重新渲染弹窗页面
+        function rander(data, $modal){
+            data.userRoleList  = userRoleList;
+            console.log(data);
+            var _html = template('userTemp', data);
+            $modal.html(_html);
+            $modal.find('select.dropdown').dropdown();
+        }
+
+        //报错弹窗
+        function errormessage (field, message){
+            field.parents(".field").addClass('error');
+            field.parents('form').addClass('error');
+            field.parents('form').find('.ui.error.message').html('<ul class="list"><li>'+ message +'</li></ul>');
+        }
+
+        //清除报错
+        function clearerror(form){
+            form.removeClass('error');
+            form.find('.field').removeClass('error');
+            form.find('.ui.error.message').html('');
+        }
+
+        //正在提交
+        function submiting(){
+            var str = '<div class="ui icon message submiting"><i class="notched circle loading icon"></i><div class="content"><div class="header">稍候 </div><p>我们正在为您获取内容。</p></div></div>';
+            modal.find('.content form').hide();
+            modal.find('.content').append(str);
+            modal.find('.submit').hide();
+        }
+
+        //提交报错
+        function submiterror(){
+            modal.find('.content form').show();
+            modal.find('.submiting').remove();
+            modal.find('.submit').show();
+        }
+
+        //提交成功
+        function sublitsuccess(message){
+            modal.find('.actions').remove();
+            modal.find('.content').html('<div class="ui icon message"><i class="inbox icon"></i><div class="content"><div class="header">'+ message +' </div><p>页面即将重新加载!</p></div></div>');
+            setTimeout(function() {
+                window.location.reload();
+            }, 1000);
+        }
+    })();
+    require(['uikit!semantic-paginaction,upload'], function(uikit){
+        $('[data-uk-pagination]').on('select.uk.pagination', function(e, pageIndex){
+            window.location.href="?currPage="+(pageIndex+1);
+        });
+
+        var progressbar = $("#progressbar"),
+        bar         = progressbar.find('.uk-progress-bar'),
+        settings    = {
+
+            action: '/uploadResources.json', // 上传路径 url
+
+            allow : '*.(jpg|jpeg|gif|png)', // 只允许上传图片
+
+            loadstart: function() {
+                bar.css("width", "0%").text("0%");
+                progressbar.removeClass("uk-hidden");
+            },
+
+            progress: function(percent) {
+                percent = Math.ceil(percent);
+                bar.css("width", percent+"%").text(percent+"%");
+            },
+
+            allcomplete: function(response) {
+
+                bar.css("width", "100%").text("100%");
+
+                setTimeout(function(){
+                    progressbar.addClass("uk-hidden");
+                    layer.msg("上传成功", {icon: 1});
+                }, 500);
+
+                setTimeout(function(){
+                    window.location.reload();
+                }, 1000);
+                
+            },
+            param: 'fileData'
+        };
+
+        var select = UIkit.uploadSelect($("#upload-select"), settings),
+            drop   = UIkit.uploadDrop($("#upload-drop"), settings);
+    });
+</script>
+
+#parse('/backStageManage/public/BOTTOM.vm')
+

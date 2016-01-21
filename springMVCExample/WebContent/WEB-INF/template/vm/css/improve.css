@@ -1,0 +1,66 @@
+.spabg{ background: #F7F7F7; min-height: 100%;}
+.page-center{}
+.main{ padding-left: 195px; padding-right: 10px; padding-top: 10px; background: #F7F7F7; min-height: 100%; }
+.segment{ box-shadow: none !important; }
+
+/*  */
+.padding{ padding: 10px;}
+.clear{ clear: both;}
+a:hover{ text-decoration: none;}
+button:focus{ outline: none;}
+/* page-slidebar */
+.page-slidebar{ width: 190px;}
+.page-slidebar .sidebar{ width: 190px !important;}
+.page-slidebar .sidebar>.item{ padding: 0 !important;}
+.page-slidebar .sidebar>.item>.slidebar-title{ padding: 10px 5px !important;}
+.page-slidebar .sidebar>.item>.slidebar-title a{ color: #FFF;}
+.page-slidebar .sidebar>.item>.title{ padding: 10px 5px !important; font-size: 14px !important;}
+.page-slidebar .sidebar>.item>.content{ padding: 0 !important; margin-top: 0 !important; width: 190px; margin-left: 0 !important; margin-right: 0 !important;}
+.page-slidebar .sidebar>.item>.content>.item{ padding: 10px 5px !important; }
+
+/* 对loading的控制 */
+.page-list{position: relative;}
+.ui > .ui.dimmer {border-radius: inherit !important;}
+
+span.layer{ display: inline-block; width: 15px; height: 35px; font-size: 1em; font-weight: bold; line-height: 35px; text-indent: center;}
+
+/* Page分页的最小高度 */
+/*#page{ min-height: 40px; float: right;}*/
+#page .ui.labeled.input>.label:not(.corner){ padding-top: 0; padding-bottom: 0;}
+#page .ui.menu{ font-size: 16px !important;}
+
+
+/* form表单大小 */
+.ui.mini.form {
+  font-size: 0.52857143rem;
+}
+
+/**/
+.spacontainer{
+    padding: 5px 10px;
+}
+
+/* webkit滚动太重置 */
+::-webkit-scrollbar {
+    width:4px;
+    height:2px;
+}
+/*::-webkit-scrollbar-button    {
+    background-color:#FF7677;
+}*/
+::-webkit-scrollbar-track     {
+    background:#E7E7E7;
+}
+::-webkit-scrollbar-track-piece {
+    background:url(http://www.lyblog.net/wp/wp-content/themes/mine/img/stripes_tiny_08.png);
+}
+::-webkit-scrollbar-thumb{
+    background:#8c8c8c;
+    border-radius:0px;
+}
+::-webkit-scrollbar-corner {
+    background:#82AFFF;
+}
+::-webkit-scrollbar-resizer  {
+    background:#FF0BEE;
+}

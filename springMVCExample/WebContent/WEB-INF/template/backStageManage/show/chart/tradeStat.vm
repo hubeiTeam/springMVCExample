@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="cn">
+<head>
+    <meta charset="UTF-8">
+    <title>商户管理后台</title>
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    #parse('/backStageManage/public/inc/baseres.vm')
+    <script type="text/javascript" src="/backStageManage/lib/echarts/echarts.js"></script>
+    <script type="text/javascript" src="/backStageManage/lib/echarts/theme/roma.js"></script>
+    <script type="text/javascript" src="/backStageManage/js/uitl.js"></script>
+    <script type="text/javascript">
+        var ServerTime = "$dateUtils.getCurrentTime()";
+    </script>
+</head>
+<body id="index" style="background: #F7F7F7; min-width: 1000px; padding:1px;" >
+    <div class="ui secondary  menu green" id="index_menu">
+   		#if(${getTradeVolumeStat})
+        <a class="item" data="TradeVolumeStat">交易金额</a>
+        #end
+        #if(${getWaterAmountStat})
+        <a class="item" data="WaterAmountStat">流水金额</a>
+        #end
+        #if(${getInsureStat})
+        <a class="item" data="InsureStat">保险金额</a>
+        #end
+        #if(${getRetainAmountStat})
+        <a class="item" data="RetainAmount">平台留存金额</a>
+        #end
+    </div>
+
+    <div class="ui card" style="width:1050px; height:500px;">
+        <div class="ui active inverted dimmer">
+            <div class="ui text loader">加载</div>
+        </div>
+
+        <div class="chart-box " id="chart-box" style="width:1050px; height:500px;">
+        </div>
+    </div>
+    
+    <div class="ui segment top" style="width:1050px; padding-top:40px;">
+        <form class="ui form small inline" name="search">
+            <input name="category" type="hidden">
+            <div class="fields">
+
+                <div class="field">
+                    <label>主查询</label>
+                    <select class="ui floating dropdown" name="postCategory">
+                        <option value="ALL" selected="selected">全部</option>
+                        <option value="SINGLE">单天</option>
+                        <option value="SEVERAL">多天</option>
+                    </select>
+                </div>
+                
+                <div class="field">
+                    <label>主查询</label>
+                    <select class="ui floating dropdown" name="insureStatus">
+                        <option value="ALL" selected="selected">全部</option>
+                        <option value="ALREADY_COMPLETE">已生效</option>
+                        <option value="NO_COMPLETE">未生效</option>
+                        <option value="CANCEL">取消</option>
+                        <option value="PART_COMPLETE">部分完成</option>
+                    </select>
+                </div>
+                
+                <div class="field">
+                    <label>年份</label>
+                    <select class="ui floating dropdown" name="year">
+                        <option value="2015" selected="selected">2015</option>
+                        <option value="2016">2016</option>
+                        <option value="2017">2017</option>
+                        <option value="2018">2018</option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label>月份</label>
+                    <select class="ui floating dropdown" name="month">
+                        <option value="01" selected="selected">1月</option>
+                        <option value="02">2月</option>
+                        <option value="03">3月</option>
+                        <option value="04">4月</option>
+                        <option value="05">5月</option>
+                        <option value="06">6月</option>
+                        <option value="07">7月</option>
+                        <option value="08">8月</option>
+                        <option value="09">9月</option>
+                        <option value="10">10月</option>
+                        <option value="11">11月</option>
+                        <option value="12">12月</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label>操作</label>
+                    <button type="subnit" class="ui submit button small">查找</button>
+                </div>
+            </div>
+        </form>
+        <div class="ui top attached label">查询条件</div>
+    </div>
+
+
+    
+    <script type="text/javascript">
+
+        var param = toQueryParams.call(window.location.href); //获取URL参数
+        console.log(param);
+
+        if( param.length <=0 || !param.category || !param.year || !param.month ){
+            param.category = $('#index_menu>a.item:eq(0)').attr('data') || "TradeVolumeStat";
+            param.year = (new Date()).getFullYear();
+            param.month = (new Date()).getMonth()+1;
+            changeHash(param);
+        }
+        
+        //修改主window的url
+        var url = (window.location.href).split(window.location.host)[1];
+        var pWindow = window.parent;
+        var newUrl = pWindow.location.pathname+'?url='+encodeURIComponent(url);
+        pWindow.history.pushState({},pWindow.document.title,newUrl);
+
+
+        $('#index_menu>a[data='+ param['category'] +']').addClass('active');
+
+        randerForm( param, $('form[name=search]') );
+
+        var myChart = echarts.init(document.getElementById('chart-box'), roma);
+
+        //获取URL参数
+        var URL = getInterface( param['category'] );
+        //删除不必要的内容
+        // delete param['category'];
+
+        $.get(URL, param, function(json){
+            unload();
+            
+            //对配置进行解析
+            var opData = {};
+
+                opData.x = []; //X轴数据
+                for( var i=0; i<json.lables.length; i++ ){
+                    opData.x[i] = (json.lables[i].split('-'))[2];
+                }
+
+                opData.date = (json.lables[0].split('-'))[0] +'-'+ (json.lables[0].split('-'))[1]; //日期
+
+                //计算是否超过本月
+                // var uDate = param['year']+'-'+param['month']+'-00 00:00:00'; //查询月
+                // var sDate = ServerTime.split('-')[0]+'-'+ServerTime.split('-')[1]+"-00 00:00:00"; //当前月
+                var sDay = (ServerTime.split('-')[2]).split(' ')[0]; //当前的天数
+                if( (new Date(param['year'], param['month'], 00)).getTime() > (new Date(ServerTime.split('-')[0], ServerTime.split('-')[1], 00)).getTime() ){ //超过当前查询时间
+                    opData.y1 = [];
+                    opData.y2 = [];
+                }else if((new Date(param['year'], param['month'], 00)).getTime() == (new Date(ServerTime.split('-')[0], ServerTime.split('-')[1], 00)).getTime()){  //当前月份
+
+                    //获取数据
+                    opData.y1 = []; //y轴增长数据1
+                    for( var i=0; i<json.dayList.length; i++ ){
+                        if(i+1>sDay){
+                            continue;
+                        }
+                        opData.y1[i] = json.dayList[i]['dayCount'];
+                    }
+
+                    opData.y2 = []; //y轴总数据
+                    for( var i=0; i<json.dayTotalList.length; i++ ){
+                        if(i+1>sDay){
+                            continue;
+                        }
+                        opData.y2[i] = json.dayTotalList[i]['dayCount'];
+                    }
+
+                }else{ //当前月之前
+                    if( json.dayTotalList[json.dayTotalList.length-1]['dayCount'] == 0 ){//判断是否统计过本月
+                        opData.y1 = [];
+                        opData.y2 = [];
+                    }else{
+                        //获取数据
+                        opData.y1 = []; //y轴增长数据1
+                        for( var i=0; i<json.dayList.length; i++ ){
+                            opData.y1[i] = json.dayList[i]['dayCount'];
+                        }
+
+                        opData.y2 = []; //y轴总数据
+                        for( var i=0; i<json.dayTotalList.length; i++ ){
+                            opData.y2[i] = json.dayTotalList[i]['dayCount'];
+                        }
+                    }
+                    
+                }
+
+            //配置参数
+            option = {
+                title : {
+                    text: randerTitle(param),
+                    x:'center',
+                    y:'top'
+                },
+                tooltip : {
+                    trigger: 'axis'
+                },
+                toolbox: {
+                    show : true,
+                    feature : {
+                        magicType : {show: true, type: ['line', 'bar']}
+                    }
+                },
+                legend: {
+                    data:['总量','日增'],
+                    x:'left',
+                    y:'top'
+                },
+                xAxis : [
+                    {
+                        type : 'category',
+                        data : opData.x
+                    }
+                ],
+                yAxis : [
+                    {
+                        type : 'value',
+                        name : '总量',
+                        axisLabel : {
+                            formatter: '{value}'+unit(param['category'])['l']
+                        }
+                    },
+                    {
+                        type : 'value',
+                        name : '日增',
+                        axisLabel : {
+                            formatter: '{value}'+unit(param['category'])['r']
+                        }
+                    }
+                ],
+                series : [
+
+                    {
+                        name:'总量',
+                        type:'line',
+                        data:opData.y2,
+                        itemStyle: {
+                            normal: {
+                                label: {
+                                    show: true,
+                                    textStyle: {
+                                        color: '#E01F54'
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    {
+                        name:'日增',
+                        type:'line',
+                        yAxisIndex: 1,
+                        data: opData.y1
+                    }
+                ]
+            };
+
+            myChart.setOption(option);
+
+        }, 'json');
+        
+        function unload(){
+            $('.dimmer').removeClass('active');
+        }
+
+        //重新渲染表单
+        function randerForm(param, form){
+            var s1 = $('select[name=postCategory]').parents('.field');
+            var s2 = $('select[name=insureStatus]').parents('.field');
+            s1.hide();
+            s2.hide();
+            if( param['category'] == "WaterAmountStat" ){
+                s1.show();
+            }else if( param['category'] == "InsureStat" ){
+                s2.show();
+            }
+
+            for( k in param ){
+                var cv = '[name='+k+']';
+                if( form.find('select'+cv).size() >0 ){
+                    form.find('select'+cv).find('option[value='+ param[k] +']').prop('selected',true);
+                }else if( form.find('input'+cv+ '[type=radio]').size() > 0 ){
+                    form.find('input'+cv+ '[type=radio]').prop('checked', false);
+                    form.find('input'+cv+ '[type=radio][value='+ param[k] +']').prop('checked', true);
+                }else{
+                    form.find('input'+cv).val(param[k]);
+                }
+            }
+        }
+
+        //参数数据渲染Title
+        function randerTitle( param ){
+            var title = "";
+            title += param['year'] +'年';
+            title += param['month'] +'月';
+            title += param['month'] +'月';
+
+            switch( param['category'] ){
+                case 'TradeVolumeStat' : title+="交易金额";break;
+                case 'WaterAmountStat' : title+="流水金额";break;
+                case 'InsureStat' : title+="保险金额";break;
+                case 'RetainAmount' : title+="平台留存金额";break;
+            }
+            title +="统计";
+
+            // title +=" 发布岗位统计";
+            return title;
+        }
+
+        //渲染单位
+        function unit( unit ) {
+            var res = {l:'', r:''};
+            switch( unit ){
+                case 'TradeVolumeStat' : res = {l:"元", r: "元"};break;
+                case 'WaterAmountStat' : res = {l:"元", r: "元"};break;
+                case 'InsureStat' : res = {l:"元", r: "元"};break;
+                case 'RetainAmount' : res = {l:"元", r: "元"};break;
+            }
+            return res;
+        }
+
+        $('#index_menu>a').on('click', function(){
+            var category = $(this).attr('data');
+            if( $(this).is('.active') ){
+                return false;
+            };
+            $('#index_menu>a').removeClass('active');
+            $(this).addClass('active');
+            $('input[name=category]').val(category);
+            $('form[name=search]').submit();
+        });
+
+        //获取接口路径
+        function getInterface(param){
+            var URL = "";
+            switch (param){
+                case 'TradeVolumeStat' : URL="/back/getTradeVolumeStat.json" ;break;
+                case 'WaterAmountStat' : URL="/back/getWaterAmountStat.json" ;break;
+                case 'InsureStat' : URL="/back/getInsureStat.json" ;break;
+                case 'RetainAmount' : URL="/back/getRetainAmount.json" ;break;
+            }
+            return URL;
+        }
+    </script>
+    <script type="text/javascript">
+        $('.ui.checkbox').checkbox();
+    </script>
+
+     #parse('/backStageManage/public/inc/jsrander.vm')
+</body>
+</html>

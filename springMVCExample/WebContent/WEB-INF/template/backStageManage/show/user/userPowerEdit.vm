@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="cn">
+<head>
+    <meta charset="UTF-8">
+    <title>商户管理后台-权限修改</title>
+    <link rel="stylesheet" type="text/css" href="/backStageManage/css/improve.css">
+    <link rel="stylesheet" type="text/css" href="/backStageManage/semantic/semantic.css">
+    <script type="text/javascript" src="/backStageManage/lib/jquery.2.0.js"></script>
+    <script type="text/javascript" src="/backStageManage/lib/template-debug.js"></script>
+    <script type="text/javascript" src="/backStageManage/semantic/semantic.js"></script>
+    <script type="text/javascript" src="/backStageManage/js/uitl.js"></script>
+    <script type="text/javascript" src="/backStageManage/lib/layer/layer.js"></script>
+    <script type="text/javascript">
+        var ServerTime = "$dateUtils.getCurrentTime()";
+    </script>
+    <style type="text/css">
+        /*解决密集slider 选择框*/
+        .slider label{ padding: 10px 0;}
+        .ui.slider.checkbox .box:after, .ui.slider.checkbox label:after{ top: 0.5rem;}
+        .ui.slider.checkbox .box:before, .ui.slider.checkbox label:before{ top: 1.2rem;}
+        .ui.checkbox input[type="checkbox"], .ui.checkbox input[type="radio"]{ top: 9px;}
+    </style>
+</head>
+<body class="ui segment basic clearing" style="margin-top:0;">
+    <div class="ui active inverted dimmer">
+        <div class="ui text loader"></div>
+    </div>
+
+    
+
+    <script type="text/html" id="template">
+        <h3 class="ui header">
+            <i class="settings icon"></i>
+            <div class="content">{{roleName}}（权限修改）
+                <div class="sub header">权限CODE：{{roleCode}}；用户组ID：{{roleId}}；</div>
+            </div>
+        </h3>
+        {{each modules as model}}
+        <table class="ui red celled table">
+            <thead>
+            <tr>
+                <th colspan="5">
+                    <div class="ui teal ribbon label">{{model.moduleName}}</div>
+                    <a class="ui label">父模块路径<div class="detail">{{model.moduleUrl}}</div></a>
+                    <a class="ui label">父模块ID<div class="detail">{{model.id}}</div></a>
+                    <a class="ui label"><i class="{{model.iconSet}} icon"></i>父模块图标</a>
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+                <tr class="warning">
+                    <td width="150">模块名称</td>
+                    <td width="450">模块路径</td>
+                    <td width="50">模块ID</td>
+                    <td width="50">父及ID</td>
+                    <td>子权限</td>
+                </tr>
+                {{each model.userModules as userModules }}
+                <tr>
+                    <td>
+                        <div class="ui slider checkbox">
+                            <input type="checkbox" name="userModules"
+                            {{if userModules.isHave == true}}
+                            checked="checked"
+                            {{/if}}
+                            >
+                            <label>{{userModules.moduleName}}</label>
+                        </div>
+                    </td>
+                    <td>{{userModules.moduleUrl}}</td>
+                    <td>{{userModules.id}}</td>
+                    <td>{{userModules.parentId}}</td>
+                    <td>
+                    {{each userModules.userPowerDtos as userPowerDtos}}
+                        <div class="ui slider checkbox">
+                            <input type="checkbox" name="userPowerDtos" data-id="{{userPowerDtos.id}}"
+                            {{if userPowerDtos.isHave == true}}
+                            checked="checked"
+                            {{/if}}
+                            >
+                            <label>{{userPowerDtos.powerName}}</label>
+                        </div>
+                    {{/each}}
+                    </td>
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+        {{/each}}
+        <button class="ui right floated instagram button" id="submit">保存权限</button>
+    </script>
+    <script type="text/javascript">
+        var param = toQueryParams.call(window.location.href);
+        $.get('/backStageManage/show/user/findUserRoleById.json', param, function(json){
+            $('.dimmer').removeClass('active');
+            // 对数据进行重新组织
+            var data = renderData(json);
+            console.log(data);
+            var _html = template('template', data);
+            $('body').append(_html);
+        }, 'json');
+
+        //父层点击改变
+        $('body').on('change','input[name=userModules]', function(){
+            if( $(this).is(':checked') ){
+                $(this).parents('tr').find('td:last').find('input').prop('checked', true);
+                return false;
+            }
+            $(this).parents('tr').find('td:last').find('input').prop('checked', false);
+        });
+
+        //点击子层改变
+        $('body').on('change','input[name=userPowerDtos]', function(){
+            if( $(this).parents('td').find('input:checked').size() >0 ){
+                $(this).parents('tr').find('td:first').find('input').prop('checked', true);
+                return false;
+
+            }
+            $(this).parents('tr').find('td:first').find('input').prop('checked', false);
+        });
+
+        //修改信息
+        $('body').on('click', '#submit', function(){
+            $(this).addClass('loading');
+            var jQ_self = $(this);
+            var jQ_input = $('input[name=userPowerDtos]:checked');
+
+            var paramString = "";
+            var stringSub = "";
+            jQ_input.each(function(){
+                paramString += stringSub + $(this).attr('data-id');
+                stringSub = ",";
+            });
+            $.post('/back/updateUserRolePower.json', {id: param.roleId, modulePower: paramString}, function(json){
+                // window.reload();
+                jQ_self.removeClass('loading');
+                if( json && json.status == "successful" ){
+                    layer.msg(json.message, {icon: 1});
+                }else{
+                    layer.msg(json.message, {icon: 3});
+                }
+            });
+        });
+
+        // 对数据进行重新组织
+        function renderData(json){
+            var data = {};
+            var userModules = json.data.userModules;
+            var parentModules = [];
+            for( var i=0; i<json.parentModules.length; i++ ){
+                parentModules[i] = json.parentModules[i]; //获取第一层信息
+                var parentId = parentModules[i].id;
+                parentModules[i].userModules = [];
+                for(var j=0; j< userModules.length; j++){
+                    if( userModules[j].parentId == parentId ){
+                        parentModules[i].userModules[parentModules[i].userModules.length] = userModules[j];
+                    }
+                }
+            }
+            data.modules = parentModules;
+            data.roleId = json.data.id;
+            data.roleCode = json.data.roleCode;
+            data.roleName = json.data.roleName;
+            return data;
+        }
+    </script>
+    #parse('/backStageManage/public/inc/jsrander.vm')
+</body>

@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="cn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <title>商户管理后台</title>
+    #parse('/backStageManage/public/inc/baseres.vm')
+    <script type="text/javascript" src="/backStageManage/lib/layer/layer.js"></script>
+    <link rel="stylesheet" type="text/css" href="/backStageManage/semantic/components/checkbox.css">
+</head>
+<body>
+    <div class="spabg">
+        <div class="ui spacontainer">
+            <div class="ui segment">
+                <h3 class="ui header">
+                    <i class="settings icon"></i>
+                    <div class="content">岗位信息 </div>
+                </h3>
+            </div>
+
+			<form class="form-horizontal" role="form">
+				<table class="ui selectable celled table">
+					<tr>
+						<td width="10%">公司名称：</td>
+						<td colspan="3">
+							<span><a href="/backStageManage/show/basic/userMerchantInfo.html?merchantId=$!{enterprise.userId}" target="_blank">$!{enterprise.companyName}</a></span>
+						</td>
+					</tr>
+					<tr>
+						<td>公司地址：</td>
+						<td colspan="3">
+							<span>$!{enterprise.companyAddress}</span>
+						</td>
+					</tr>
+					<tr>
+						<td>招聘标题：</td>
+						<td colspan="3">
+							<span><b>$!{post.title}</b></span>
+							#if($!treatment)
+								[<font color="red"> ${treatment}</font>]
+							#end
+						</td>
+					</tr>
+					<tr>
+						<td>联系人名称：</td>
+						<td><span>$!{post.postInfoDto.linkName}</span></td>
+						<td>联系人电话：</td>
+						<td><span>$!{post.postInfoDto.linkPhone}</span></td>
+					</tr>
+					<tr>
+						<td>招聘职位：</td>
+						<td>$!{categoryName}</td>
+						<td>地区：</td>
+						<td>$!{city.name}</td>
+					</tr>
+					<tr>
+						<td>招聘人数：</td>
+						<td>$!{post.personalNumber}</td>
+						<td>薪资：</td>
+						<td>
+							<font color="red">$!{post.wage}元/人</font>
+								保险：#if($workCountDay && $workCountDay > 0) 5 #else 2.8 #end /人
+						</td>
+					</tr>
+					<tr>
+						<td>工作地点：</td>
+						<td colspan="3">$!{addressName}</td>
+					</tr>
+					<tr>
+						<td>工作日期：</td>
+						<td colspan="3">
+							#if($workCountDay > 0)
+								$dateUtils.format($!post.postInfoDto.workStartTime)  ~  $dateUtils.format($!post.postInfoDto.workStopTime)   
+								#set($count = $workCountDay+1)
+								(共${count}天)
+							#else
+								$dateUtils.format($!{post.workDate})
+							#end
+						</td>
+					</tr>
+					<tr>
+						<td>工作起始时间：</td>
+						<td>
+							$dateUtils.format($!{post.postInfoDto.workStartTime},"HH:mm") ~ $dateUtils.format($!{post.postInfoDto.workStopTime},'HH:mm')
+							#if($stringUtils.equals($post.status,'INIT'))
+								<font color="red">未付款</font>
+								<a href="javascript:;" onclick="offlinePost('$!post.id')">下架</a>
+							#elseif($stringUtils.equals($post.status,'PAY_COMPLETE'))
+								<font color="green">支付完成</font>
+								<a href="javascript:;" onclick="offlinePost('$!post.id')">下架</a>
+							#elseif($stringUtils.equals($post.status,'PUBLISH_ING'))
+								<font color="red">发布中</font>
+								<a href="javascript:;" onclick="offlinePost('$!post.id')">下架</a>
+							#elseif($stringUtils.equals($post.status,'HOUR_24'))
+								<font color="red">紧急发布中</font>
+								<a href="javascript:;" onclick="offlinePost('$!post.id')">下架</a>
+							#elseif($stringUtils.equals($post.status,'SIGN_UP_FULL'))
+								<font color="green">已报满</font>
+								<a href="javascript:;" onclick="offlinePost('$!post.id')">下架</a>
+							#elseif($stringUtils.equals($post.status,'HOUR_24_SIGN_UP_FULL'))
+								<font color="green">24小时报满</font>
+								<a href="javascript:;" onclick="offlinePost('$!post.id')">下架</a>
+							#elseif($stringUtils.equals($post.status,'VERIFI_FULL'))
+								<font color="green">审核已满</font>
+								<a href="javascript:;" onclick="offlinePost('$!post.id')">下架</a>
+							#elseif($stringUtils.equals($post.status,'HOUR_24_VERIFI_FULL'))
+								<font color="green">审核已满</font>
+								<a href="javascript:;" onclick="offlinePost('$!post.id')">下架</a>
+							#elseif($stringUtils.equals($post.status,'WORK_ING'))
+								<font color="red">工作中</font>
+							#elseif($stringUtils.equals($post.status,'WORK_COMPLETE'))
+								<font color="green">工作完成</font>
+							#elseif($stringUtils.equals($post.status,'COMPLETE'))
+								<font color="green">已完成</font>
+								<span>
+									<a class="ui blue label" data-id="$post.id"> <i class="money icon"></i>校验</a>
+									<div class="ui small inline loader"></div>
+								</span>
+								 &nbsp;
+								#if($rollbackPeoples && !$!rollbacks)
+									<a data-id="$post.id" class="ui black label rollback">岗位回滚</a>
+								#end
+							#elseif($stringUtils.equals($post.status,'CLOSE'))
+								<font color="green">已关闭</font>
+							#end
+						</td>
+						<td>性别要求：</td>
+						<td>
+							#if(!$post.postClaimDto || !$post.postClaimDto.sex)
+								不限
+							#else
+								#if($post.postClaimDto.sex == 'M')
+									男
+								#elseif($post.postClaimDto.sex == 'W')
+									女
+								#end
+							#end
+						</td>
+					<tr>
+					<tr>
+						<td>年龄要求：</td>
+						<td colspan="3">
+							#if(!$post.postClaimDto || !$post.postClaimDto.ageMin)
+								不限
+							#else
+								$!post.postClaimDto.ageMin
+							#end
+							~
+							#if(!$post.postClaimDto || !$post.postClaimDto.ageMax)
+								不限
+							#else
+								$!post.postClaimDto.ageMax
+							#end
+						</td>
+					</tr>
+					<tr>
+						<td>身高要求：</td>
+						<td colspan="3">
+							#if(!$post.postClaimDto || !$post.postClaimDto.bodyHeightMin)
+								不限
+							#else
+								$!post.postClaimDto.bodyHeightMin
+							#end
+							~
+							#if(!$post.postClaimDto || !$post.postClaimDto.bodyHeightMax)
+								不限
+							#else
+								$!post.postClaimDto.bodyHeightMax
+							#end
+						</td>
+					</tr>
+					<tr>
+						<td>体重要求：</td>
+						<td colspan="3">
+							#if(!$post.postClaimDto || !$post.postClaimDto.bodyWeightMin)
+								不限
+							#else
+								$!post.postClaimDto.bodyWeightMin
+							#end
+							~
+							#if(!$post.postClaimDto || !$post.postClaimDto.bodyWeightMax)
+								不限
+							#else
+								$!post.postClaimDto.bodyWeightMax
+							#end
+						</td>
+					</tr>
+					<tr>
+						<td>工作描述：</td>
+						<td colspan="3">
+							$!post.postInfoDto.workDesc
+						</td>
+					</tr>
+					#if(${order})
+						<tr>
+    						<td width="10%">支付方式：</td>
+    						<td>
+    							<span>
+									#if($stringUtils.equals($order.payCategory,'ALIPAY'))
+										支付宝
+									#elseif($stringUtils.equals($order.payCategory,'ASSEST'))
+										余额
+									#end
+								</span>
+								<span>
+									#if($stringUtils.equals($order.status,'TRADE_SUCCESSFUL'))
+										支付金额：<font color="red">$arithUtils.formatAmount(${order.amount})</font> 元 #if($order.desc) ,$!{order.desc} #end
+									#else
+										未支付
+									#end
+								</span>
+    						</td>
+							<td width="10%">订单号：</td>
+    						<td>
+    							<span>
+									#if($stringUtils.isNotEmpty($order.tradeNo))
+										支付宝：$order.tradeNo,平台：$order.orderId
+									#else
+										平台：$order.orderId
+									#end
+								</span>
+    						</td>
+    					</tr>
+						#if(${order.buyerAlipayAccount})
+							<tr>
+								<td>支付宝账号：</td>
+								<td>$!{order.buyerAlipayAccount}</td>
+								<td>支付描述：</td>
+								<td>$!{order.desc}</td>
+							</tr>
+						#end
+					#end
+				</table>
+			</form>
+    
+            <div class="ui tiny header">岗位退款信息</div> 
+			<table id="signInfoTables" class="ui selectable celled table">
+                <thead>
+                    <th>金额</th>
+                    <th>原因</th>
+                    <th>退款时间</th>
+                </thead>
+				#if($refunds)
+					#set($sumRefund = 0)
+					#foreach($refund in $refunds)
+						#set($sumRefund =$refund.amount + $sumRefund)
+						<tr>
+							<td>$arithUtils.formatAmount($refund.amount) 元</td>
+							<td>$refund.reason</td>
+							<td>$dateUtils.format($refund.createTime,'yyyy-MM-dd HH:mm')</td>
+						</tr>
+					#end
+					<tr>
+						<td align="right" colspan="3">总退款：$arithUtils.formatAmount($sumRefund)</td>
+					</tr>
+				#else
+					<tr><td colspan="3" align="center">暂无</td></tr>
+				#end
+			</table>
+
+            #if($rollbacks)
+            <div class="ui tiny header">岗位回滚信息</div> 
+			<table id="signInfoTables" width="80%" class="ui selectable celled table">
+					<thead>
+						<th>报名编号</th>
+						<th>姓名</th>
+						<th>操作人</th>
+						<th>回滚时间</th>
+						<th>回滚状态</th>
+					</thead>
+					#foreach($rollback in $rollbacks)
+						<tr>
+							<td>$rollback.signNo</td>
+							<td>$rollback.realName</td>
+							<td>$rollback.operator</td>
+							<td>$dateUtils.format($rollback.createTime,'yyyy-MM-dd HH:mm')</td>
+							<td><font color="green">回滚完成</font></td>
+						</tr>
+					#end
+			</table>
+            #end
+
+            <div class="ui tiny header">岗位报名信息</div>
+			#if($signs)
+				<table id="signInfoTables" width="80%" class="ui selectable celled table">
+                <!-- <tr><td colspan="11" align="center">岗位报名信息</td></tr> -->
+                <thead>
+						<th width="4%">序号</th>
+    					<th width="10%">报名编号</th>
+    					<th>姓名</th>
+    					<th>联系电话</th>
+    					<th width="13%">保单号</th>
+    					<th>岗位状态</th>
+    					<th>工资</th>
+						<th>补助金额</th>
+						<th>报名时间</th>
+						<th>最后更新时间</th>
+						<th>评价</th>
+    				</tr>
+                </thead>
+				#set($validPeople=0)
+				#set($refuse=0)
+				#set($noPromise=0)
+				#set($subsidyAmounts = 0)
+				#set($dealAmounts = 0)
+				#set($fullWage=0)
+				#set($insureNumber=0)
+				#foreach($sign in $!signs)
+					<tr>
+						<td>$velocityCount</td>
+						<td>$sign.signNo</td>
+						<td><a href="/backStageManage/show/basic/userPeopleInfo.html?userId=$sign.userId" target="_blank">$sign.userName</a></td>
+						<td>$sign.userPhone</td>
+						<td>
+							#if($sign.insureId)
+								#if($stringUtils.equals($sign.insureId,'INSURE_CALCEL'))
+									<font color="red">已取消</font>
+								#else
+									#set($insureNumber=$insureNumber+1)
+									$sign.insureId
+								#end
+							#else
+								无
+							#end
+						</td>
+						<td>
+							#if($stringUtils.equals($sign.status,'SIGN_UP'))
+								<font color="red">待录取</font>
+							#elseif($stringUtils.equals($sign.status,'ENROLL'))
+								<font color="green">已录取</font>
+								#set($validPeople=$validPeople+1)
+							#elseif($stringUtils.equals($sign.status,'REFUSE'))
+								<font color="red">已拒绝</font>
+								#set($refuse=$refuse+1)
+							#elseif($stringUtils.equals($sign.status,'NO_PROMISE'))
+								<font color="red">已爽约</font>
+								#set($noPromise=$noPromise+1)
+							#elseif($stringUtils.equals($sign.status,'HOUR_24'))
+								<font color="green">进入24小时</font>
+								#set($validPeople=$validPeople+1)
+							#elseif($stringUtils.equals($sign.status,'WORK_ING'))
+								<font color="green">工作中</font>
+								#set($validPeople=$validPeople+1)
+							#elseif($stringUtils.equals($sign.status,'WORK_COMPLETE'))
+								<font color="green">未领工资</font>
+								#set($validPeople=$validPeople+1)
+							#elseif($stringUtils.equals($sign.status,'ASK'))
+								<font color="green">领取工资中</font>
+								#set($validPeople=$validPeople+1)
+							#elseif($stringUtils.equals($sign.status,'REFUSE_ASK_WAGE'))
+								<font color="green">商户拒绝发工资</font>
+								#set($validPeople=$validPeople+1)
+							#elseif($stringUtils.equals($sign.status,'SIGN_COMPLETE'))
+								#if($sign.askCount == 0)
+									<font color="red"><b>超时未领取</b></font>
+								#else
+									<font color="green"><b>已领工资</b></font>
+								#end
+								#set($validPeople=$validPeople+1)
+								#set($dealAmounts = $dealAmounts+$sign.actualWage)
+							#elseif($stringUtils.equals($sign.status,'DEMENSION'))
+								<font color="green">维权</font>
+								#set($validPeople=$validPeople+1)
+							#elseif($stringUtils.equals($sign.status,'MERCHANT_NO_PROMISE'))
+								<font color="red">商户爽约</font>
+								#set($dealAmounts = $dealAmounts+$sign.actualWage)
+								#set($validPeople=$validPeople+1)
+							#end
+						</td>
+						<td>
+							#if($post.wage == $sign.actualWage)
+								#if($stringUtils.equals($sign.status,'SIGN_COMPLETE'))
+									#set($fullWage=$fullWage+1)
+								#end
+								<font color="green">$arithUtils.formatAmount($sign.actualWage)</font>
+							#else
+								<font color="red">$arithUtils.formatAmount($sign.actualWage)</font>
+							#end
+						</td>
+						<td>
+							#if($sign.subsidyAmount)
+								#set($subsidyAmounts=$subsidyAmounts+$sign.subsidyAmount)
+								$arithUtils.formatAmount($sign.subsidyAmount)
+							#end
+						</td>
+						<td>
+							$dateUtils.format($sign.createTime,'yyyy-MM-dd HH:mm:ss')
+						</td>
+						<td>
+							$dateUtils.format($sign.modifyTime,'yyyy-MM-dd HH:mm:ss')
+						</td>
+						<td>
+							$!sign.rating
+						</td>
+					</tr>
+				#end
+					<tr>
+						<td colspan="11" align="right">满薪：$fullWage 人，有效：${validPeople} 人，爽约：${noPromise} 人，拒绝：${refuse} 人，保险：$!{insureNumber} 人，总补助：<font color="red"> #if($subsidyAmounts != 0)$arithUtils.formatAmount($subsidyAmounts)#else 0 #end </font> 元，总交易金额：<font color="red">#if($dealAmounts!=0)$arithUtils.formatAmount($dealAmounts) #else 0 #end</font> 元</td>
+					</tr>
+				</table>
+			#else
+
+				<table id="signInfoTables" width="80%" class="ui selectable celled table">
+    				<!-- <tr><td colspan="11" align="center">岗位报名信息</td></tr> -->
+                    <thead>
+                            <th width="4%">序号</th>
+                            <th width="10%">报名编号</th>
+                            <th>姓名</th>
+                            <th>联系电话</th>
+                            <th width="13%">保单号</th>
+                            <th>岗位状态</th>
+                            <th>工资</th>
+                            <th>补助金额</th>
+                            <th>报名时间</th>
+                            <th>最后更新时间</th>
+                            <th>评价</th>
+                        </tr>
+                    </thead>
+					<tr><td colspan="10">无</td></tr>
+				</table>
+			#end
+
+			<script type="text/html" id="rollback">
+				<div class="ui segment">
+					<form class="ui form error" onsubmit="return false;" name="rollback" action="/control/rollbackPostToWorkComplete.json">
+						<h4 class="ui dividing header">回滚对象</h4>
+						<div class="field">
+						#foreach($rollbackPeople in $rollbackPeoples)
+							<div class="ui slider checkbox">
+								<input type="checkbox" name="signNos" value="$rollbackPeople.signNo">
+								<label>$rollbackPeople.userRealName</label>
+							</div>
+						#end
+						</div>
+						<input type="hidden" name="postId" value="$post.id" />
+						<div class="ui error message">
+							<div class="header">
+								重要提示：只能回滚到签退节点，请选择具体需要回滚的用户，每个岗位只能回滚一次！
+							</div>
+							<ul class="list" style="list-style:none;">
+								<p>只能回滚一次！</p>
+								<p>只能回滚一次！</p>
+								<p>本规则解释权归<a href="javascript:;">@研发部</a>所有</p>
+							</ul>
+						</div>
+						<div class="field">
+				    		<button class="ui blue button right floated">回滚</button>
+				    	</div>
+					</form>
+				</div>
+			</script>
+
+			<script type="text/javascript">
+				$(document).on('click', '.label:has(.money.icon)', function(){
+					var id = $(this).attr('data-id');
+					parent = $(this).parent();
+		            $(this).remove();
+		            parent.find('.loader').addClass('active');
+		            var param = {};
+		            param.postId = id;
+		            $.get('/control/calibrationPost.json', param, function(json){
+		                parent.find('.loader').removeClass('active');
+		                if( json && json.status == "successful" ){
+		                    parent.append('<div class="ui pointing teal left label">'+ json.message +'</div>');
+		                }else{
+		                    parent.append('<div class="ui pointing red left label">'+ json.message +'</div>');
+		                }
+		            }, 'json');
+		        });
+
+		        $(document).on('click', '.rollback', function(){
+		        	layer.open({
+					    type: 1,
+					    title: false,
+					    move: false,
+					    area: ['600px', '300px'],
+					    content: template('rollback', {})
+					});
+		        });
+
+		        $(document).on('click', 'form[name=rollback] button.button', function(){
+		        	var form = $('form[name=rollback]');
+		        	var postId = form.find('input[name=postId]').val();
+		        	var signNos = "";
+		        	var str = '';
+		        	var signNosInputs = form.find('input[name=signNos]:checked');
+		        	signNosInputs.each(function(){
+		        		signNos += str+ $(this).val();
+		        		str = ','
+		        	});
+		        	var param = {};
+		        	param.signNos = signNos;
+		        	param.postId = postId;
+		        	console.log(param);
+		        	$.post('/control/rollbackPostToWorkComplete.json', param, function(json){
+		        		if( json || json.status == "SUCCESSFUL" ){
+		        			layer.closeAll();
+		        			window.location.reload();
+		        		}else{
+		        			layer.msg(json.message, {icon: 5});
+		        		}
+		        	});
+		        });
+
+			</script>
+	</body>
+</html>
+

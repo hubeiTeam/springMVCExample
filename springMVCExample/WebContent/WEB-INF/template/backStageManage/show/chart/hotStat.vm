@@ -1,0 +1,122 @@
+#parse('/backStageManage/public/TOP.vm')
+<script type="text/javascript" src="/backStageManage/js/uitl.js"></script>
+<link rel="stylesheet" type="text/css" href="/backStageManage/ui/css/components/datepicker.css">
+
+<div class="main">
+<!-- <body id="index" style="background: #F7F7F7; min-width: 1000px; padding:1px;" > -->
+
+    <div class="ui card" style="width:1050px; height:500px;">
+        <div class="ui active inverted dimmer">
+            <div class="ui text loader">加载</div>
+        </div>
+
+        <div class="container" id="container" style="width:1050px; height:500px;">
+
+        </div>
+    </div>
+    
+    <div class="ui segment top" style="width:1050px; padding-top:40px;">
+        <form class="ui form small inline" name="search">
+            <div class="five fields">
+                <div class="field">
+                    <label>日期</label>
+                    <input name="createTime" value="" type="text" data-uk-datepicker="{format:'YYYY-MM-DD'}">
+                </div>
+                <div class="field">
+                    <label>操作</label>
+                    <button type="subnit" class="ui submit small button">查找</button>
+                </div>
+            </div>
+        </form>
+        <div class="ui top attached label">查询条件</div>
+    </div>
+    <script type="text/javascript" src="http://webapi.amap.com/maps?v=1.3&key=c42f9f8f60582436083bc7adead0065a"></script> 
+
+    <script type="text/javascript">
+
+        //创建地图
+        var map = new AMap.Map('container',{
+            zoom: 11
+        });
+        map.setLimitBounds(map.getBounds());
+
+        //创建ICON
+        var icon = new AMap.Icon({
+                image : '/backStageManage/images/mark.png',
+                size : new AMap.Size(10,10)
+        });
+
+        var param = toQueryParams.call(window.location.href); //获取URL参数
+
+        if( !param || !param.createTime ){
+            var param = {};
+            param.createTime = ( new Date() ).Format('yyyy-MM-dd');
+        }
+
+        //修改主window的url
+        // var url = (window.location.href).split(window.location.host)[1];
+        // var pWindow = window.parent;
+        // var newUrl = pWindow.location.pathname+'?url='+encodeURIComponent(url);
+        // pWindow.history.pushState({},pWindow.document.title,newUrl);
+
+        $.get('/back/queryHotListByPage.json', param, function(json){
+            if(json && json.datas){
+                var markers = [];
+                var marker = [];
+                for(var i=0; i<json.datas.length; i++){
+                    var data  = json.datas[i];
+                    marker = markMap(data.latitude,data.longitude);
+                    markers.push(marker);
+                }
+                map.plugin(["AMap.MarkerClusterer"], function () {
+                  cluster = new AMap.MarkerClusterer(map, markers);
+                });
+                unload();
+            }
+        }, "json");
+
+
+        randerForm( param, $('form[name=search]') );
+
+        function unload(){
+            $('.dimmer').removeClass('active');
+        }
+
+        //重新渲染表单
+        function randerForm(param, form){
+            for( k in param ){
+                var cv = '[name='+k+']';
+                if( form.find('select'+cv).size() >0 ){
+                    form.find('select'+cv).find('option[value='+ param[k] +']').prop('selected',true);
+                }else if( form.find('input'+cv+ '[type=radio]').size() > 0 ){
+                    form.find('input'+cv+ '[type=radio]').prop('checked', false);
+                    form.find('input'+cv+ '[type=radio][value='+ param[k] +']').prop('checked', true);
+                }else{
+                    form.find('input'+cv).val(param[k]);
+                }
+            }
+        }
+
+        function markMap(latitude,longitude){
+            var marker = new AMap.Marker({
+                    icon : icon,//24px*24px
+                    position : [longitude,latitude],
+                    offset : new AMap.Pixel(-5,-5),
+                    map : map
+            });
+            return marker;
+        }
+
+    </script>
+    <script type="text/javascript">
+        //事件插件驱动
+        $('.ui.checkbox').checkbox();
+
+        ;(function(){
+            $('select.dropdown').dropdown();
+            require(["uikit!datepicker"], function(UI){
+            });
+        })();
+    </script>
+</div>
+#parse('/backStageManage/public/BOTTOM.vm')

@@ -1,0 +1,110 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>事亲后台管理平台</title>
+<link href="share/images/favicon.ico" rel="shortcut icon"/>
+<link rel="stylesheet" type="text/css" href="admin/css/default/share.css"/>
+<!-- <script src="share/js/jquery-1.11.0.min.js" type="application/javascript"></script> -->
+<link rel="stylesheet" type="text/css" href="/semantic/semantic.base.css">
+
+<link rel="stylesheet" type="text/css" href="/ui/css/uikit.css">
+<link rel="stylesheet" type="text/css" href="/ui/css/components/progress.css">
+<link rel="stylesheet" type="text/css" href="/css/improve.css">
+
+<!-- <script src="/js/jquery.2.0.js" type="application/javascript"></script>
+<script src="/js/require-2.1.14.min.js" type="application/javascript"></script>
+<script src="/js/template-debug.js" type="application/javascript"></script> -->
+<script type="text/javascript" src="share/js/jsUtil.js"></script>
+<script src="admin/js/index.js" type="application/javascript"></script>
+
+
+<script type="text/javascript" src="/js/system.js"></script>
+<script type="text/javascript" src="/js/uitl.js"></script>
+<script type="text/javascript" src="/js/searchPage.js"></script>
+<script type="text/javascript" src="/js/laypage.dev.js"></script>
+<script type="text/javascript" src="/js/layer.js"></script>
+
+<script type="text/javascript" src="/lib/jquery.2.0.js"></script>
+<script type="text/javascript" src="/lib/template-debug.js"></script>
+<script type="text/javascript" src="/semantic/semantic.js"></script>
+<script type="text/javascript" src="/lib/require-2.1.14.min.js"></script>
+</head>
+
+<body>
+<div class="bezel" id="bezel-id">
+    <div class="head">
+        <div class="hleft"><span class="head-icon">管理平台</span></div>
+    </div>
+    <div class="center">
+        <div class="rleft">
+            <div class="center">
+            <div class="topMenu">
+            <ul>
+            <li class="this_modal" data-type="1" style="cursor: pointer;">新增</li>
+            <li><a href="#">　删除　</a></li>
+            <li><a href="#">　置顶　</a></li>
+            <li><a href="#">　取消置顶　</a></li>
+            <li><a href="#">　推荐　</a></li>
+            <li><a href="#">　取消推荐　</a></li>
+            </ul>
+            </div>
+            <div class="search">
+            <span>标题：<input type="text"/></span>
+            <span>标题：<input type="text"/></span>
+            <span>标题：<input type="text"/></span>
+            <span>标题：<input type="text"/></span>
+            <span><input type="button" id="search-btn" value="查询" /> </span>
+            </div>
+            <div class="tableMain">
+            <table class="right-table" width="99%"  border="0px" cellpadding="0" align="center" cellspacing="0" >
+            <tbody>
+            <tr>
+            <th>用户id</th>
+            <th>用户姓名</th>
+            <th>用户密码</th>
+            <th>用户状态</th>
+            <th id="clearTDrightBorder">操作</th>
+            </tr>
+            #foreach($user in $userList)
+                 <tr data-id="$!{user.id}">
+                       <td>$!{user.id}</td>
+                       <td>$!{user.userName}</td>
+                       <td>$!{user.userPassword}</td>
+                       <td>
+                       #if(${user.status} == "1")
+                       <td>有效</td>
+                       #else
+                       <td>无效</td>
+                       #end
+                       <td id="clearTDrightBorder">修改　预览</td>
+                   </tr>
+               #end
+            </tbody>
+            </table>
+            </div>
+        <div id="page">
+            <ul>
+            <li>条数：
+              <select name="page" style="background:rgba(0,0,0,0.4); border:none; height:25px; line-height:25px; color:#FFFFFF">
+                <option value="10">10</option>
+                <option value="20">20</option>
+                <option value="30">30</option>
+                <option value="40">40</option>
+                <option value="50">50</option>
+              </select></li>
+            <li class="first"><a href="#">&nbsp;首页&nbsp;</a></li>
+            <li class="upPage"><a href="#">&nbsp;上一页&nbsp;</a></li>
+            <li>page <input type="text" size="1" style="background:rgba(0,0,0,0.4); border:none; height:25px; line-height:25px; color:#FFFFFF; " /> of</li>
+            <li class="nextPage"><a href="#">&nbsp;下一页&nbsp;</a></li>
+            <li class="lastPage"><a href="#">&nbsp;末页&nbsp;</a></li>
+            </ul>
+        </div>
+</div>
+</div>
+    </div>
+</div>
+
+</body>
+
+</html>

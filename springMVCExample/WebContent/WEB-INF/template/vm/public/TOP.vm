@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<html lang="cn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <title>事亲管理后台</title>
+    #parse('/backStageManage/public/inc/baseres.vm')
+</head>
+<body id="index" >
+    #parse('/backStageManage/public/inc/slidebar.vm')

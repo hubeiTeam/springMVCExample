@@ -1,0 +1,299 @@
+#parse('/backStageManage/public/TOP.vm')
+<link rel="stylesheet" type="text/css" href="/backStageManage/ui/css/components/datepicker.css">
+<script type="text/javascript" src="/backStageManage/js/uitl.js"></script>
+<script type="text/javascript" src="/backStageManage/js/system.js"></script>
+<script type="text/javascript" src="/backStageManage/lib/layPage/laypage.dev.js"></script>
+<script type="text/javascript" src="/backStageManage/js/searchPage.js"></script>
+<div class="main">
+    <div class="page-center ui segment">
+		<div class="ui dividing header">
+          <i class="user icon"></i>
+          <div class="content">
+            岗位对账列表
+          </div>
+        </div>
+        
+         <form class="ui small form" action="" method="get" name="search">
+            <div class="fields">
+                <div class="field">
+                    <label>是否满薪</label>
+                    <select class="ui dropdown" name="fullWage">
+                    	<option value="0" selected="selected">所有</option>
+                    	<option value="1">满薪</option>
+                    	<option value="2">非满薪</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label>岗位类别</label>
+                    <select class="ui dropdown" name="postCategory">
+                        <option value="0" selected="selected">全部类别</option>
+                        <option value="SINGLE">单天 </option>
+                        <option value="SEVERAL">多天</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label>商户手机号</label>
+                    <input type="text" placeholder="直接查询" name="publishUserPhone">
+                </div>
+                <div class="field">
+                    <label>BD姓名</label>
+                    <input type="text" placeholder="支持模糊查询" name="bdName">
+                </div>
+                <div class="field">
+                    <label>工作时间(起始)</label>
+                    <input type="text" placeholder="年/月/日" data-uk-datepicker="{format:'YYYY-MM-DD'}" name="workStartTime">
+                </div>
+                <div class="field">
+                    <label>工作时间(结束)</label>
+                    <input type="text" placeholder="年/月/日" data-uk-datepicker="{format:'YYYY-MM-DD'}" name="workStopTime">
+                </div>
+            </div>
+            <div class="fields">
+                <div class="field">
+                    <label>公司名称</label>
+                    <input type="text" placeholder="支持模糊查询" name="companyName">
+                </div>
+                <div class="field">
+                    <label>最小工资</label>
+                    <input type="text" placeholder="1234" name="wageMin">
+                </div>
+                <div class="field">
+                    <label>最大工资</label>
+                    <input type="text" placeholder="1234" name="wageMax">
+                </div>
+                <div class="field">
+                    <label>操作</label>
+                    <!-- <input class="ui button mini" type="submit" value="查询" > -->
+                    <div class="ui buttons small">
+                      <button class="ui button instagram" type="submit"> 查询 </button>
+                      <div class="or" data-text="或"></div>
+                      <button class="ui button" onclick="$('form').form('clear');">重置</button>
+                    </div>
+                </div>
+                <div class="field">
+                    <label>一键校验</label>
+                    <div class="ui blue small button">
+                        <i class="money icon"></i>
+                        一键校验
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    
+        <!-- 按钮中心 -->
+    <div class="ui page-center page-list">
+        <div class="ui active inverted dimmer page-loading">
+            <div class="ui large text loader">加载中</div>
+        </div>
+        <div class="ui" style="min-height:400px;-webkit-transition:height .5s;">
+            <table class="ui selectable celled table">
+                <thead>
+                    <tr>
+                        <th>编号</th>
+                        <th>BD</th>
+                        <th>账号</th>
+                        <th>公司名称</th>
+                        <th>岗位标题</th>
+                        <th>岗位数</th>
+                        <th>已完成人数</th>
+                        <th>岗位薪资</th>
+                        <th>工资总金额</th>
+                        <th>交易金额</th>
+                        <th>公司补贴</th>
+                        <th>保险金额/人</th>
+                        <th>工作日期</th>
+                        <th>岗位类别</th>
+                        <th width="200">操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 底部按钮 -->
+    <div class="page-center ui segment">
+        <div id="page" class="ui">
+        </div>
+        <div class="clear"></div>
+    </div>
+</div>
+
+<script type="text/html" id="list" >
+    {{each datas as v}}
+        <tr data-id="{{v.id}}">
+            <td>{{v.tableTitle}}</td>
+            <td>{{v.bdName}}</td>
+            <td><a href="/backStageManage/show/basic/userMerchantInfo.html?merchantId={{v.publishUserId}}" target="_blank">{{v.publishUserPhone}}</a></td>
+            <td><a href="/backStageManage/show/basic/userMerchantInfo.html?merchantId={{v.publishUserId}}" target="_blank">{{v.companyName}}</a></td>
+            <td><a href="/backStageManage/show/basic/postInfo.html?id={{v.id}}" target="_blank">{{v.title}}</a></td>
+            <td>{{v.personalNumber}}</td>
+            <td>{{v.completePeopleNumber}}</td>
+            <td>{{v.wage}}</td>
+            <td>{{v.tradeAmount}}</td>
+            <td>{{v.dealAmount}}</td>
+            <td>{{v.companySubsidyAmount}}</td>
+            <td>{{v.insurePrice}}</td>
+            <td>{{v.workDate}}</td>
+			<td>{{v.postCategory.name}}</td>
+            <td><a class="ui green label" href="/backStageManage/show/basic/postInfo.html?id={{v.id}}" target="_blank"> <i class="unhide icon"></i>查看</a><a class="ui blue label"> <i class="money icon"></i>校验</a><div class="ui small inline loader"></div></td>
+        </tr>
+    {{/each}}
+</script>
+
+<script type="text/javascript">
+
+    //实现ajax队列插件
+    Timmer = (function($){
+        var Timmer = function(Obj, fen, success, error){
+            this.Obj = Obj; //需要操作的对象
+            this.fen = fen; //队列大小
+            this.len = 0; //当前所在位置
+            this.queue = 0; //当前队列中数量
+            this.error = error; //成功
+            this.success = success; //失败
+        };
+    
+        Timmer.prototype.start = function(){
+    
+            //判断是否再队列限制以内
+            if( this.Obj.length <= this.fen  ){
+                for( var i=0; i< this.Obj.length; i++ ){
+                    this.add();
+                    this.ajax( 'get', this.Obj[i] );
+                }
+            }else{
+                for( var i=0; i< this.fen; i++  ){
+                    this.add();
+                    this.ajax( 'get', this.Obj[i] );
+                }
+                //符合条件开始进行队列
+                this.polling();
+            };
+        };
+    
+        Timmer.prototype.ajax = function(type, obj){
+    
+            //对当前的所在作用于赋值
+            var curr = this;
+    
+            //ajax申请
+            $.ajax({
+                type: type,
+                url: obj.url,
+                data: obj.param,
+                dataType: 'json',
+                success: function(json){
+                    curr.success(obj.dom,json);
+                    curr.pop.call(curr);
+                },
+                error: function(json){
+                    curr.error(obj.dom);
+                    curr.pop.call(curr);
+                }
+            });
+        }
+    
+        Timmer.prototype.polling = function(){
+    
+            var curr = this;
+            var timeout = null;
+            timeout = setInterval( function(){
+                if( curr.len >= curr.Obj.length ){ //当是最后一个时结束
+                    clearTimeout(timeout);
+                }else if( curr.fen > curr.queue ){
+                    curr.ajax( 'get', curr.Obj[curr.len] );
+                    curr.add();
+                }
+            }, 100);
+        }
+    
+        Timmer.prototype.pop = function(){
+            this.queue --;
+        }
+        Timmer.prototype.add = function(){
+            this.len ++;
+            this.queue ++;
+        }
+    
+        return Timmer;
+    })($);
+
+    ;(function(){
+        thisLaypage({
+            url: '/back/queryReconciliationPost.json',
+            resolve: function(res){
+                for( var i=0; i<res.datas.length; i++ ){
+                    res.datas[i].workDate = (new Date(res.datas[i].workDate)).Format('yyyy-MM-dd');
+                    // res.datas[i].createTime = (new Date(res.datas[i].createTime)).Format('yyyy-MM-dd');
+                    res.datas[i].postCategory = getPostCategoryStatus(res.datas[i].postCategory);
+                    res.datas[i].status = getGiftStatus(res.datas[i].status);
+                }
+                console.log(res);
+                return res;
+            }
+        });
+    })();
+
+    //页面操作绑定
+    ;(function(){
+        $(document).on('click', '.label:has(.money.icon)', function(){
+            var parent = $(this).parents('td');
+            var id = $(this).parents('tr').attr('data-id');
+            $(this).remove();
+            parent.find('.loader').addClass('active');
+            var param = {};
+            param.postId = id;
+            $.get('/control/calibrationPost.json', param, function(json){
+                parent.find('.loader').removeClass('active');
+                if( json && json.status == "successful" ){
+                    parent.append('<div class="ui pointing teal left label">'+ json.message +'</div>');
+                }else{
+                    parent.append('<div class="ui pointing red left label">'+ json.message +'</div>');
+                }
+            }, 'json');
+        });
+
+        $(document).on('click', '.button:has(.money.icon)', function(){
+            var documents = $('.page-list tbody').find('tr');
+            var ajaxs = [];
+            function error( dom ){
+                console.log(dom);
+            }
+            function success( dom,json ){
+                dom.find('.pointing').remove();
+                var thistd = dom.find('.label').parents('td');
+                thistd.find('.loader').removeClass('active');
+                if( json && json.status == "successful" ){
+                    thistd.append('<div class="ui pointing teal left label">'+ json.message +'</div>');
+                }else{
+                    thistd.append('<div class="ui pointing red left label">'+ json.message +'</div>');
+                }
+            }
+            documents.each(function(i){
+                var btm = $(this).find('.label:has(.money.icon)');
+                $(this).find('td').find('.loader').addClass('active');
+                btm.remove();
+                $(this).find('.pointing').remove();
+                var postId = $(this).attr('data-id');
+                ajaxs[i]={url:'/control/calibrationPost.json',param:'postId='+postId,dom:$(this)};
+            });
+            console.log(ajaxs);
+            var t = new Timmer(ajaxs,4,success,error);
+            t.start();
+        });
+
+    })();
+
+    //事件插件驱动
+	;(function(){
+		$('select.dropdown').dropdown();
+		require(["uikit!datepicker"], function(UI){
+        });
+	})();
+</script>
+
+#parse('/backStageManage/public/BOTTOM.vm')
+

@@ -42,4 +42,5 @@ public interface BackUserService {
 
 	// 据id删除一个权限对象
 	boolean deleteOnePower(Integer id);
+	
 }

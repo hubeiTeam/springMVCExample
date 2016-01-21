@@ -1,0 +1,257 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>用户列表</title>
+<!-- <script type="text/javascript" src="/js/laypage.dev.js"></script>
+<script type="text/javascript" src="/js/layer.js"></script>
+<script type="text/javascript" src="/js/uitl.js"></script>
+<script type="text/javascript" src="/js/system.js"></script>
+
+<script type="text/javascript" src="/js/jquery.2.0.js"></script>
+<script type="text/javascript" src="/js/require-2.1.14.min.js"></script>
+<script type="text/javascript" src="/js/semantic.js"></script>
+<script type="text/javascript" src="/js/template-debug.js"></script>
+
+<link rel="stylesheet" type="text/css" href="/css/datepicker.css">
+<link rel="stylesheet" type="text/css" href="/css/improve.css">
+<link rel="stylesheet" type="text/css" href="/css/progress.css">
+<link rel="stylesheet" type="text/css" href="/css/semantic.base.css">
+<link rel="stylesheet" type="text/css" href="/css/uikit.css"> -->
+<link rel="stylesheet" type="text/css" href="/semantic/semantic.base.css">
+
+<link rel="stylesheet" type="text/css" href="/ui/css/uikit.css">
+<link rel="stylesheet" type="text/css" href="/ui/css/components/progress.css">
+<link rel="stylesheet" type="text/css" href="/css/improve.css">
+
+<script type="text/javascript" src="/js/system.js"></script>
+<script type="text/javascript" src="/js/uitl.js"></script>
+<script type="text/javascript" src="/js/searchPage.js"></script>
+<script type="text/javascript" src="/js/laypage.dev.js"></script>
+<script type="text/javascript" src="/js/layer.js"></script>
+
+<script type="text/javascript" src="/lib/jquery.2.0.js"></script>
+<script type="text/javascript" src="/lib/template-debug.js"></script>
+<script type="text/javascript" src="/semantic/semantic.js"></script>
+<script type="text/javascript" src="/lib/require-2.1.14.min.js"></script>
+</head>
+
+<body>
+
+<div class="main">
+    <div class="page-center ui segment">
+        <div class="ui dividing header">
+            <i class="user icon"></i>
+            <div class="content">
+                岗位列表
+            </div>
+        </div>
+        <form class="ui small form" action="" method="get" name="search">
+            <div class="fields">
+                <div class="field">
+                    <label>发布时间(起始)</label>
+                        <input type="text" placeholder="年/月/日" data-uk-datepicker="{format:'YYYY-MM-DD'}" name="publishTimeBegin">
+                </div>
+                <div class="field">
+                    <label>发布时间(结束)</label>
+                    <input type="text" placeholder="年/月/日" data-uk-datepicker="{format:'YYYY-MM-DD'}" name="publishTimeEnd">
+                </div>
+                <div class="field">
+                    <label>操作</label>
+                    <!-- <input class="ui button mini" type="submit" value="查询" > -->
+                    <div class="ui buttons">
+                      <button class="ui button instagram" type="submit"> 查询 </button>
+                      <div class="or" data-text="或"></div>
+                      <button class="ui button" onclick="$('form').form('clear');">重置</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="page-center ui page-list">
+        <div class="ui active inverted dimmer page-loading">
+            <div class="ui large text loader">加载中</div>
+        </div>
+        <div class="ui" style="min-height:400px;-webkit-transition:height .5s;">
+            <table class="ui selectable celled table">
+                <thead>
+                    <tr>
+                        <th>用户id</th>
+                        <th>用户名</th>
+                        <th>密码</th>
+                        <th>状态</th>
+                        <!-- <th>操作</th> -->
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+            <h5 class="ui dividing header " align="right" id="table-count"></h5>
+        </div>
+    </div>
+
+    <div class="page-center ui segment">
+            <div id="page">
+            </div>
+            <div class="clear"></div>
+    </div>
+
+</div>
+
+<!-- 弹出层窗口 -->
+<div class="ui modal" id="UIModel" data-type="" style="min-height:600px;">
+
+</div>
+
+<!-- 列表模板 -->
+<script type="text/html" id="list">
+    {{each datas as v}}
+    <tr data-id="{{v.id}}">
+        <td>{{v.id}}</td>
+        <td>{{v.userName}}</td>
+        <td>{{v.userPassword}}</td>
+        <td>{{v.status}}</td>
+        <!-- <td><a class="ui green label"> <i class="write square icon"></i>修改</a></td> -->
+    </tr>
+    {{/each}}
+</script>
+
+<!-- 弹出层模板 （） -->
+<script type="texr/html" id="UIModel-tmp">
+    <i class="close icon"></i>
+    <form class="ui content small form" name="editinfo">
+        <h3 class="ui dividing header">岗位修改</h3>
+        <div class="fields">
+            <div class="field">
+               <label>最低年龄</label>
+               <input disabled="disabled" type="text" value="{{postClaim.ageMin}}">
+            </div>
+            <div class="field">
+               <label>最高年龄</label>
+               <input disabled="disabled" type="text" value="{{postClaim.ageMax}}">
+            </div>
+        </div>
+    </form>
+    <div class="actions">
+        <div class="ui button deny">取消</div>
+        <div class="ui button positive submit" data-form="editinfo">提交</div>
+    </div>
+</script>
+<script type="text/javascript">
+
+    //分页组件
+    ;(function(){
+        window.thisLaypage = '';
+        var param = toQueryParams.call(window.location.href);
+        randerForm(param, $('form[name=search]'));
+        var currPage = param.currPage || 1;
+
+        thisLaypage = laypage({
+            cont: $('#page'),
+            //pages: pages, //通过后台拿到的总页数
+            curr: currPage, //初始化当前页
+            skip: true,
+            jump: function(e){ //触发分页后的回调
+                param.currPage = e.curr;
+                changeHash(param);
+                loading();
+                $.getJSON('/userList.json', param, function(res){
+                    e.pages = e.last = Math.ceil(res.count/10) || 1; //重新获取总页数，一般不用写
+                    randerSize(res.count);
+                    thisLaypage.rePage();
+                    rander(res.datas);
+                });
+            }
+        });
+
+        function loading(){
+            $('.page-loading').addClass('dimmer');
+        }
+
+        function unload(){
+            $('.page-loading').removeClass('dimmer');
+        }
+
+        function rander(datas){
+            var data = {};
+            data.datas = datas;
+            data = resolve(data);
+            var _html = template('list', data);
+            $('.page-list tbody').html(_html);
+            unload();
+        }
+
+        function randerSize(count){
+            $('#table-count').text('总条数：' +count+ ' 条');
+        }
+
+
+        //对数据进行解析
+        function resolve(data){
+            console.log(data);
+
+            // for( var i=0; i<data.datas.length; i++ ){
+            //     data.datas[i].status = getPluralismStatus(data.datas[i].status);
+            //     data.datas[i].createTime = (new Date(data.datas[i].createTime)).Format('yyyy-MM-dd');
+            //     data.datas[i].postCategory = getPostCategoryStatus(data.datas[i].postCategory);
+            //     data.datas[i].workDate = (new Date(data.datas[i].workDate)).Format('yyyy-MM-dd');
+            // }
+            console.log(data);
+            return data;
+        }
+
+        //重新渲染表单
+        function randerForm(param, form){
+            for( k in param ){
+                var cv = '[name='+k+']';
+                form.find('input'+cv).val(param[k]);
+                form.find('select'+cv).find('option[value='+ param[k] +']').prop('selected','selected');
+            }
+        }
+    })();
+
+    //列表上的事件操作
+    ;(function(){
+        var bigTable = $('.page-center table');
+        var model = $('#UIModel');
+        //修改
+        bigTable.on('click', 'td .label.ui:has(.square)', function(){
+            var id = $(this).parents('tr').attr('data-id');
+            var param = {};
+            param.id = id;
+            $.post('/control/queryPluralismPostMessage.json', param, function(json){
+                render(json);
+            }, 'json');
+        });
+
+        function render(json){
+            // json.pluralismPost.workDate = (new Date(json.pluralismPost.workDate)).Format('yyyy-MM-dd');
+            // json.postInfo.workStartTime = (new Date(json.postInfo.workStartTime)).Format('yyyy-MM-dd hh:mm:ss');
+            // json.postInfo.workStopTime = (new Date(json.postInfo.workStopTime)).Format('yyyy-MM-dd hh:mm:ss');
+            var _html = template('UIModel-tmp', json);
+            model.html(_html);
+            model.modal('show');
+        }
+    })();
+
+    //事件插件驱动
+    ;(function(){
+        $('select.dropdown').dropdown();
+        require(["uikit!datepicker"], function(UI){
+        });
+    })();
+    // requirejs.config({
+    //     baseUrl: "/vm/",
+    //     paths: {
+    //         "uikit": '/vm/js/uikit'
+    //     },
+    //     config: {
+    //         "uikit": {
+    //             "base": "./js"
+    //         }
+    //     }
+    // });
+</script>
+</body>
+</html>

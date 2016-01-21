@@ -1,0 +1,405 @@
+#parse('/backStageManage/public/TOP.vm')
+<link rel="stylesheet" type="text/css" href="/backStageManage/ui/css/components/datepicker.css">
+<link rel="stylesheet" type="text/css" href="/backStageManage/ui/css/components/form-file.css">
+<script type="text/javascript" src="/backStageManage/js/uitl.js"></script>
+<script type="text/javascript" src="/backStageManage/js/system.js"></script>
+<script type="text/javascript" src="/backStageManage/lib/layPage/laypage.dev.js"></script>
+<script type="text/javascript" src="/backStageManage/js/searchPage.js"></script>
+<div class="main">
+    <!-- 头部搜索条件  -->
+    <div class="page-center ui segment">
+		<div class="ui dividing header">
+          <i class="user icon"></i>
+          <div class="content">
+            学生推荐商户列表
+          </div>
+          </div>
+         <form class="ui mini form" action="" method="get" name="search">
+            <div class="fields">
+            	<div class="field">
+            	<label>状态</label>
+            	<select class="ui dropdown" name="statusLike">
+            			#if($!status=="0")
+                    	<option value="0" selected="selected">全部状态</option>
+                    	#else
+                    	<option value="0">全部状态</option>
+                    	#end
+                    	#if($!status=="INIT")
+                    	<option value="INIT" selected="selected">未处理</option>
+                    	#else
+                    	<option value="INIT">未处理</option>
+                    	#end
+                    	#if($!status=="COMPLETE")
+                    	<option value="COMPLETE" selected="selected">已处理</option>
+                    	#else
+                    	<option value="COMPLETE">已处理</option>
+                    	#end
+                    </select>
+                </div>
+                <div class="field">
+					<label>推荐时间</label>
+					 #if($!beginTimeLike)
+					  <input type="text"	placeholder="年/月/日" style="width: 150px" value="$!{beginTimeLike}" name="beginTimeLike" data-uk-datepicker="{format:'YYYY-MM-DD'}">
+					 #else
+					  <input type="text" placeholder="年/月/日" style="width: 150px" name="beginTimeLike" data-uk-datepicker="{format:'YYYY-MM-DD'}">
+					 #end 
+					 ~ 
+					 #if($!endTimeLike) 
+						<input type="text" placeholder="年/月/日" style="width: 150px" value="$!{endTimeLike}" name="endTimeLike" data-uk-datepicker="{format:'YYYY-MM-DD'}">
+					#else
+					 	<input	type="text" placeholder="年/月/日" style="width: 150px"	name="endTimeLike" data-uk-datepicker="{format:'YYYY-MM-DD'}">
+					#end
+				</div>
+                <div class="field">
+                    <label>操作</label>
+                    <div class="ui buttons">
+                      <button class="ui button instagram" type="submit"> 查询 </button>
+                      <div class="or" data-text="或"></div>
+                      <button class="ui button" onclick="$('form').form('clear');">重置</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="ui page-center page-list">
+		<div class="ui active inverted dimmer page-loading">
+			<div class="ui large text loader">加载中</div>
+		</div>
+		<div class="ui"	style="min-height: 400px; -webkit-transition: height .5s;">
+			<table class="ui selectable celled table">
+				<thead>
+					<tr>
+						<th>序列号</th>
+						<th>推荐人</th>
+						<th>公司名称</th>
+						<th>公司联系人</th>
+						<th>联系电话</th>
+						<th>推荐时间</th>
+						<th>状态</th>
+						<th>操作</th>
+					</tr>
+				</thead>
+				 <tbody>
+                </tbody>
+			</table>
+		</div>
+	</div>
+	<div class="page-center ui segment">
+		<div id="page" class="ui"></div>
+		<div class="clear"></div>
+	</div>
+</div>
+</div>
+<div class="ui small modal" id="adduser" style="min-height:390px;"></div>
+<script type="text/html" id="list">
+    {{each datas as v}}
+        <tr data-id="{{v.id}}">
+			<td>{{v.tableTitle}}</td>
+			<td>
+				<a href="/backStageManage/show/basic/userPeopleInfo.html?userId={{v.userId}}" target="_blank">
+					{{v.userName}}
+				</a>
+			</td>
+            <td>{{v.companyName}}</td>
+            <td>{{v.linkName}}</td>
+            <td>{{v.linkPhone}}</td>
+			<td>{{v.createTime}}</td>
+            <td>{{v.status.name}}</td>
+			<td>
+				#if(${updateUserRecommend})
+				{{if v.status.code=="INIT"}}
+					<button class="ui circular grey mini button this_modal" data-type="2"><i class="edit icon"></i>修改</button>
+				{{/if}}
+				#end
+				#if(${deleteUserRecommend})	
+				<button class="ui circular red mini button deleteUserRecommend"><i class="remove user icon"></i>删除</button>
+				#end
+			</td>
+        </tr>
+    {{/each}}
+</script>
+<script type="text/javascript">
+	;(function(){
+	    thisLaypage({
+	        url: '/back/getUserRecommendListByPage.json',
+	        resolve: function(res){
+	            for( var i=0; i<res.datas.length; i++ ){
+	                res.datas[i].createTime = (new Date(res.datas[i].createTime)).Format('yyyy-MM-dd hh:mm');
+	                res.datas[i].status = getSystemStatus(res.datas[i].status);
+	            }
+	            console.log(res);
+	            return res;
+	        }
+	    });
+	})();
+	;(function(){
+
+        //当前的id
+        var g_id = '';
+
+        //弹出框
+        var modal = $("#adduser");
+        var $modal = $("#adduser");
+		var main=$(".main");
+        //点击弹出新增和编辑框
+        main.on('click',".this_modal", function(){
+            var data = {};
+            var type = $(this).attr('data-type');
+
+            if( type == 1 ){
+                data.type = 1;
+            }
+
+            //首次渲染页面
+            rander(data, $modal);
+            $modal.modal('show');
+
+            //二次渲染弹窗
+            if( type == 2 ){
+
+                //获取参数
+                var param = {};
+                param.id = $(this).parents('tr').attr('data-id');
+                g_id = param.id;
+
+                //获取数据
+                $.get('/back/findUserRecommendById.json', param ,function( res ){
+                    //console.log(res);
+                    data.type = 2;
+                    data.res = res;
+                    rander(data, $modal);
+                }, 'json');
+            }
+        });
+
+        //删除用户
+        main.on('click','.deleteUserRecommend', function(){
+            var id = $(this).parents('tr').attr('data-id');
+            g_id = id;
+            var userName = $(this).parents('tr').find('td').eq(1).text();
+            var data = {};
+                data.userName = userName;
+            var _html = template('userDelete', data);
+            $modal.html(_html);
+            $modal.modal('show');
+        });
+
+        //调制页面
+        $('#gopage a').on('click', function(){
+            var page = $('#gopage').find('input[name=currPage]').val();
+            if( page ){
+                window.location.href="?currPage="+page;
+            }
+        });
+
+        //提交表单
+        modal.on('click', ".submit", function(){
+            var form = $(this).parents('.modal').find("form");
+            if ( !validate(form) ){
+                return false;
+            }
+            submiting();
+            var formType = form.attr('name');
+            if( formType == "editUserRecommend" ){
+                var param = validate(form);
+                param.id = g_id;
+                $.post('/back/updateUserRecommend.json', param, function(json){
+                    if(json && json.status == "successful"){
+                        sublitsuccess(json.message);
+                    }else{
+                        errormessage($('input,select'), json.message);
+                        submiterror();
+                    }
+                } ,"json");
+            }
+        });
+
+        //确认删除用户
+        modal.on('click', ".submit-deleteUserRecommend", function(){
+            var param = {};
+            param.id = g_id;
+            $.post('/back/deleteUserRecommend.json', param, function(json){
+                if(json && json.status == "successful"){
+                    sublitsuccess(json.message);
+                }else{
+                    errormessage($('input,select'), json.message);
+                    submiterror();
+                }
+            }, 'json');
+        });
+        
+        //重新渲染弹窗页面
+        function rander(data, $modal){
+            //data.userRoleList  = userRoleList;
+            console.log(data);
+            var _html = template('userTemp', data);
+            $modal.html(_html);
+            $modal.find('select.dropdown').dropdown();
+        }
+
+        //验证表单信息
+        function validate (form){
+            clearerror(form);
+            //返回值
+            var returnData = {};
+            var userId = form.find('input[name=userId]'),
+                companyName = form.find('input[name=companyName]'),
+                linkName = form.find('input[name=linkName]'),
+                linkPhone = form.find('input[name=linkPhone]'),
+				status = form.find('input[name=status]:checked');
+            returnData = {
+                userId: userId.val(),
+                companyName: companyName.val(),
+                linkName: linkName.val(),
+                status: status.val(),
+				linkPhone: linkPhone.val()
+            };
+
+            return returnData;
+
+        }
+
+        //报错弹窗
+        function errormessage (field, message){
+            field.parents(".field").addClass('error');
+            field.parents('form').addClass('error');
+            field.parents('form').find('.ui.error.message').html('<ul class="list"><li>'+ message +'</li></ul>');
+        }
+
+        //清除报错
+        function clearerror(form){
+            form.removeClass('error');
+            form.find('.field').removeClass('error');
+            form.find('.ui.error.message').html('');
+        }
+
+        //正在提交
+        function submiting(){
+            var str = '<div class="ui icon message submiting"><i class="notched circle loading icon"></i><div class="content"><div class="header">稍候 </div><p>我们正在为您获取内容。</p></div></div>';
+            modal.find('.content form').hide();
+            modal.find('.content').append(str);
+            modal.find('.submit').hide();
+        }
+
+        //提交报错
+        function submiterror(){
+            modal.find('.content form').show();
+            modal.find('.submiting').remove();
+            modal.find('.submit').show();
+        }
+
+        //提交成功
+        function sublitsuccess(message){
+            modal.find('.actions').remove();
+            modal.find('.content').html('<div class="ui icon message"><i class="inbox icon"></i><div class="content"><div class="header">'+ message +' </div><p>页面即将重新加载!</p></div></div>');
+            setTimeout(function() {
+                window.location.reload();
+            }, 1000);
+        }
+    })();
+    require(['uikit!semantic-paginaction, datepicker'], function(uikit){
+        $('[data-uk-pagination]').on('select.uk.pagination', function(e, pageIndex){
+            window.location.href="?currPage="+(pageIndex+1);
+        });
+    });
+</script>
+
+<!-- modal 弹出框 修改用户信息 新增用户 --> 
+<script type="text/html" id="userTemp">
+    {{if type == 1 || type == 2 }}
+        <div class="ui inverted dimmer">
+    {{else}}
+        <div class="ui active inverted dimmer">
+    {{/if}}
+        <div class="ui text loader">Loading</div>
+    </div>
+    <i class="close icon"></i>
+    <div class="header">
+    {{if type == "1"}}
+        新增用户
+    {{else if type == "2"}}
+        修改用户
+    {{else}}
+        USERNAME
+    {{/if}}
+    </div>
+    <div class="content">
+        {{ if res && res.data }}
+        <form class="ui large form" name="editUserRecommend">
+            <div class="two fields">
+                <div class="field">
+                    <label>推荐用户</label>
+                    <input type="text" placeholder="" readonly="" value="{{res.data.userName}}" name="userName">
+                </div>
+                <div class="field">
+                    <label>推荐公司</label>
+                    <input type="text" placeholder="" value="{{res.data.companyName}}" name="companyName">
+                </div>
+            </div>
+            <div class="two fields">
+                <div class="field">
+                    <label>联系人</label>
+                    <input type="text" placeholder="" name="linkName" value="{{res.data.linkName}}">
+                </div>
+                <div class="field">
+                   <label>联系电话</label>
+                    <input type="text" placeholder="" value="{{res.data.linkPhone}}" name="linkPhone">
+                </div>
+            </div>
+			<div class="two fields">
+                <div class="field">
+					<label>状态</label>
+					{{if res.data.status == "INIT" }}
+					<input type="radio" name="status" value="INIT" checked="checked"/>未处理
+                    <input type="radio" name="status" value="COMPLETE"/>处理完成
+					{{else if res.data.status == "COMPLETE" }}
+					<input type="radio" name="status" value="INIT" />未处理
+                    <input type="radio" name="status" value="COMPLETE" checked="checked"/>处理完成
+					{{else}}
+					<input type="radio" name="status" value="INIT" checked="checked"/>未处理
+                    <input type="radio" name="status" value="COMPLETE"/>处理完成
+					{{/if}}
+                </div>
+            </div>
+            <div class="ui error message"></div>
+        </form>
+		{{/if}}
+    </div>
+    <div class="actions">
+        <div class="ui black deny button">
+            取消
+        </div>
+        <div class="ui right labeled icon button submit">
+            提交
+            <i class="checkmark icon"></i>
+        </div>
+    </div>
+</script>
+
+<!-- modal 删除确认 -->
+<script type="text/html" id="userDelete">
+    <div class="header">
+        推荐用户：“{{userName}}” 
+    </div>
+    <div class="content">
+        <div class="ui negative icon message">
+            <i class="remove icon"></i>
+            <div class="content">
+                <div class="header">确认删除此用户吗？ </div>
+                <p>删除用户此用户将不能登陆.</p>
+            </div>
+        </div>
+    </div>
+    <div class="actions">
+        <div class="ui black deny button">
+            取消
+        </div>
+        <div class="ui right red labeled icon button submit-deleteUserRecommend">
+            删除
+            <i class="checkmark icon"></i>
+        </div>
+    </div>
+</script>
+
+#parse('/backStageManage/public/BOTTOM.vm')
+

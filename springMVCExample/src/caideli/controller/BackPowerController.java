@@ -40,7 +40,7 @@ public class BackPowerController extends BaseController {
 	/**日志配置*/
 	private Logger TIMER_LOGGER = LoggerFactary.getLogger(LoggerFactary.QUERY_TIME);
 	/** 测试分页 */
-	@NoLogin
+	/*@NoLogin
 	@RequestMapping(value="/backBone/test")
 	public ModelAndView login(HttpServletRequest request,HttpServletResponse response){ 
 		//appointJsonView(result);
@@ -62,7 +62,7 @@ public class BackPowerController extends BaseController {
 	    TIMER_LOGGER.info("[/login.html] push time[" + (System.currentTimeMillis() - startTime) +"ms]");
 		
 	    return result;  
-	}
+	}*/
 	/** 测试  *//*
 	@RequestMapping(value="/myPage/login/login")
 	public ModelAndView test(){

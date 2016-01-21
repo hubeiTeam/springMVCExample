@@ -1,0 +1,67 @@
+#parse('/backStageManage/public/TOP.vm')
+<script type="text/javascript" src="/backStageManage/js/uitl.js"></script>
+<script type="text/javascript" src="/backStageManage/lib/layer/layer.js"></script>
+<div class="main">
+
+    <div class="ui">
+
+        <div class="ui pointing menu" id="index-menu">
+            <a class="green item" attr-url="/backStageManage/show/chart/regist.html">
+                <i class="home icon"></i> 注册相关
+            </a>
+            #if(${forwardPluralismStat})
+            <a class="red item" attr-url="/backStageManage/show/chart/pluralismStat.html">
+                <i class="mail icon"></i> 岗位相关
+            </a>
+            #end
+            #if(${forwardSystemStat})
+            <a class="blue item" attr-url="/backStageManage/show/chart/subsidyStat.html">
+                <i class="user icon"></i> 红包补贴
+            </a>
+            #end
+            #if(${forwardTradeStat})
+            <a class="orange item" attr-url="/backStageManage/show/chart/tradeStat.html">
+                <i class="home icon"></i> 财务统计
+            </a>
+            #end
+        </div>
+
+        <iframe src="" frameborder="0" style="width:100%" height="700" style="border:none;" id="census">
+            
+        </iframe>
+    </div>
+    <script type="text/javascript">
+
+        //iframe
+        var jQ_iframe = $('#census');
+        $('.ui.dropdown').dropdown();
+
+        $('#index-menu>a').on('click', function(){
+            // if( !getCookie('JSESSIONID') ){
+            //     window.location.reload();
+            //     return false;
+            // }
+            if( $(this).is('.active') ){
+                return false;
+            }
+            $('#index-menu>a').removeClass('active');
+            $(this).addClass('active');
+            var url = $(this).attr('attr-url') || "http://baidu.com";
+            jQ_iframe.attr('src', url);
+        });
+
+        //渲染iframe
+        var url = "/backStageManage/show/chart/regist.html";
+        var param = toQueryParams.call(window.location.href); //获取URL参数
+        if( param['url'] ){
+            url = param['url'];
+        }
+        jQ_iframe.attr('src', url);
+
+        //渲染菜单
+        $('#index-menu>a').removeClass('active');
+        $('#index-menu>a[attr-url="'+ url.split('?')[0] +'"]').addClass('active');
+
+    </script>
+</div>
+#parse('/backStageManage/public/BOTTOM.vm')
