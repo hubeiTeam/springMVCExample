@@ -54,11 +54,10 @@ public class TestMobileCity {
 			// System.out.println(jsonString+"]");
 			//String jsonString2 = jsonString + "]";
 			// 把STRING转化为json对象
-			jsonString=jsonString.replace(")","");
 			//jsonString=jsonString.replace("{","");
 			//jsonString=jsonString.replace("}","");
 			jsonString=jsonString.replace("getPhoneNumInfoExtCallback(","");
-			jsonString=jsonString.replace(";<!--[if !IE]>|xGv00|6741027ad78d9b06f5642b25ebcb1536<![endif]-->", "");
+			jsonString=jsonString.replace(");<!--[if !IE]>|xGv00|6741027ad78d9b06f5642b25ebcb1536<![endif]-->", "");
 			System.out.println("转换时对象："+jsonString);
 			//array = JSONArray.fromObject(jsonString);
 			//jsonObject = new JSONObject(jsonString);
