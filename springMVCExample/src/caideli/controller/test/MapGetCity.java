@@ -1,7 +1,7 @@
 /**
  * 
  */
-package caideli.controller;
+package caideli.controller.test;
 
 import java.io.BufferedReader;
 import java.io.IOException;
