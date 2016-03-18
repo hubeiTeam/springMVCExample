@@ -1,0 +1,282 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>物业管理系统后台</title>
+<link href="../images/skin.css" rel="stylesheet" type="text/css" />
+<link href="../css/left.css" rel="stylesheet" type="text/css" />
+<script src="../js/prototype.lite.js" type="text/javascript"></script>
+<script src="../js/moo.fx.js" type="text/javascript"></script>
+<script src="../js/moo.fx.pack.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+ function logout(){
+    if(confirm("确定要退出吗？")){
+        window.location="../public/exit";
+    }
+ }
+</script>
+</head>
+
+
+<body>
+	<div id="top" style="width:100%;height:64px;padding:0px;">
+
+<table width="100%" height="64" border="0" cellpadding="0" cellspacing="0" 
+class="admin_topbg">
+  <tr>
+    <td width="45%" height="64"><img src="../images/logoS2.gif" width="262" 
+
+height="64"></td>
+    <td width="55%" valign="top"   align="left"><table width="100%" border="0" cellspacing="0" 
+
+cellpadding="0">
+      <tr>
+        <td width="72%" height="38" class="admin_txt" valign="middle">
+        <span 
+
+style="color:red;font-weight:bold">乔昌明</span> 您好,感谢登录使用本系统！
+    <span   id="bottomMsg" style="margin-right:18px;"></span>
+                <script type="text/javascript">
+         	var now=new Date();
+		 //获取年
+		 var year=now.getFullYear();
+		 //获取月
+		var month=now.getMonth()+1;
+		//获取日
+		var date=now.getDate();
+		var week=["星期天","星期一","星期二","星期三","星期四","星期五","星期六"];
+	     var day=now.getDay();
+		 var todayInfo="今天是："+year+"年"+month+"月"+date+"日   "+
+		    week[day];
+		 document.getElementById("bottomMsg").innerHTML=todayInfo;
+         </script>
+<a href="#" target="_self" onClick="logout();"><img 
+
+src="../images/out.gif" alt="安全退出" width="46" height="20" border="0" align="middle"></a>
+</td>
+        <td   width="18%">&nbsp;</td>
+     <td width="10%">&nbsp;</td>  
+      </tr>
+      <tr>
+        <td height="19" colspan="3">&nbsp;</td>
+        </tr>
+    </table></td>
+  </tr>
+</table>
+        </div>
+	<!-- 内容开始 -->
+	<div id="cont"
+		style="width:100%;height:auto; background-color:red;padding:0px;margin-top:2px;">
+		<!-- 左侧div开始 -->
+		<div id="left"
+			style="float:left; width:18%; height:568px;margin-top:3px;padding:0px;border-right:1px solid  #777E82;">
+			<table width="100%" height="280" border="0" cellpadding="0"
+				cellspacing="0" bgcolor="#EEF2FB">
+				<tr>
+					<td width="182" valign="top">
+						<!-- 内容层 -->
+						<div id="container">
+					
+							<h1 class="type">
+								<a href="javascript:void(0)">系统管理</a>
+							</h1>
+							<div class="content">
+								<table width="100%" border="0" cellspacing="0" cellpadding="0">
+									<tr>
+										<td><img src="../images/menu_topline.gif"
+											width="182" height="5" />
+										</td>
+									</tr>
+								</table>
+								<ul class="MM">
+									<li><a href="../user/userList.html" target="main">人员管理</a>
+									</li>
+									<li><a href="../feeItem/feeItem.html" target="main">收费项设置</a>
+									</li>
+								</ul>
+							</div>
+							<h1 class="type">
+								<a href="javascript:void(0)">基础数据</a>
+							</h1>
+							<div class="content">
+								<table width="100%" border="0" cellspacing="0" cellpadding="0">
+									<tr>
+										<td><img src="../images/menu_topline.gif"
+											width="182" height="5" />
+										</td>
+									</tr>
+								</table>
+								<ul class="MM">
+									<li><a href="../building/save" target="main">楼栋信息</a>
+									</li>
+									<li><a href="../ownerDetail" target="main">业主信息</a>
+									</li>
+									<li><a href="../carStall" target="main">车位信息</a>
+									</li>
+								</ul>
+							</div>
+							<h1 class="type">
+								<a href="javascript:void(0)">报修单管理</a>
+							</h1>
+							<div class="content">
+								<table width="100%" border="0" cellspacing="0" cellpadding="0">
+									<tr>
+										<td><img src="../images/menu_topline.gif"
+											width="182" height="5" />
+										</td>
+									</tr>
+								</table>
+								<ul class="MM">
+									<li><a href="../report" target="main">所有报修</a>
+									</li>
+									<li><a href="../report/show1" target="main">未受理报修</a>
+									</li>
+									<li><a href="../report/show2" target="main">已受理报修</a>
+									</li>
+									<li><a href="../report/show3" target="main">已处理报修</a>
+									</li>
+								</ul>
+							</div>
+							<h1 class="type">
+								<a href="javascript:void(0)">投诉单管理</a>
+							</h1>
+							<div class="content">
+								<table width="100%" border="0" cellspacing="0" cellpadding="0">
+									<tr>
+										<td><img src="../images/menu_topline.gif"
+											width="182" height="5" />
+										</td>
+									</tr>
+								</table>
+								<ul class="MM">
+									<li><a href="../complain" target="main">所有投诉</a>
+									</li>
+									<li><a href="../complain/weishouli"
+										target="main">未受理投诉</a>
+									</li>
+									<li><a href="../complain/yishouli"
+										target="main">已受理投诉</a>
+									</li>
+									<li><a href="../complain/yichuli"
+										target="main">已处理投诉</a>
+									</li>
+								</ul>
+							</div>
+							<h1 class="type">
+								<a href="javascript:void(0)">业主缴费管理</a>
+							</h1>
+							<div class="content">
+								<table width="100%" border="0" cellspacing="0" cellpadding="0">
+									<tr>
+										<td><img src="../images/menu_topline.gif"
+											width="182" height="5" />
+										</td>
+									</tr>
+								</table>
+								<ul class="MM">
+									<li><a href="../userCost/preAddFee"
+										target="main">录入缴费</a>
+									</li>
+									<li><a href="../userCost/findall"
+										target="main">缴费查询</a>
+									</li>
+
+								</ul>
+							</div>
+						</div>
+						<h1 class="type">
+							<a href="javascript:void(0)">缴费金额统计</a>
+						</h1>
+						<div class="content">
+							<table width="100%" border="0" cellspacing="0" cellpadding="0">
+								<tr>
+									<td><img src="../images/menu_topline.gif"
+										width="182" height="5" />
+									</td>
+								</tr>
+							</table>
+							<ul class="MM">
+								<li><a href="../userCost" target="main">按项目统计</a>
+								</li>
+							</ul>
+						</div>
+						
+
+					
+						<h1 class="type">
+							<a href="javascript:void(0)">服务中心</a>
+						</h1>
+						<div class="content">
+							<table width="100%" border="0" cellspacing="0" cellpadding="0">
+								<tr>
+									<td><img src="../images/menu_topline.gif"
+										width="182" height="5" />
+									</td>
+								</tr>
+							</table>
+							<ul class="MM">
+								<li><a
+									href="../user/findInfoById/${session.user.userId}"
+									target="main">个人资料</a>
+								</li>
+								<li><a href="../carStall/selectOne"
+									target="main">我要租车位</a>
+								</li>
+								<li><a href="../report/preAddReport"  target="main">我要报修</a>
+								</li>
+								<li><a href="../complain/preAddComplain" target="main">我要投诉</a>
+								</li>
+							</ul>
+						</div>
+						<h1 class="type">
+							<a href="javascript:void(0)">安全设置</a>
+						</h1>
+						<div class="content">
+							<table width="100%" border="0" cellspacing="0" cellpadding="0">
+								<tr>
+									<td><img src="../images/menu_topline.gif"
+										width="182" height="5" />
+									</td>
+								</tr>
+							</table>
+							<ul class="MM">
+								<li><a href="../user/preUpdate" target="main">修改密码</a>
+								</li>
+
+							</ul>
+						</div> </#if> <script type="text/javascript">
+							var contents = document
+									.getElementsByClassName('content');
+							var toggles = document
+									.getElementsByClassName('type');
+
+							var myAccordion = new fx.Accordion(toggles,
+									contents, {
+										opacity : true,
+										duration : 400
+									});
+							myAccordion.showThisHideOpen(contents[0]);
+						</script></td>
+				</tr>
+			</table>
+
+			<!-- 左侧div结束 -->
+		</div>
+		<!-- 右侧div开始 -->
+		<div id="right"
+			style="float:left; width:81%;height:568px;margin-left:0px;margin-top:10px;background-image: url(../images/mainBg.png); background-repeat: repeat-x;">
+			<iframe width="100%" height="100%" frameborder="0" border="0"
+				src="notice.html" marginwidth="0" marginheight="0" name="main"
+				scrolling="no"></iframe>
+			<!--  右侧div结束  -->
+		</div>
+		<!-- 内容结束 -->
+	</div>
+	<!-- 底部版权声明的div -->
+	<div id="bottom"
+		style="clear:left;width:100%;height:24px;padding:0px; background-image: url(../images/i-1.png); background-repeat: repeat-x;text-align: center;">
+		<span>版权所有：岳阳职业技术学院计算机系软件专业1301班 </span>
+	</div>
+</body>
+</html>

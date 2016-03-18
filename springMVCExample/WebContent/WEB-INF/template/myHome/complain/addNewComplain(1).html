@@ -1,0 +1,41 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>录入投诉单</title>
+<link type="text/css" href="main.css" rel="stylesheet" />
+<script language="javascript" type="text/javascript" src="js/datePicker/WdatePicker.js"></script>
+</head>
+
+<body>
+ <form action="#" method="post">
+  <!-- 此处使用隐藏域将投诉人的Id保存起来 -->
+ <input type="hidden" name="userId" value="1" />
+ <table width="55%" border="0" cellpadding="2" cellspacing="1" bgcolor="#464646" class="newfont03" align="center">
+  <caption class="tablestyle_title">服务中心-->我要投诉</caption>
+    <tr>
+   <td width="30%" align="right">投诉内容:</td>
+   <td><input type="text" name="complainText" class="text" style="width:254px" /></td>  
+   </tr>
+     <tr>
+      <td width="30%" align="right">投诉备注:</td>
+   <td><input type="text" name="reamark" class="text" style="width:254px" /></td>  
+   </tr>
+   
+   <tr>
+      <td width="30%" align="right">投诉日期:</td>
+   <td><input type="text" name="complainDate" class="text" style="width:154px" onClick="WdatePicker()" /></td>  
+   </tr>
+   
+   <tr>
+   <td colspan="3" align="center">
+     <input type="submit" style="width:63px; height:20px; border:none; background-image:url(images/btnSubmit.gif)" value="录 入"/>
+          <input type="button" style="width:63px; height:20px; border:none; background-image:url(images/btnSubmit.gif); margin-left:15px;" value="返 回" onclick="javascript:window.location='reportList.html'"/>
+   </td>
+   </tr>
+  </table>
+  </form> 	
+</body>
+</html>
+
+

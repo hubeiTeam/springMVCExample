@@ -96,6 +96,6 @@
 
 	<!-- 欢迎页面 -->
 	<welcome-file-list>
-		<welcome-file>/backStageMange/show/logon.html</welcome-file>
+		<welcome-file>/logon.html</welcome-file>
 	</welcome-file-list>
 </web-app>

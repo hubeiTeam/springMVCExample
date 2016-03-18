@@ -36,7 +36,7 @@
 	<!-- 告诉velocity模板位置 -->
     <bean id="velocityConfigurer" class="org.springframework.web.servlet.view.velocity.VelocityConfigurer"> 
 	    <property name="resourceLoaderPath"> 
-			<value>/WEB-INF/template/vm/</value> 
+			<value>/WEB-INF/template/myHome/</value> 
 	    </property> 
 	    <property name="configLocation" value="classpath:caideli/properties/velocity.properties"/>  
 	</bean>  
@@ -68,7 +68,7 @@
 	
 <!-- 加载静态资源 -->
 <!-- <mvc:resources mapping="/backStageManage/**" location="/WEB-INF/template/backStageManage/*" /> --> 
-<mvc:resources mapping="/**" location="/WEB-INF/template/vm/*" /> 
+<mvc:resources mapping="/**" location="/WEB-INF/template/myHome/*" /> 
 <!-- <mvc:resources mapping="/backStageManage/**" location="/backStageManage/" />  -->	
 
 	 <!-- 异常解析器 -->  

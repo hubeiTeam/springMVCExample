@@ -1,0 +1,74 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>录入缴费</title>
+<link type="text/css" href="../css/main.css" rel="stylesheet" />
+<script language="javascript" type="text/javascript" src="../js/datePicker/WdatePicker.js"></script>
+</head>
+
+<body>
+  <!-- 此处使用隐藏域将收费人员的Id保存起来 -->
+ <input type="hidden" name="userId" value="3" />
+  <table width="50%" border="0" cellpadding="3" cellspacing="1" bgcolor="#464646" class="newfont03" align="center">
+  <caption class="tablestyle_title">发票详情</caption>
+  <tr>
+  <td width="30%" align="right">缴费人:</td>
+   <td>
+   	 <input type="text" id="jiaoName" />
+   </td>   
+   <td width="40%"></td>
+   </tr>
+    <tr>
+  <td width="30%" align="right">收费人:</td>
+   <td>
+     <input type="text" id="shouName" />
+   </td>   
+   <td width="40%"></td>
+   </tr>
+   <tr>
+  <td width="30%" align="right">缴费项目:</td>
+   <td>
+     <input type="text" id="jname" />
+   </td>   
+   <td width="40%"></td>
+   </tr>
+   <td width="30%" align="right">缴费金额:</td>
+   <td width="30%"><input type="text" id="qian" class="text" style="width:154px" /></td>  
+   <td width="40%"><span  style="color:red; display: none;">*缴费金额必须填写，且必须为数字！</span></td>
+   </tr>
+     <tr>
+   <td width="30%" align="right">缴费日期:</td>
+   <td width="30%"><input type="text" id=jdate" class="text" style="width:154px" onClick="WdatePicker()" /></td>  
+   <td width="40%"><span  style="color:red; display: none;">*缴费日期必须填写！</span></td>
+   </tr>
+  
+   <td colspan="3" align="center">
+    	  <input onclick="javascript:printme();" type="button" style="width:63px; height:20px; border:none; background-image:url(${contextPath}/images/btnSubmit.gif)" value="打印发票"/>
+          <input type="reset" style="width:63px; height:20px; border:none; background-image:url(${contextPath}/images/btnSubmit.gif); margin-left:15px;" value="取 消" />
+   </td>
+   </tr>
+  </table>
+  
+  <!-- ------------------------------------------打印-------------------------------------- -->
+
+
+
+
+<span id='div1'>
+<!----------------------------------------发票------------------------------>
+
+
+
+</span>
+<script language="javascript">
+	function printme(){
+		document.body.innerHTML=document.getElementById('div1').innerHTML+'<br/>'+document.getElementById('div2').innerHTML;
+		window.print();
+	}
+</script>
+<p> </p>
+<div id="div2"></div>
+
+</body>
+</html>

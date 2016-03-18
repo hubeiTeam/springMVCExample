@@ -47,7 +47,7 @@ public class LoginInterceptor implements MethodInterceptor {
 			return invocation.proceed();
 		}
 		ModelAndView result=new ModelAndView();
-		result.setViewName("/backStageManage/show/logon");
+		result.setViewName("/login");
 		return result;
 	}
 	

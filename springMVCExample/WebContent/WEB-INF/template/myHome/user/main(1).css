@@ -1,0 +1,100 @@
+/* 框架右边页面的样式 */
+body {
+	font:13px Arial, Helvetica, sans-serif;
+	color: #000;
+	background-color: #CFD7E1;
+	margin: 0px;
+}
+.newfont03 {
+	border-collapse:collapse;
+	font-family: "宋体";
+	font-size: 12px;
+	color: #000000;
+	text-decoration: none;
+       background-color:#FFFFFF;   
+}
+/* 表格中单元格边框样式 */
+.newfont03  td{
+	border:1px solid #D5DAE0;
+}
+.newfont03  
+a.newfont03:hover {
+	font-family: "宋体";
+	font-size: 12px;
+	color: #FF0000;
+	text-decoration: underline;
+}
+.tablestyle_title{
+	/*height: 20px; font-style: normal; font-variant: normal; font-weight: bold; font-size: 16px;letter-spacing: 2px; text-align: middle; border-top: 2px solid #ff7300; padding-left: 10px; background-color: #f0f0f0;text-align:center;*/
+	background:#466C8F;
+	padding:3px;
+	text-align:left;
+	color:#FFFFFF;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	height: 20px;
+	font-style: normal; font-variant: normal; font-weight: bold; font-size: 16px;letter-spacing: 2px; padding-left: 10px; 
+}
+/*  内容行样式 */
+tr.cont{
+	background-color:#FFF;
+	text-align:center;
+}
+/* 分页导航信息的样式 */
+.right-text09 {
+	font-family: Tahoma;
+	font-size: 13px;
+	font-weight: bold;
+	color: #F26521;
+	text-decoration: none;
+}
+
+.right-font08 {
+	font-family: "宋体";
+	font-size: 12px;
+	color: #000000;
+	text-decoration: none;
+}
+a.right-font08:hover {
+	font-family: "宋体";
+	font-size: 12px;
+	color: #FF0000;
+	text-decoration: underline;
+}
+/* 显示新增记录的div样式 */
+.addData{
+	display:inline; float:left; height:16px; padding-top:1px; padding-bottom:2px; padding-right:20px; margin-left:80px; 
+	text-align:center;}
+/*  显示页号及分页导航信息的div样式 */
+.showPage{
+	display:inline; margin-left:34px; padding:2px;
+}
+/* 显示编辑记录的div样式 */
+.editData{
+	display:inline; float:left; height:16px; padding-top:1px; padding-bottom:2px;
+	margin-left:20px;
+	text-align:center;}	
+
+/* 单行文本输入框的样式 */
+input.text{
+ border:1px solid #7F9DB9;font-size:12px;font-family: Verdana, Arial, Helvetica, sans-serif;height:18px
+}
+/* 提交与重置按钮的样式 */
+.submitAndReset{
+	width:63px; height:20px; border:none; background-image:url(../images/btnSubmit.gif);
+}
+/* 多行表格标题行单元格的样式 */
+  .firstRow td{
+	  font-family: "Times New Roman", Times, serif;
+	  font-size:13px;
+	  font-weight:bold;
+	  background-color:#EEEEEE;
+	  text-align:center;
+  }
+	/* fieldset的公共样式 */
+	fieldset{
+	border:1px solid #476D90;
+	}
+	legend{
+		font-size:15px;
+		font-weight:bold;
+	}

@@ -1,0 +1,42 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>3D柱状图查询</title>
+<link type="text/css" href="../css/main.css" rel="stylesheet" />
+<script language="javascript" type="text/javascript" src="../js/datePicker/WdatePicker.js"></script>
+</head>
+
+<body>
+<table width="96%" border="0" cellpadding="4" cellspacing="1"  bgcolor="#464646" class="newfont03" align="center">
+  <caption class="tablestyle_title">业主缴费管理-->缴费查询</caption>
+  <tr>
+  <td colspan="9">
+   <div style="margin-top:2px; margin-left:auto; margin-right:auto; width:100%; height:auto;">
+  <fieldset style="border:1px solid #476D90; width:90%">
+     <legend>缴费金额统计-->按收费项目统计金额</legend>
+      <div class="newfont03">
+      
+         <form action="${contextPath}/userCost/dataFind"  method="post">
+    <span style="float:left; margin-left:28px">
+             缴费日期：
+             从<input type="text" name="beginDate" class="text" style="width:154px"  value="${(beginDate)!''}" onClick="WdatePicker()" />&nbsp;到&nbsp;<input type="text" name="endDate" class="text" style="width:154px" value="${(endDate)!''}" onClick="WdatePicker()" />
+            </span>
+            <span  style="float:left; margin-left:30px">
+                 <input type="submit" style="width:123px; height:20px; border:none; background-image:url(../images/btn_bg.gif)" value="3D统计图"/>
+            </span>
+          </form>
+      </div>
+</fieldset>
+</div>
+<div style="margin-top:2px; margin-left:auto; margin-right:auto; width:90%; height:auto;">
+    <!-- 显示jfreeChart统计图 -->
+	<img src="${contextPath}/${imgPath}" width="48%" />
+  <img src="${contextPath}/${imgPath1}" width="48%"  />
+  
+</div>
+  </td>
+  </tr>
+  </table>
+</body>
+</html>

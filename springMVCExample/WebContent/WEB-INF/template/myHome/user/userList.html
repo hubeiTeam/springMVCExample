@@ -1,0 +1,63 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>用户列表</title>
+<link type="text/css" href="../css/main.css" rel="stylesheet" />
+<script type="text/javascript">
+//改变每页的条数
+function turnPage(pageSize){
+   window.location="../user/1-"+pageSize;
+}
+</script>
+</head>
+
+<body>
+  <table width="90%" border="0" cellpadding="4" cellspacing="1" bgcolor="#464646" class="newfont03" align="center">
+  <caption class="tablestyle_title">人员管理-->用户列表</caption>
+                  <tr class="firstRow">
+                    <td width="28%" height="20">用户名</td>
+                    <td width="34%">姓名</td>
+                    <td>角色</td>
+                  </tr>
+            
+                     <tr  class="cont">
+                   <td bgcolor="#FFFFFF">wangzhihao</td><td>王志浩</td><td>工作人员</td>
+                  </tr>  
+      
+                 
+                 <tr>
+                  <td colspan="3"  class="right-font08">
+                  
+                  <div class="addData"> <img src="../images/add.gif"  style="border:none;" /><a href="../user/preAdd" class="right-font08">新增用户</a></div>
+               <div class="showPage">
+                第 <span class="right-text09">1</span> 页 |共 <span class="right-text09">3</span> 页 |
+                每页<select name="pageSize" onchange="turnPage(this.value)">
+            
+                     <option value="5" selected="selected">5</option> 
+                      <option value="8">8</option>  
+                    <option value="10">10</option> 
+                      <option value="15">15</option>
+            
+                </select>条
+               </div>  
+                 <div class="showPage">
+                 [<a href="../user/1-${pager.pageSize}" class="right-font08">首页</a> | 
+               
+                    <a href="../user/${pager.pageNumber-1}-${pager.pageSize}" class="right-font08">上一页</a> 
+              
+          
+            
+                 | 
+    
+                    <a href="../user/${pager.pageNumber+1}-${pager.pageSize}" class="right-font08">下一页</a> 
+           
+             
+                | <a href="../user/${pager.totalPage}-${pager.pageSize}" class="right-font08">末页</a>]
+                 </div>
+                  </td>
+                  </tr>
+                </table>
+
+</body>
+</html>

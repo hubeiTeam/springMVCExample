@@ -1,16 +1,13 @@
-/**
- *
- * 登录注册接口
- *
- *//*
 package caideli.controller;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.context.annotation.Scope;
@@ -25,32 +22,32 @@ import caideli.bean.BackUser;
 import caideli.service.BackUserService;
 import caideli.tool.LoggerFactary;
 
-*//**
+/**
  * @author :caideli
  * @pakageName:caideli.controller
  * @CreatTime ：2015年9月28日 上午11:11:36 
- *//*
+ */
 @Scope("prototype")
 @Controller("loginController")
 public class LoginController extends BaseController {
 	
-	*//**
+	/**
 	 * 
-	 *//*
+	 */
 	private static final long serialVersionUID = 1L;
 	@Resource
 	private BackUserService backUserService;
-	*//**日志配置*//*
+	/**日志配置*/
 	private Logger TIMER_LOGGER = LoggerFactary.getLogger(LoggerFactary.QUERY_TIME);
 	
 	@NoLogin
-	@RequestMapping(value="/backStageManage/show/logon.html",method = RequestMethod.GET)
+	@RequestMapping(value="/myHome/login.html",method = RequestMethod.GET)
 	public ModelAndView login(){
 		ModelAndView result=new ModelAndView();
 		return result;
 	}
 	@NoLogin
-	@RequestMapping(value="/backStageManage/show/logon",method = RequestMethod.GET)
+	@RequestMapping(value="/myHome/login",method = RequestMethod.GET)
 	public ModelAndView login1(){
 		ModelAndView result=new ModelAndView();
 		return result;
@@ -58,26 +55,26 @@ public class LoginController extends BaseController {
 	@RequestMapping(value="/back",method=RequestMethod.GET)
 	public ModelAndView back1(){
 		ModelAndView result=new ModelAndView();
-		super.setView(result, "/backStageManage/show/logon");
+		super.setView(result, "/myHome/login");
 		return result;
 	}
 	@RequestMapping(value="/",method=RequestMethod.GET)
 	public ModelAndView back2(){
 		ModelAndView result=new ModelAndView();
-		super.setView(result, "/backStageManage/show/logon");
+		super.setView(result, "/login");
 		return result;
 	}
 	
-	*//**
+	/**
 	 * 登录验证
 	 * caideli
 	 * 2015年9月28日
 	 * @param userName
 	 * @param userPassword
 	 * @return
-	 *//*
+	 */
 	@NoLogin
-	@RequestMapping(value="/backStageManage/show/logon.json",method=RequestMethod.POST)
+	@RequestMapping(value="/myHome/login.json",method=RequestMethod.POST)
 	public ModelAndView login(String userName,String userPassword){
 		ModelAndView result=new ModelAndView();
 		appointJsonView(result);
@@ -108,23 +105,19 @@ public class LoginController extends BaseController {
 			user.setUserPassword(userPassword);
 			request.getSession().setAttribute("userAdmin",user);
 		}
-		TIMER_LOGGER.info("[/backStageManage/show/logon.json] push time[" + (System.currentTimeMillis() - startTime) +"ms]");	    
+		TIMER_LOGGER.info("[/myHome/login.json] push time[" + (System.currentTimeMillis() - startTime) +"ms]");	    
 		return result;
 	}
 	
-	*//**index访问接口**//*
-	@RequestMapping(value="/backStageManage/show/index.html",method = RequestMethod.GET)
+	/**index访问接口**/
+	@RequestMapping(value="/myHome/index.html",method = RequestMethod.GET)
 	public ModelAndView index(){
 		ModelAndView result=new ModelAndView();
 		long startTime = System.currentTimeMillis();
-		result.addObject("userModuleTree",super.getUserModuleTree());
-		result.addObject("forwardTradeStat", super.getLoginUserAdmin().getPowers().containsKey("forwardTradeStat"));
-		result.addObject("forwardSystemStat", super.getLoginUserAdmin().getPowers().containsKey("forwardSystemStat"));
-		result.addObject("forwardPluralismStat", super.getLoginUserAdmin().getPowers().containsKey("forwardPluralismStat"));
-		TIMER_LOGGER.info("[/backStageManage/show/index.html] push time[" + (System.currentTimeMillis() - startTime) +"ms]");
+		TIMER_LOGGER.info("[/myHome/index.html] push time[" + (System.currentTimeMillis() - startTime) +"ms]");
 		return result;
 	}
-	*//**判断登录的用户session是否消失**//*
+	/**判断登录的用户session是否消失**/
 	@RequestMapping(value="/back/isLogin.json",method = RequestMethod.GET)
 	public ModelAndView isLogin(HttpServletRequest request){
 		ModelAndView result=new ModelAndView();
@@ -139,4 +132,3 @@ public class LoginController extends BaseController {
 		return result;
 	}
 }
-*/

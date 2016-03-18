@@ -1,0 +1,161 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>缴费查询</title>
+<link type="text/css" href="${contextPath}/css/main.css" rel="stylesheet" />
+<script type="text/javascript">
+//改变每页的条数
+function turnPage(pageSize){
+   window.location="${contextPath}/userCost/findall/1-"+pageSize;
+}
+function deleteMany(){
+	document.getElementById("feeForm").submit();
+}
+
+</script>
+<script language="javascript" type="text/javascript" src="${contextPath}/js/datePicker/WdatePicker.js"></script>
+</head>
+
+<body>
+
+<table width="100%" border="0" cellpadding="2" cellspacing="1" bgcolor="#464646" class="newfont03" align="center">
+  <caption class="tablestyle_title">业主缴费管理-->缴费查询</caption>
+  <tr>
+  <td colspan="9">
+   <div style="margin-top:2px; margin-left:auto; margin-right:auto; width:100%; height:auto;">
+  <fieldset style="border:1px solid #476D90; width:">
+     <legend>高级搜索-->查找缴费明细</legend>
+      <div class="newfont03">
+    <form action="${contextPath}/userCost/findByCondition" method="post">
+       <span style="float:left; margin-left:2px">
+         业主姓名：<input type="text" name="realName" class="text"  value="${(realName)!''}" style="width:120px" />
+         </span>
+        <span style="float:left; margin-left:2px">
+         缴费项目：
+         <select name="feeItemId">
+        	<#list feelist as fee>
+        	 <#if feeItemId==fee.feeId>
+        	    <option value="${(fee.feeId)!''}"  selected="selected">${(fee.feeName)!''}</option>
+        	   <#else>
+        	    <option value="${(fee.feeId)!''}">${(fee.feeName)!''}</option>
+        	   </#if>
+		         
+		    </#list>
+     </select>
+        </span>
+            <span style="float:left; margin-left:8px">
+            缴费日期：
+            从<input type="text" name="beginDate" class="text" style="width:144px" value="${(begin)!''}"  onClick="WdatePicker()" />&nbsp;到&nbsp;<input type="text" name="endDate" class="text" style="width:144px"  value="${(end)!''}"  onClick="WdatePicker()" />
+            </span>
+            <span  style="float:left; margin-left:10px">
+                 <input type="submit" style="width:63px; height:20px; border:none; background-image:url(${contextPath}/images/btnSubmit.gif)" value="查 找"/>
+            </span>
+            </form>
+      </div>
+</fieldset>
+</div>
+  </td>
+  </tr>
+ 
+                   <tr class="firstRow">
+                  <td width="8%">选择</td>
+				    <td width="10%">业主姓名</td>
+                    <td width="19%" height="20">所住楼栋</td>
+                      <td width="11%">联系电话</td>
+                    <td width="9%" height="20">缴费项目</td>
+                     <td width="8%">缴费金额</td>
+                    <td width="8%">收费人</td>
+                    <td width="8%">缴费日期</td>
+                    <td width="18%">备注</td> 
+                  </tr>
+                  <tr id="aa"></tr>
+                  	  <form action="${contextPath}/userCost/deleteMany" id="feeForm",method="post">
+                  <#list pager.list as fee>
+	                  <tr  class="cont">
+	                  <td><input type="checkbox" name="delid" value="${(fee.userCostId)!''}"/></td>
+					    <td bgcolor="#FFFFFF">${(fee.payName)!''}</td>
+	                    <td>${(fee.buildingName)!''}</td>
+	                    <td>${(fee.telephone)!''}</td>
+	                   <td bgcolor="#FFFFFF">${(fee.feeName)!''}</td>
+	                   <td>${(fee.havaCost)!''}</td>
+	                    <td>${(fee.chargeName)!''}</td>
+	                    <td>${(fee.sendDate)!''}</td>
+	                    <td>${(fee.remark)!''}</td>
+	                  </tr>
+                  </#list>
+                 
+                  <tr>
+                  <td colspan="9"  class="right-font08">
+                    <img src="${contextPath}/images/delete.gif"  style="border:none; margin-left:60px; margin-right:10px;" /><a href="javascript:deleteMany();" class="right-font08"  onclick="return confirm('确定删除选中项吗？');">删除选中的条目</a>
+                     </form>
+                    
+                <div class="showPage">
+                第 <span class="right-text09">${pager.pageNumber}</span> 页 |共 <span 
+
+class="right-text09">${pager.totalPage}</span> 页 |
+                每页<select name="pageSize" onchange="turnPage(this.value)">
+              <!-- 每页条数与option中的值相同时，这一项要选中 -->
+               <#if pager.pageSize ==5>
+                     <option value="5" selected="selected">5</option> 
+                      <option value="8">8</option>  
+                    <option value="10">10</option> 
+                      <option value="15">15</option>
+                 <#elseif pager.pageSize ==8>
+                      <option value="5">5</option> 
+                      <option value="8" selected="selected">8</option>  
+                    <option value="10">10</option> 
+                      <option value="15">15</option>
+                   <#elseif pager.pageSize ==10>
+                      <option value="5">5</option> 
+                      <option value="8">8</option>  
+                    <option value="10" selected="selected">10</option> 
+                      <option value="15">15</option>
+                        <#else>
+                      <option value="5">5</option> 
+                      <option value="8" selected="selected">8</option>  
+                    <option value="10">10</option> 
+                      <option value="15" selected="selected">15</option> 
+               </#if>
+        
+            
+                </select>条
+               </div>  
+                 <div class="showPage">
+                 [<a href="${contextPath}/userCost/findall/1-${pager.pageSize}" class="right-font08">
+
+首页</a> | 
+                 <#if pager.pageNumber &gt; 1>
+                    <a href="${contextPath}/userCost/findall/${pager.pageNumber-1}-${pager.pageSize}" 
+
+class="right-font08">上一页</a> 
+                 <#else>
+                                                          上一页 
+                 </#if>
+                 | 
+                  <#if pager.pageNumber &lt; pager.totalPage>
+                    <a href="${contextPath}/userCost/findall/${pager.pageNumber+1}-${pager.pageSize}" 
+
+class="right-font08">下一页</a> 
+                 <#else>
+                                                          下一页 
+                 </#if>
+                | <a href="${contextPath}/userCost/findall/${pager.totalPage}-${pager.pageSize}" 
+
+class="right-font08">末页</a>]
+                 </div>
+                  </td>
+                  </tr>
+                 <tr>
+                   <td colspan="9"  align="center"/>
+                       <input type="button" style="width:123px; height:20px; border:none; background-image:url(${contextPath}/images/btn_bg.gif)" value="打印发票" onclick="javascript:alert('后台打印中')" />
+            &nbsp;   &nbsp;   &nbsp; 
+             
+             <a href="${contextPath}/userCost/fapiao.htm" target="_blank"  class="right-font08">查看发票模板</a>
+                   </td>
+                 </tr>
+             
+                </table>
+                 
+</body>
+</html>

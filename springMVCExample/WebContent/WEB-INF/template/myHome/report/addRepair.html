@@ -1,0 +1,62 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>录入维修记录</title>
+<link type="text/css" href="${contextPath}/css/main.css" rel="stylesheet" />
+<script language="javascript" type="text/javascript" src="${contextPath}/js/datePicker/WdatePicker.js"></script>
+</head>
+
+<body>
+ <form action="${contextPath}/report/upadteAddRepair" method="post">
+  <!-- 此处使用隐藏域将报修单的相关属性保存起来 -->
+ <input type="hidden" name="tb_report.reportId" value="${(OneUser.reportId)!''}" />
+  <input type="hidden" name="tb_report.reportState" value="2" />
+    <!-- 此处使用隐藏域将维修记录单的相关属性保存起来 -->
+  <input type="hidden" name="tb_repair.reportId" value="${(OneUser.reportId)!''}" />
+    <input type="hidden" name="tb_repair.userId" value="${(OneUser.handlerId)!''}" />
+  
+  
+   <!-- 此处使用隐藏域将处理人的Id保存起来 -->
+    <input type="hidden" name="tb_report.handlerId" value="${(OneUser.handlerId)!''}" />
+  <table width="90%" border="0" cellpadding="3" cellspacing="1" bgcolor="#464646" class="newfont03" align="center">
+  <caption class="tablestyle_title">报修单管理-->录入维修记录</caption>
+
+   <tr>
+   <td width="20%" align="right">问题类别:</td>
+   <td>${(OneUser.reportName)!''}</td>  
+   </tr>
+    <tr>
+   <td width="20%" align="right">问题描述:</td>
+   <td>${(OneUser.question)!''}</td>  
+   </tr>
+   <tr>
+      <td width="20%" align="right">报修日期:</td>
+   <td>${(OneUser.reportDate)!''}</td>  
+   </tr>
+     <tr>
+   <td width="20%" align="right">维修人:</td>
+   <td> ${(OneUser.realName)!''} </td>  
+   </tr>
+    <tr>
+   <td width="20%" align="right">维修总费用(元):</td>
+   <td><input type="text" name="tb_repair.totalCost" class="text" style="width:154px" /></td>
+   </tr>
+      <tr>
+   <td width="20%" align="right">维修结果:</td>
+   <td><input type="text" name="tb_repair.repairResult" class="text" style="width:304px" /></td>
+   </tr>
+       <tr>
+   <td width="20%" align="right">完成日期:</td>
+   <td><input type="text" name="tb_repair.endDate" class="text" style="width:154px" onClick="WdatePicker()"/></td>
+   </tr>
+   <tr>
+   <td colspan="3" align="center">
+     <input type="submit" style="width:63px; height:20px; border:none; background-image:url(${contextPath}/images/btnSubmit.gif)" value="录 入"/>
+          <input type="button" style="width:63px; height:20px; border:none; background-image:url(${contextPath}/images/btnSubmit.gif); margin-left:15px;" value="返 回" onclick="javascript:history.go(-1);"/>
+   </td>
+   </tr>
+  </table>
+  </form> 	
+</body>
+</html>

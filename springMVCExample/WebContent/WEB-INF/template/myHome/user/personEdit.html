@@ -1,0 +1,50 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>个人信息</title>
+<link type="text/css" href="${contextPath}/css/main.css" rel="stylesheet" />
+<script language="javascript" type="text/javascript" src="${contextPath}/js/datePicker/WdatePicker.js"></script>
+</head>
+
+<body>
+<form action="${contextPath}/user/updateUser"  method="post">
+
+<input  type="hidden" name="tb_ownerDetail.ownerId"   value="${(owner.ownerId)!''}" />
+  <table width="90%" border="0" cellpadding="3" cellspacing="1" bgcolor="#464646" class="newfont03" align="center">
+  <caption class="tablestyle_title">服务中心-->个人资料</caption>
+  <tr>
+
+   <td width="15%" align="right">姓名:</td>
+   <td>${(owner.realName)!''}</td>  
+   </tr>
+   <tr>
+   <td width="15%" align="right">所住楼栋:</td>
+   <td>${(owner.buildingName)!''}</td>
+   </tr>
+      <tr>
+   <td width="15%" align="right">门牌号:</td>
+   <td>${(owner.houseNumber)!''}</td>  
+   </tr>
+       <tr>
+   <td width="15%" align="right">身份证号:</td>
+   <td><input type="text" name="tb_ownerDetail.cardId"  class="text" style="width:154px"  value="${(owner.cardId)!''}"  /></td>  
+   </tr>
+       <tr>
+   <td width="15%" align="right">联系电话:</td>
+   <td><input type="text" name="tb_ownerDetail.telephone"  class="text" style="width:154px"  value="${(owner.telephone)!''}"  /></td>  
+   </tr>
+       <tr>
+   <td width="15%" align="right">入住日期:</td>
+   <td><input type="text" name="tb_ownerDetail.enterDate" class="text" style="width:154px"   value="${(owner.enterDate)!''}" onClick="WdatePicker()" /></td>  
+   </tr>
+   <tr>
+   <td colspan="2" align="left">
+     <input type="submit" style="margin-left:110px;width:63px; height:20px; border:none; background-image:url(${contextPath}/images/btnSubmit.gif)" value="更 新"/>
+          <input type="reset" style="width:63px; height:20px; border:none; background-image:url(${contextPath}/images/btnSubmit.gif); margin-left:15px;" value="取 消"/>
+   </td>
+   </tr>
+  </table>	
+  </form>
+</body>
+</html>

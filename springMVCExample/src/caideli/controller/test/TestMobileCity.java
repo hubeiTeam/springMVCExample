@@ -8,7 +8,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -56,8 +55,8 @@ public class TestMobileCity {
 			// 把STRING转化为json对象
 			//jsonString=jsonString.replace("{","");
 			//jsonString=jsonString.replace("}","");
-			jsonString=jsonString.replace("getPhoneNumInfoExtCallback(","");
-			jsonString=jsonString.replace(");<!--[if !IE]>|xGv00|6741027ad78d9b06f5642b25ebcb1536<![endif]-->", "");
+			jsonString=jsonString.replace("getPhoneNumInfoExtCallback(","");/*
+			jsonString=jsonString.replace(");<!--[if !IE]>|xGv00|6741027ad78d9b06f5642b25ebcb1536<![endif]-->", "");*/
 			System.out.println("转换时对象："+jsonString);
 			//array = JSONArray.fromObject(jsonString);
 			//jsonObject = new JSONObject(jsonString);
@@ -69,7 +68,7 @@ public class TestMobileCity {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return jsonObject.getString("province");
+		return jsonObject.getString("province")+"_"+jsonObject.getString("cityname");
 	}
 
 	/**
@@ -90,7 +89,7 @@ public class TestMobileCity {
 	}
 
 	public static void main(String[] args) throws Exception {
-		String testMobileNumber = "15267131024";
+		String testMobileNumber = "18356464656";
 		System.out.println(calcMobileCity(testMobileNumber));
 		/*List<String> mobileList = new ArrayList<String>();
 		for (int i = 1350345; i < 1350388; i++) {

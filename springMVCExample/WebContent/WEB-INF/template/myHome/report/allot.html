@@ -1,0 +1,55 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>分配维修人员</title>
+<link type="text/css" href="${contextPath}/css/main.css" rel="stylesheet" />
+</head>
+
+<body>
+ <form action="${contextPath}/report/updateAllot/1" method="post">
+  <!-- 此处使用隐藏域将报修单的Id保存起来 -->
+ <input type="hidden" name="tb_report.reportId" value="${(OneUser.reportId)!''}" />
+  <table width="60%" border="0" cellpadding="3" cellspacing="1" bgcolor="#464646" class="newfont03" align="center">
+  <caption class="tablestyle_title">报修单管理-->分配维修人员</caption>
+  <tr>
+   <td width="20%" align="right">业主:</td>
+   <td>${(OneUser.realName)!''}</td>  
+   </tr>
+   <tr>
+   <td width="20%" align="right">问题类别:</td>
+   <td>${(OneUser.reportName)!''}</td>  
+   </tr>
+    <tr>
+   <td width="20%" align="right">问题描述:</td>
+   <td>${(OneUser.question)!''}</td>  
+   </tr>
+   <tr>
+      <td width="20%" align="right">报修日期:</td>
+   <td>${(OneUser.reportDate)!''}</td>  
+   </tr>
+    <tr>
+      <td width="20%" align="right">报修备注:</td>
+   <td>${(OneUser.reamark)!''}</td>  
+   </tr>
+     <tr>
+   <td width="20%" align="right">维修人:</td>
+   <td>
+   
+     <select name="tb_report.handlerId">
+     <#list xlk as xlk>
+      <option value="${(xlk.userId)!''}">${(xlk.realName)!''}</option>
+     </#list>        
+     </select>
+   </td>  
+   </tr>
+ <tr>
+   <td colspan="3" align="center">
+     <input type="submit" style="width:63px; height:20px; border:none; background-image:url(${contextPath}/images/btnSubmit.gif)" value="更 新"/>
+          <input type="button" style="width:63px; height:20px; border:none; background-image:url(${contextPath}/images/btnSubmit.gif); margin-left:15px;" value="返 回" onclick="javascript:history.go(-1);"/>
+   </td>
+   </tr>
+  </table>
+  </form> 	
+</body>
+</html>

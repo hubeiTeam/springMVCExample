@@ -1,0 +1,68 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>录入缴费</title>
+<link type="text/css" href="${contextPath}/css/main.css" rel="stylesheet" />
+<script language="javascript" type="text/javascript" src="${contextPath}/js/datePicker/WdatePicker.js"></script>
+</head>
+
+<body>
+<form action="${contextPath}/userCost/add" method="post">
+  <!-- 此处使用隐藏域将收费人员的Id保存起来 -->
+ <input type="hidden" name="userId" value="3" />
+  <table width="80%" border="0" cellpadding="3" cellspacing="1" bgcolor="#464646" class="newfont03" align="center">
+  <caption class="tablestyle_title">业主缴费管理-->录入缴费</caption>
+  <tr>
+  <td width="30%" align="right">缴费人:</td>
+   <td>
+     <select name="tb_userCost.userId">
+     	<#list useList as user>
+      		<option value="${(user.userId)!''}">${(user.realName)!''}</option>
+        </#list>
+     </select>
+   </td>   
+   <td width="40%"></td>
+   </tr>
+   <tr>
+  <td width="30%" align="right">缴费项目:</td>
+   <td>
+     <select name="tb_userCost.feeId">
+     	<#list feelist as fee>
+		      <option value="${(fee.feeId)!''}">${(fee.feeName)!''}</option>
+		 </#list>
+     </select>
+   </td>   
+   <td width="40%"></td>
+   </tr>
+   <tr>
+   <td width="30%" align="right">缴费金额:</td>
+   <td width="30%"><input type="text" name="tb_userCost.havaCost" class="text" style="width:154px" /></td>  
+   <td width="40%"><span  style="color:red; display: none;">*缴费金额必须填写，且必须为数字！</span></td>
+   </tr>
+      <tr>
+   <td width="30%" align="right">收费人:</td>
+   <td width="30%">${session.user.realName} <input type="hidden" name="tb_userCost.reveiveId" value="${session.user.userId}" /></td>  
+   <td width="40%"></td>
+   </tr>
+     <tr>
+   <td width="30%" align="right">缴费日期:</td>
+   <td width="30%"><input type="text" name="tb_userCost.sendDate" class="text" style="width:154px" onClick="WdatePicker()" /></td>  
+   <td width="40%"><span  style="color:red; display: none;">*缴费日期必须填写！</span></td>
+   </tr>
+   <tr>
+     <tr>
+   <td width="30%" align="right">备注:</td>
+   <td width="30%"><input type="text" name="tb_userCost.remark" class="text" style="width:154px" /></td>  
+   <td width="40%"></td>
+   </tr>
+   <tr>
+   <td colspan="3" align="center">
+     <input type="submit" style="width:63px; height:20px; border:none; background-image:url(${contextPath}/images/btnSubmit.gif)" value="保 存"/>
+          <input type="reset" style="width:63px; height:20px; border:none; background-image:url(${contextPath}/images/btnSubmit.gif); margin-left:15px;" value="取 消" />
+   </td>
+   </tr>
+  </table>
+  </form> 	
+</body>
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>投诉单管理--录入处理结果</title>
+<link type="text/css" href="${contextPath}/css/main.css" rel="stylesheet" />
+<script language="javascript" type="text/javascript" src="${contextPath}/js/datePicker/WdatePicker.js"></script>
+</head>
+
+<body>
+ <form action="${contextPath}/complain/update1/2" method="post">
+  <!-- 此处使用隐藏域将投诉单的Id保存起来 -->
+ <input type="hidden" name="tb_complain.complainId" value="${(com.complainId)!''}" />
+  <table width="90%" border="0" cellpadding="3" cellspacing="1" bgcolor="#464646" class="newfont03 " align="center">
+  <caption class="tablestyle_title">投诉单管理-->录入处理结果</caption>
+
+   <tr>
+   <td width="20%" align="right">投诉人:</td>
+   <td>${(com.realName)!''}</td>  
+   </tr>
+    <tr>
+   <td width="20%" align="right">投诉内容:</td>
+   <td>${(com.complainText)!''}</td>  
+   </tr>
+   <tr>
+      <td width="20%" align="right">投诉日期:</td>
+   <td>${(com.complainDate)!''}</td>  
+   </tr>
+     <tr>
+   <td width="20%" align="right">处理人:</td>
+   <td>
+     <select name="tb_complain.doWithId">
+     <#list users as us>
+      <option value="${(us.userId)!''}">${(us.realName)!''}</option>
+        
+            </#list>
+     </select>
+   </td>  
+   </tr>
+
+      <tr>
+   <td width="20%" align="right">处理结果:</td>
+   <td><input type="text" name="tb_complain.ComplainResult" class="text" style="width:304px" /></td>
+   </tr>
+       <tr>
+   <td width="20%" align="right">完成日期:</td>
+   <td><input type="text" name="tb_complain.endDate" class="text" style="width:154px" onClick="WdatePicker()"/></td>
+   </tr>
+   <tr>
+   <td colspan="3" align="center">
+     <input type="submit" style="width:63px; height:20px; border:none; background-image:url(${contextPath}/images/btnSubmit.gif)" value="录 入"/>
+          <input type="button" style="width:63px; height:20px; border:none; background-image:url(${contextPath}/images/btnSubmit.gif); margin-left:15px;" value="返 回" onclick="javascript:history.go(-1);"/>
+   </td>
+   </tr>
+  </table>
+  </form> 	
+</body>
+</html>
